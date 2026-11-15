@@ -1,0 +1,11 @@
+{
+  "_ghi_chu": "Luật ký hiệu chỉ dùng kiểm thử thuật toán, không phải tri thức bệnh lúa hoặc nguồn nông học.",
+  "rules": [
+    {"id": "R1", "loai": "trung_gian", "neu": ["a=co"], "thi": "b=co", "nguon": {"ma": "TEST", "muc": "Dữ liệu kiểm thử ký hiệu"}},
+    {"id": "R2", "loai": "trung_gian", "neu": ["b=co"], "thi": "c=co", "nguon": {"ma": "TEST", "muc": "Dữ liệu kiểm thử ký hiệu"}},
+    {"id": "R3", "loai": "trung_gian", "neu": ["c=co", "d=co"], "thi": "e=co", "nguon": {"ma": "TEST", "muc": "Dữ liệu kiểm thử ký hiệu"}},
+    {"id": "R4", "loai": "trung_gian", "neu": ["e=co"], "thi": "f=co", "nguon": {"ma": "TEST", "muc": "Dữ liệu kiểm thử ký hiệu"}},
+    {"id": "R5", "loai": "trung_gian", "neu": ["f=co"], "thi": "g=co", "nguon": {"ma": "TEST", "muc": "Dữ liệu kiểm thử ký hiệu"}},
+    {"id": "R6", "loai": "trung_gian", "neu": ["a=co"], "thi": "b=co", "nguon": {"ma": "TEST", "muc": "Dữ liệu kiểm thử ký hiệu"}}
+  ]
+}

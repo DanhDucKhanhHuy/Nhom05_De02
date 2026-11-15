@@ -7,7 +7,7 @@ Khung ban đầu chưa cài thuật toán. Chỉ triển khai khi được giao 
 Tài liệu, docstring và comment bằng tiếng Việt; mã hóa UTF-8.
 
 ## Lệnh từ thư mục Nhom05_De02
-Dùng Python 3.10 hoặc 3.11. Tạo môi trường bằng `python -m venv .venv`;
+Dùng Python 3.10 hoặc 3.11 hoặc 3.14. Tạo môi trường bằng `python -m venv .venv`;
 kích hoạt theo hướng dẫn đa nền tảng trong README.
 - Cài chức năng: `python -m pip install -r requirements.txt`
 - Cài công cụ: `python -m pip install -r requirements-dev.txt`

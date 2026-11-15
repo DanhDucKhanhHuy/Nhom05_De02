@@ -1,0 +1,13 @@
+{
+  "_ghi_chu": "Từ vựng ký hiệu chỉ dùng kiểm thử suy diễn, không phải tri thức bệnh lúa.",
+  "thuoc_tinh": {
+    "a": {"loai": "du_kien_nguoi_dung", "gia_tri": ["co", "khong", "chua_biet"], "cau_hoi": "Bạn có quan sát dấu hiệu A không?", "lua_chon": [{"ma": "co", "nhan": "Có"}, {"ma": "khong", "nhan": "Không"}, {"ma": "chua_biet", "nhan": "Chưa biết"}]},
+    "d": {"loai": "du_kien_nguoi_dung", "gia_tri": ["co", "khong", "chua_biet"], "cau_hoi": "Bạn có quan sát dấu hiệu D không?", "lua_chon": [{"ma": "co", "nhan": "Có"}, {"ma": "khong", "nhan": "Không"}, {"ma": "chua_biet", "nhan": "Chưa biết"}]},
+    "h": {"loai": "du_kien_nguoi_dung", "gia_tri": ["co", "khong", "chua_biet"], "cau_hoi": "Bạn có quan sát dấu hiệu H không?", "lua_chon": [{"ma": "co", "nhan": "Có"}, {"ma": "khong", "nhan": "Không"}, {"ma": "chua_biet", "nhan": "Chưa biết"}]},
+    "b": {"loai": "su_kien_suy_ra", "gia_tri": ["co"]},
+    "c": {"loai": "su_kien_suy_ra", "gia_tri": ["co"]},
+    "e": {"loai": "su_kien_suy_ra", "gia_tri": ["co"]},
+    "f": {"loai": "su_kien_suy_ra", "gia_tri": ["co"]},
+    "g": {"loai": "su_kien_suy_ra", "gia_tri": ["co"]}
+  }
+}

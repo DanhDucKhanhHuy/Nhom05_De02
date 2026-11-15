@@ -44,17 +44,27 @@ True = có, False = không, None = chưa biết. Không xem chưa biết là ph�
 `luat_da_dung` (list id), `nguon` (list chuỗi trích nguồn).
 Không tự gán độ tin cậy nếu chưa có phương pháp định lượng.
 
-Ví dụ hợp đồng **chưa chạy được**:
+Hai trường tùy chọn bổ sung tương thích: `giai_thich` (chuỗi tiếng Việt) và
+`vet` (danh sách `VetLuat` mô tả các lần suy diễn thực tế). Bốn trường cũ giữ nguyên.
+Hiện `diagnose()` luôn cung cấp cả hai trường này; `do_tin_cay=None` vì chưa có
+phương pháp định lượng. CNN chỉ xếp thứ tự hỏi, không xác nhận bệnh bằng số giả.
+Hàm kiểm tra cả ba bệnh, kể cả bệnh không xuất hiện trong top-3.
+
+Ví dụ chạy với câu trả lời chưa biết:
 
 ```python
 diagnose([("dao_on", 0.55), ("dom_nau", 0.40), ("bac_la", 0.03)],
          lambda cau_hoi: None)
-# Hiện: raise NotImplementedError("chưa cài đặt")
-# Hình dạng kết quả bản thật khi chưa đủ dữ kiện:
-# {"ket_luan": None, "do_tin_cay": None, "luat_da_dung": [], "nguon": []}
+# {"ket_luan": None, "do_tin_cay": None, "luat_da_dung": [], "nguon": [],
+#  "giai_thich": "Chưa đủ chắc, liên hệ cán bộ khuyến nông. Không kết luận lá khỏe.",
+#  "vet": []}
 ```
 
-Đầu vào sai dự kiến ném `ValueError`. Kết luận, luật và nguồn trong báo cáo
+Đầu vào sai ném `ValueError`. Chỉ chọn một gợi ý khi đúng một bệnh được chứng minh
+và các bệnh khác bị bác bỏ trong bộ luật hiện tại; còn mơ hồ hoặc nhiều gợi ý thì
+`ket_luan=None`. Không suy ra lá khỏe chỉ vì thiếu dấu hiệu bệnh. Callback được
+nhớ theo thuộc tính trong cả phiên, không hỏi lại giữa các mục tiêu.
+Kết luận, luật và nguồn trong báo cáo
 phải từ tri thức đã kiểm chứng, không từ ví dụ ký hiệu của test.
 
 ## 3. Lộ trình: TV1 → TV5
@@ -148,6 +158,26 @@ từng luật; cần duyệt thủ công theo `docs/nguon_tri_thuc.md`.
 - `backward(goal: str, facts: set[str], rules: list[Luat],
   hoi_nguoi_dung: HoiNguoiDung) -> bool`: True khi chứng minh được; False khi
   chưa chứng minh được, không đồng nghĩa phủ định y học.
+
+API bổ sung, không thay chữ ký hoặc kiểu trả về của hai hàm cũ:
+
+- `forward_with_trace(facts, rules) -> tuple[set[str], list[VetLuat]]`: trả bao đóng
+  và vết theo thứ tự thêm sự kiện mới; không bắn lại kết luận đã biết.
+- `backward_with_status(goal, facts, rules, hoi_nguoi_dung) -> KetQuaSuyDienLui`:
+  trả `trang_thai` và `vet` của nhánh chứng minh thành công.
+- `VetLuat` gồm `id`, `dieu_kien` (list sự kiện), `ket_luan`, `nguon` (`ma`, `muc`).
+  Điều kiện và nguồn được sao chép, sửa vết không sửa luật gốc.
+- `trang_thai`: `xac_nhan` khi chứng minh được; `bac_bo` khi mọi nhánh bị dữ kiện
+  bác bỏ rõ; `chua_du` khi thiếu dữ kiện, có câu trả lời None, không có luật hỗ trợ
+  hoặc chỉ có chu trình chưa chứng minh được. Bác bỏ đích không phải chẩn đoán
+  không bệnh ngoài thực tế.
+- AND: một điều kiện bác bỏ thì cắt sớm; ở API ba trạng thái, gặp chưa biết vẫn
+  xét điều kiện tiếp theo vì có thể tìm được phủ định rõ. OR: một nhánh xác nhận
+  là đủ; nếu chưa thành công mà còn nhánh chưa đủ thì không được trả bác bỏ.
+- `backward()` cũ vẫn cắt sớm cả khi chưa chứng minh được một điều kiện AND,
+  giữ số câu hỏi theo hành vi cũ. Cả hai API chỉ hỏi thuộc tính hỏi được, mỗi thuộc
+  tính một lần trong một lời gọi và không sửa facts/rules đầu vào.
+- None không khớp `co` hoặc `khong`; chỉ khớp nếu đích yêu cầu rõ `chua_biet`.
 
 Test thuật toán xfail chỉ khi NotImplementedError; kết quả sai vẫn fail. Khi
 hàm đạt, bỏ dấu xfail tương ứng và giữ các kiểm tra. XPASS là lỗi để nhắc cập nhật

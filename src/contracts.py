@@ -37,7 +37,33 @@ class Luat(TypedDict):
     nguon: NguonLuat
 
 
-class ChanDoan(TypedDict):
+class VetLuat(TypedDict):
+    """Một luật thực sự được dùng, cùng điều kiện và nguồn đã chụp lại."""
+
+    id: str
+    dieu_kien: list[str]
+    ket_luan: str
+    nguon: NguonLuat
+
+
+TrangThaiSuyDien = Literal["xac_nhan", "bac_bo", "chua_du"]
+
+
+class KetQuaSuyDienLui(TypedDict):
+    """Trạng thái chứng minh đích và vết của nhánh chứng minh thành công."""
+
+    trang_thai: TrangThaiSuyDien
+    vet: list[VetLuat]
+
+
+class ChiTietChanDoan(TypedDict, total=False):
+    """Các trường bổ sung tùy chọn, không phá hợp đồng bốn trường cũ."""
+
+    giai_thich: str
+    vet: list[VetLuat]
+
+
+class ChanDoan(ChiTietChanDoan):
     """Kết luận có thể chưa xác định khi không đủ dữ kiện."""
 
     ket_luan: MaLop | None

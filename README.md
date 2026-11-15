@@ -4,7 +4,7 @@
 
 Đồ án cuối kỳ – Học kỳ 1, năm học 2026 – 2027 · Thời gian thực hiện: 02/11 – 06/12/2026
 
-> **Trạng thái:** CN2 đã có 27 luật có nguồn, từ vựng thuộc tính, suy diễn tiến/lùi và script kiểm tra. Chẩn đoán tích hợp, mạng Bayes, CN1, CNN và ứng dụng vẫn đang phát triển; dự đoán CNN hiện là **GIẢ**. Môi trường TensorFlow **chưa cài thử**; xem `docs/kiem_chung.md`.
+> **Trạng thái:** CN2 đã có 27 luật có nguồn, từ vựng thuộc tính, suy diễn tiến/lùi, truy vết, kết quả ba trạng thái và chẩn đoán bằng luật với CNN giả. Phần xác suất, CN1, CNN thật và ứng dụng vẫn cần hoàn thiện/kiểm chứng; dự đoán CNN hiện là **GIẢ**. Môi trường TensorFlow **chưa cài thử**; xem `docs/kiem_chung.md`.
 
 ---
 
@@ -157,9 +157,9 @@ python -m scripts.check_rules
 ```
 
 Nếu ruff chưa có trong PATH dùng `python -m ruff check .`. Demo đọc bản đồ 4 × 4,
-in dự đoán **GIẢ** và báo “chưa cài đặt” cho CN1, chẩn đoán tích hợp, mạng
-Bayes và ứng dụng. Suy diễn luật CN2 có thể chạy riêng; bản dự đoán giả không
-đọc ảnh.
+in dự đoán **GIẢ**, báo “chưa cài đặt” cho CN1 và chạy CN2 với câu trả lời
+“Chưa biết”. CN2 trả thông báo chưa đủ chắc, liên hệ cán bộ khuyến nông.
+Demo không gọi mạng Bayes hoặc ứng dụng; bản dự đoán giả không đọc ảnh.
 
 Các module chưa cung cấp CLI xử lý tham số. Một số thuật toán CN1/CN2 và mô hình
 đã có hàm thư viện; các hàm chưa triển khai ném `NotImplementedError`. Không coi

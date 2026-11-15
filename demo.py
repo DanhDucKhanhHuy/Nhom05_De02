@@ -1,4 +1,4 @@
-"""Chạy khung CN1–CN3 trên bản đồ mẫu; không cần thư viện học máy."""
+"""Chạy thử CN2 với CNN giả và bản đồ mẫu; không cần thư viện học máy."""
 import json
 import sys
 from pathlib import Path
@@ -9,7 +9,7 @@ from src.search.run import plan_route
 
 
 def main() -> None:
-    """Đọc dữ liệu mẫu và chỉ bắt trạng thái chưa cài đặt của từng chức năng."""
+    """Đọc dữ liệu mẫu, in giải thích CN2 và báo phần CN1 chưa triển khai."""
     duong_dan = Path(__file__).resolve().parent / "data/sample/maps/map_4x4.json"
     ban_do = json.loads(duong_dan.read_text(encoding="utf-8"))
     print(f"Bản đồ minh họa: {ban_do['rows']} × {ban_do['cols']}")
@@ -20,11 +20,11 @@ def main() -> None:
         print("CN1:", plan_route(ban_do, ban_do["k"], ban_do["p"], "hill"))
     except NotImplementedError:
         print("CN1: chưa cài đặt")
-    try:
-        print("CN2:", diagnose(top3, lambda cau_hoi: None))
-    except NotImplementedError:
-        print("CN2 chẩn đoán tích hợp: chưa cài đặt (suy diễn luật chạy riêng được)")
-    print("Mạng Bayes và ứng dụng tích hợp: chưa cài đặt")
+    result = diagnose(top3, lambda cau_hoi: None)
+    print("CN2:", result["ket_luan"] or "chưa đủ chắc")
+    print("CN2 — giải thích:")
+    print(result["giai_thich"])
+    print("Mạng Bayes và ứng dụng không được gọi trong demo này.")
 
 
 if __name__ == "__main__":
