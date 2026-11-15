@@ -149,7 +149,7 @@
       "id": "BL02",
       "loai": "chan_doan",
       "neu": [
-        "vet_bac_keo_dai_tu_chop_la=co"
+        "vet_bac_bat_dau_o_chop_la=co"
       ],
       "thi": "suy_luan=nghi_bac_la",
       "nguon": {
@@ -161,7 +161,7 @@
       "id": "BL03",
       "loai": "chan_doan",
       "neu": [
-        "vet_bac_chuyen_vang_trang_khi_benh_tien_trien=co"
+        "vet_hoai_tu_vang_trang_o_mep_la=co"
       ],
       "thi": "suy_luan=nghi_bac_la",
       "nguon": {
@@ -319,10 +319,22 @@
       "neu": [
         "suy_luan=nghi_dom_nau"
       ],
-      "thi": "khuyen_nghi=quan_ly_co_dai_va_luan_canh",
+      "thi": "khuyen_nghi=quan_ly_co_dai_trong_vu",
       "nguon": {
         "ma": "S3",
-        "muc": "Mục quản lý bệnh, quản lý cỏ dại và luân canh"
+        "muc": "Mục Quản lý bệnh trong vụ, quản lý cỏ dại"
+      }
+    },
+    {
+      "id": "DN10",
+      "loai": "khuyen_nghi",
+      "neu": [
+        "suy_luan=nghi_dom_nau"
+      ],
+      "thi": "khuyen_nghi=luan_canh_vu_tiep_theo_neu_bi_nhiem",
+      "nguon": {
+        "ma": "S3",
+        "muc": "Mục Quản lý bệnh, biện pháp cho vụ tiếp theo: luân canh"
       }
     }
   ]

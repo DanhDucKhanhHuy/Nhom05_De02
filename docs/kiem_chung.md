@@ -2,14 +2,16 @@
 
 ## Cập nhật CN2 – 15/11/2026
 
-- `python -m scripts.check_rules`: đạt; 27 luật, bốn mã nguồn, từ vựng, luật chẩn đoán/khuyến nghị, chuỗi nhiều bước và kiểm tra chu trình hợp lệ.
-- `python -m pytest tests/test_rules.py -q`: 17 passed.
-- `python -m pytest`: 19 passed, 9 xfailed. Cả 9 xfail đều thuộc CN1 đang triển khai; không còn xfail CN2.
+- `python -m scripts.check_rules`: đạt; 28 luật, bốn mã nguồn, từ vựng, luật chẩn đoán/khuyến nghị, chuỗi nhiều bước và kiểm tra chu trình hợp lệ.
+- `python -m pytest tests/test_rules.py -q`: 19 passed.
+- `python -m pytest`: 21 passed, 9 xfailed. Cả 9 xfail đều thuộc CN1 đang triển khai; không còn xfail CN2.
 - `python -m ruff check .`: đạt.
 - `python demo.py`: mã thoát 0; nêu rõ chẩn đoán tích hợp chưa cài, suy diễn luật CN2 chạy riêng được.
 - Kiểm tra thủ công `rules.json` với `sources.json`, `vocabulary.json` và `docs/nguon_tri_thuc.md`: DO01/DO03 đã trỏ đúng nguồn; DN04/DN06/DN08 đã sửa thuật ngữ và ý nghĩa; BL02/BL03 khớp nội dung S2; mỗi bệnh có luật khuyến nghị riêng.
-- Bốn nguồn đang dùng là S1–S4. S2 và S3 không ghi năm xuất bản; trường năm để `null`, phần ghi chú nói rõ thiếu năm. S2 dùng trang HTML.
+- Rà soát tiếp theo: BL02 không còn khẳng định vệt tăng kích thước; BL03 chỉ hỏi màu hoại tử quan sát được, không nói có diễn tiến đổi màu theo thời gian. DN09 giới hạn quản lý cỏ dại trong vụ; DN10 tách luân canh cho vụ tiếp theo. Không phát hiện thêm phát biểu vượt nguồn trong lượt đối chiếu này.
+- Bốn nguồn đang dùng là S1–S4. S2 và S3 không ghi năm xuất bản; trường năm để `null`, phần ghi chú nói rõ thiếu năm. Dấu thời gian máy chủ của S2 và bản quyền website của S3 không được tính là năm xuất bản. S2 dùng trang HTML.
 - Các kiểm tra trên không chứng minh nội dung tri thức đã được chuyên gia địa phương chứng nhận hoặc hiệu quả chẩn đoán trên dữ liệu thật.
+- Việc xác minh năm S2/S3 hoặc thay bằng nguồn có năm vẫn cần người phụ trách nguồn xử lý.
 
 ## Trạng thái các phần khác
 

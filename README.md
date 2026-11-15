@@ -4,7 +4,7 @@
 
 Đồ án cuối kỳ – Học kỳ 1, năm học 2026 – 2027 · Thời gian thực hiện: 02/11 – 06/12/2026
 
-> **Trạng thái:** CN2 đã có 27 luật có nguồn, từ vựng thuộc tính, suy diễn tiến/lùi, truy vết, kết quả ba trạng thái và chẩn đoán bằng luật với CNN giả. Phần xác suất, CN1, CNN thật và ứng dụng vẫn cần hoàn thiện/kiểm chứng; dự đoán CNN hiện là **GIẢ**. Môi trường TensorFlow **chưa cài thử**; xem `docs/kiem_chung.md`.
+> **Trạng thái:** CN2 đã có 28 luật có nguồn, từ vựng thuộc tính, suy diễn tiến/lùi và script kiểm tra. Chẩn đoán tích hợp, mạng Bayes, CN1, CNN và ứng dụng vẫn đang phát triển; dự đoán CNN hiện là **GIẢ**. Môi trường TensorFlow **chưa cài thử**; xem `docs/kiem_chung.md`.
 
 ---
 
@@ -143,7 +143,7 @@ Nguồn: [TensorFlow 2.16.1](https://pypi.org/project/tensorflow/2.16.1/),
 
 - **Ảnh lá lúa:** bộ dữ liệu công khai (Kaggle, Mendeley Data), tối thiểu 4 lớp: đạo ôn, bạc lá, đốm nâu, lá khỏe. Đường dẫn tải và giấy phép ghi trong `docs/du_lieu.md`. Tải về và giải nén vào `data/raw/`.
 - **Ảnh thực tế:** ≥ 20 ảnh tự chụp hoặc sưu tầm trong `data/anh_thuc_te/`; nguồn từng ảnh ghi trong `data/anh_thuc_te/nguon.csv`.
-- **Tri thức cho hệ chuyên gia:** 27 luật có tham chiếu tới bốn nguồn trong `src/rules/sources.json`; từ vựng thuộc tính và lựa chọn nằm trong `src/rules/vocabulary.json`. Cách đối chiếu từng luật xem `docs/nguon_tri_thuc.md`. Luật không chứa tên thuốc, hoạt chất hay liều lượng.
+- **Tri thức cho hệ chuyên gia:** 28 luật có tham chiếu tới bốn nguồn trong `src/rules/sources.json`; từ vựng thuộc tính và lựa chọn nằm trong `src/rules/vocabulary.json`. Cách đối chiếu từng luật xem `docs/nguon_tri_thuc.md`. Luật không chứa tên thuốc, hoạt chất hay liều lượng.
 
 ## 6. Cách chạy khung hiện tại
 
