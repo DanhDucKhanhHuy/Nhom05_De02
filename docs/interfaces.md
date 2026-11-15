@@ -111,35 +111,34 @@ Ví dụ đầy đủ: `data/sample/maps/map_4x4.json`, chép bản minh họa R
 không phải khảo sát ruộng thật. Bản đồ đánh giá chính thức tối thiểu 20 × 20;
 lưới nhỏ chỉ phục vụ test/demo. TV1 cài kiểm tra schema và khả thi.
 
-## 5. Schema rules.json
+## 5. Schema luật, nguồn và từ vựng
 
-File `src/rules/rules.json` có đối tượng gốc:
+`src/rules/rules.json` có danh sách `rules`. Mỗi luật có đúng năm trường:
 
-```json
-{"_ghi_chu": "Mô tả trạng thái bộ luật", "rules": []}
-```
+- `id`: chuỗi duy nhất.
+- `loai`: `chan_doan`, `nguy_co`, `trung_gian` hoặc `khuyen_nghi`.
+- `neu`: danh sách sự kiện không rỗng, kết hợp bằng AND.
+- `thi`: một sự kiện được suy ra.
+- `nguon`: đối tượng `{ "ma": "S1", "muc": "Mục 1, triệu chứng trên lá" }`.
 
-`_ghi_chu` là chú thích tùy chọn; `rules` là danh sách. Mỗi luật có đúng:
-
-- `id`: chuỗi không rỗng, duy nhất.
-- `nếu`: danh sách không rỗng các chuỗi sự kiện, kết hợp bằng AND.
-- `thì`: một chuỗi sự kiện kết luận không rỗng; có thể làm điều kiện luật sau.
-- `nguon`: chuỗi không rỗng; tài liệu, cơ quan/tác giả, URL hoặc trang/mục.
-- `ghi_chu`: chuỗi, có thể rỗng; giải thích phạm vi áp dụng.
-
-Ví dụ ký hiệu **chỉ để kiểm thử**, không đưa vào bộ luật nông học:
+Sự kiện có dạng `thuoc_tinh=gia_tri`. Ví dụ kiểm thử ký hiệu:
 
 ```json
-{"id": "T1", "nếu": ["A"], "thì": "B",
- "nguon": "fixture logic, không phải nguồn nông học", "ghi_chu": "Chỉ dùng kiểm thử"}
+{"id":"T1","loai":"chan_doan","neu":["vet_la_hinh_thoi=co"],
+ "thi":"suy_luan=nghi_dao_on","nguon":{"ma":"S1","muc":"Mục 1"}}
 ```
 
-`python -m scripts.check_rules` kiểm tra schema, nguồn không rỗng, id duy nhất,
-từ khóa thuốc/hoạt chất/liều và một số đơn vị. Không tự phát hiện mọi tên thương mại,
-không chứng minh nguồn có thật hoặc hỗ trợ kết luận. TV2 phải duyệt thủ công
-nội dung, tên sản phẩm/hoạt chất và mở nguồn kiểm tra từng luật.
-Không dùng danh sách tên thuốc tự bịa. File rỗng đạt schema nhưng chưa đủ ≥20 luật;
-script báo riêng trạng thái này, test số lượng hiện xfail.
+`src/rules/vocabulary.json` khai báo toàn bộ thuộc tính và giá trị. Thuộc tính
+`du_kien_nguoi_dung` phải có câu hỏi tiếng Việt và lựa chọn Có/Không/Chưa biết;
+`su_kien_suy_ra` chỉ do luật tạo.
+`src/rules/sources.json` ánh xạ mã nguồn tới tên tài liệu, cơ quan, năm (hoặc
+ghi rõ năm chưa xác định) và URL. Mục trích dẫn cụ thể nằm trong `nguon.muc`.
+
+`python -m scripts.check_rules` kiểm tra schema, id duy nhất, tối thiểu 20 luật,
+mã nguồn tồn tại, từ vựng/giá trị, đủ luật chẩn đoán và khuyến nghị cho ba bệnh,
+chu trình, chuỗi nhiều bước, nội dung và đơn vị bị cấm. Vi phạm tiêu chí bắt
+buộc trả mã thoát khác 0. Script không xác nhận nguồn có thật sự chứng minh
+từng luật; cần duyệt thủ công theo `docs/nguon_tri_thuc.md`.
 
 ## 6. Giao tiếp nội bộ phục vụ test
 

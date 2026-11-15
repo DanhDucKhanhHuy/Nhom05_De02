@@ -1,29 +1,329 @@
 {
-  "_ghi_chu": "Bộ luật nhận diện triệu chứng đã đối chiếu nguồn; kết luận là gợi ý, không thay thế cán bộ chuyên môn. Mã sự kiện được mô tả trong docs/nguon_tri_thuc.md.",
+  "_ghi_chu": "Quy ước dữ kiện, sự kiện suy ra và nguồn nằm trong vocabulary.json, sources.json, docs/nguon_tri_thuc.md. Kết quả là gợi ý, không thay thế người có chuyên môn.",
   "rules": [
-    {"id":"DO01","nếu":["vet_la_hinh_thoi"],"thì":"goi_y_dao_on","nguon":"S1, mục 1 Triệu chứng và tác hại (lá); S2, mục Rice Blast - Symptoms","ghi_chu":"Dấu hiệu định hướng, cần xét thêm hình dạng/màu vết."},
-    {"id":"DO02","nếu":["vet_la_tam_xam_kho"],"thì":"goi_y_dao_on","nguon":"S1, mục 1 Triệu chứng và tác hại (lá)","ghi_chu":"Mô tả vùng giữa vết hoại tử, khô xám."},
-    {"id":"DO03","nếu":["vet_la_vien_nau"],"thì":"goi_y_dao_on","nguon":"S2, mục Rice Blast - Leaf Symptoms","ghi_chu":"Viền nâu cùng dấu hiệu hình dạng làm tăng tính phù hợp."},
-    {"id":"DO04","nếu":["vet_co_la_nau_do"],"thì":"goi_y_dao_on","nguon":"S1, mục 1 Triệu chứng và tác hại (cổ lá)","ghi_chu":"Vị trí cổ lá giữa phiến và bẹ."},
-    {"id":"DO05","nếu":["dot_than_teo_nau"],"thì":"goi_y_dao_on","nguon":"S1, mục 1 Triệu chứng và tác hại (đốt thân)","ghi_chu":"Dấu hiệu tại đốt thân."},
-    {"id":"DO06","nếu":["co_bong_thoi_nau"],"thì":"goi_y_dao_on","nguon":"S1, mục 1 Triệu chứng và tác hại (cổ bông, cổ gié)","ghi_chu":"Dấu hiệu tại cổ bông/cổ gié."},
-    {"id":"DO07","nếu":["bong_lek_trang_som"],"thì":"can_xem_xet_dao_on_co_bong","nguon":"S1, mục 1 Triệu chứng và tác hại (cổ bông)","ghi_chu":"Lép trắng có thể do nguyên nhân khác; không dùng riêng để kết luận."},
-    {"id":"DO08","nếu":["am_u_va_suong_som"],"thì":"dieu_kien_thuan_loi_dao_on","nguon":"S1, mục 2 Điều kiện phát sinh phát triển","ghi_chu":"Yếu tố điều kiện môi trường, không phải triệu chứng xác nhận bệnh."},
-    {"id":"DO09","nếu":["ruong_thieu_nuoc"],"thì":"dieu_kien_thuan_loi_dao_on","nguon":"S1, mục 2 Điều kiện phát sinh phát triển","ghi_chu":"Yếu tố nguy cơ được tài liệu nêu."},
-    {"id":"DO10","nếu":["sa_day"],"thì":"dieu_kien_thuan_loi_dao_on","nguon":"S1, mục 2 Điều kiện phát sinh phát triển","ghi_chu":"Yếu tố nguy cơ được tài liệu nêu."},
-    {"id":"DO11","nếu":["thua_dam"],"thì":"dieu_kien_thuan_loi_dao_on","nguon":"S1, mục 2 Điều kiện phát sinh phát triển","ghi_chu":"Yếu tố nguy cơ được tài liệu nêu."},
-    {"id":"BL01","nếu":["vet_bac_dau_la_uot_nuoc"],"thì":"goi_y_bac_la","nguon":"S2, mục Triệu chứng - Bệnh bạc lá vi khuẩn trên lúa","ghi_chu":"Triệu chứng thường bắt đầu từ mép lá."},
-    {"id":"BL02","nếu":["vet_bac_keo_dai_tu_chop_la"],"thì":"goi_y_bac_la","nguon":"S2, mục Triệu chứng - Bệnh bạc lá vi khuẩn trên lúa","ghi_chu":"Vệt bệnh bắt đầu gần chóp lá và tăng dần chiều dài, chiều rộng."},
-    {"id":"BL03","nếu":["vet_bac_chuyen_vang_trang_khi_benh_tien_trien"],"thì":"goi_y_bac_la","nguon":"S2, mục Triệu chứng - Bệnh bạc lá vi khuẩn trên lúa","ghi_chu":"Vùng bệnh chuyển vàng đến trắng khi bệnh tiến triển."},
-    {"id":"BL04","nếu":["vet_bac_mep_luon_song"],"thì":"goi_y_bac_la","nguon":"S2, mục Triệu chứng - Bệnh bạc lá vi khuẩn trên lúa","ghi_chu":"Mép vệt bệnh có dạng lượn sóng."},
-    {"id":"BL05","nếu":["la_hoac_cay_con_héo"],"thì":"can_xem_xet_bac_la","nguon":"S2, mục Triệu chứng - Bệnh bạc lá vi khuẩn trên lúa","ghi_chu":"Có thể gặp héo lá/cây non; cần phân biệt nguyên nhân khác."},
-    {"id":"DN01","nếu":["dom_tron_hoac_bau_duc_nau"],"thì":"goi_y_dom_nau","nguon":"S3, Symptoms","ghi_chu":"Vết đốm nâu tròn đến bầu dục."},
-    {"id":"DN02","nếu":["dom_nau_vien_sam"],"thì":"goi_y_dom_nau","nguon":"S3, Symptoms","ghi_chu":"Vết lớn có viền nâu sẫm."},
-    {"id":"DN03","nếu":["dom_nau_tam_nhat_xam"],"thì":"goi_y_dom_nau","nguon":"S3, Symptoms","ghi_chu":"Tâm vết có thể đỏ nhạt hoặc xám."},
-    {"id":"DN04","nếu":["dom_nau_tren_bao_tu"],"thì":"goi_y_dom_nau","nguon":"S3, Symptoms","ghi_chu":"Vị trí trên bao tử được tài liệu mô tả."},
-    {"id":"DN05","nếu":["dom_nau_tren_la_gia"],"thì":"goi_y_dom_nau","nguon":"S3, Plant parts and life stages affected; Symptoms","ghi_chu":"Bệnh thường phổ biến hơn khi cây gần trưởng thành và lá già hóa."},
-    {"id":"DN06","nếu":["hat_giong_moc_kem_va_dom_bao_tu"],"thì":"can_xem_xet_dom_nau","nguon":"S3, Symptoms","ghi_chu":"Đốm trên bao tử có thể gây chết mạ và cây yếu; không phải dấu hiệu đặc hiệu đơn độc."},
-    {"id":"DN07","nếu":["dom_nau_tren_vo_hat"],"thì":"goi_y_dom_nau","nguon":"S3, Plant parts and life stages affected; Symptoms","ghi_chu":"Tổn thương trên vỏ trấu được mô tả tương tự tổn thương trên lá."},
-    {"id":"DN08","nếu":["dom_nau_tren_la_bao_tu_vo_hat"],"thì":"can_xem_xet_dom_nau","nguon":"S3, Plant parts and life stages affected; Symptoms","ghi_chu":"Chỉ là tổng hợp triệu chứng, không phải chẩn đoán xác định."}
+    {
+      "id": "DO01",
+      "loai": "chan_doan",
+      "neu": [
+        "vet_la_hinh_thoi=co"
+      ],
+      "thi": "suy_luan=nghi_dao_on",
+      "nguon": {
+        "ma": "S1",
+        "muc": "Mục 1, triệu chứng trên lá"
+      }
+    },
+    {
+      "id": "DO02",
+      "loai": "chan_doan",
+      "neu": [
+        "vet_la_tam_xam_kho=co"
+      ],
+      "thi": "suy_luan=nghi_dao_on",
+      "nguon": {
+        "ma": "S1",
+        "muc": "mục 1 Triệu chứng và tác hại (lá)"
+      }
+    },
+    {
+      "id": "DO03",
+      "loai": "chan_doan",
+      "neu": [
+        "vet_la_vien_nau=co"
+      ],
+      "thi": "suy_luan=nghi_dao_on",
+      "nguon": {
+        "ma": "S4",
+        "muc": "Mục triệu chứng trên lá"
+      }
+    },
+    {
+      "id": "DO04",
+      "loai": "chan_doan",
+      "neu": [
+        "vet_co_la_nau_do=co"
+      ],
+      "thi": "suy_luan=nghi_dao_on",
+      "nguon": {
+        "ma": "S1",
+        "muc": "mục 1 Triệu chứng và tác hại (cổ lá)"
+      }
+    },
+    {
+      "id": "DO05",
+      "loai": "chan_doan",
+      "neu": [
+        "dot_than_teo_nau=co"
+      ],
+      "thi": "suy_luan=nghi_dao_on",
+      "nguon": {
+        "ma": "S1",
+        "muc": "mục 1 Triệu chứng và tác hại (đốt thân)"
+      }
+    },
+    {
+      "id": "DO06",
+      "loai": "chan_doan",
+      "neu": [
+        "co_bong_thoi_nau=co"
+      ],
+      "thi": "suy_luan=nghi_dao_on",
+      "nguon": {
+        "ma": "S1",
+        "muc": "mục 1 Triệu chứng và tác hại (cổ bông, cổ gié)"
+      }
+    },
+    {
+      "id": "DO07",
+      "loai": "trung_gian",
+      "neu": [
+        "bong_lek_trang_som=co"
+      ],
+      "thi": "can_kiem_tra=dao_on",
+      "nguon": {
+        "ma": "S1",
+        "muc": "mục 1 Triệu chứng và tác hại (cổ bông)"
+      }
+    },
+    {
+      "id": "DO08",
+      "loai": "nguy_co",
+      "neu": [
+        "am_u_va_suong_som=co"
+      ],
+      "thi": "yeu_to_nguy_co=dao_on",
+      "nguon": {
+        "ma": "S1",
+        "muc": "mục 2 Điều kiện phát sinh phát triển"
+      }
+    },
+    {
+      "id": "DO09",
+      "loai": "nguy_co",
+      "neu": [
+        "ruong_thieu_nuoc=co"
+      ],
+      "thi": "yeu_to_nguy_co=dao_on",
+      "nguon": {
+        "ma": "S1",
+        "muc": "mục 2 Điều kiện phát sinh phát triển"
+      }
+    },
+    {
+      "id": "DO10",
+      "loai": "nguy_co",
+      "neu": [
+        "sa_day=co"
+      ],
+      "thi": "yeu_to_nguy_co=dao_on",
+      "nguon": {
+        "ma": "S1",
+        "muc": "mục 2 Điều kiện phát sinh phát triển"
+      }
+    },
+    {
+      "id": "DO11",
+      "loai": "nguy_co",
+      "neu": [
+        "thua_dam=co"
+      ],
+      "thi": "yeu_to_nguy_co=dao_on",
+      "nguon": {
+        "ma": "S1",
+        "muc": "mục 2 Điều kiện phát sinh phát triển"
+      }
+    },
+    {
+      "id": "BL01",
+      "loai": "chan_doan",
+      "neu": [
+        "vet_bac_dau_la_uot_nuoc=co"
+      ],
+      "thi": "suy_luan=nghi_bac_la",
+      "nguon": {
+        "ma": "S2",
+        "muc": "mục Triệu chứng - Bệnh bạc lá vi khuẩn trên lúa"
+      }
+    },
+    {
+      "id": "BL02",
+      "loai": "chan_doan",
+      "neu": [
+        "vet_bac_keo_dai_tu_chop_la=co"
+      ],
+      "thi": "suy_luan=nghi_bac_la",
+      "nguon": {
+        "ma": "S2",
+        "muc": "mục Triệu chứng - Bệnh bạc lá vi khuẩn trên lúa"
+      }
+    },
+    {
+      "id": "BL03",
+      "loai": "chan_doan",
+      "neu": [
+        "vet_bac_chuyen_vang_trang_khi_benh_tien_trien=co"
+      ],
+      "thi": "suy_luan=nghi_bac_la",
+      "nguon": {
+        "ma": "S2",
+        "muc": "mục Triệu chứng - Bệnh bạc lá vi khuẩn trên lúa"
+      }
+    },
+    {
+      "id": "BL04",
+      "loai": "chan_doan",
+      "neu": [
+        "vet_bac_mep_luon_song=co"
+      ],
+      "thi": "suy_luan=nghi_bac_la",
+      "nguon": {
+        "ma": "S2",
+        "muc": "mục Triệu chứng - Bệnh bạc lá vi khuẩn trên lúa"
+      }
+    },
+    {
+      "id": "BL05",
+      "loai": "trung_gian",
+      "neu": [
+        "la_hoac_cay_con_heo=co"
+      ],
+      "thi": "can_kiem_tra=bac_la",
+      "nguon": {
+        "ma": "S2",
+        "muc": "mục Triệu chứng - Bệnh bạc lá vi khuẩn trên lúa"
+      }
+    },
+    {
+      "id": "DN01",
+      "loai": "chan_doan",
+      "neu": [
+        "dom_tron_hoac_bau_duc_nau=co"
+      ],
+      "thi": "suy_luan=nghi_dom_nau",
+      "nguon": {
+        "ma": "S3",
+        "muc": "Mục triệu chứng"
+      }
+    },
+    {
+      "id": "DN02",
+      "loai": "chan_doan",
+      "neu": [
+        "dom_nau_vien_sam=co"
+      ],
+      "thi": "suy_luan=nghi_dom_nau",
+      "nguon": {
+        "ma": "S3",
+        "muc": "Mục triệu chứng"
+      }
+    },
+    {
+      "id": "DN03",
+      "loai": "chan_doan",
+      "neu": [
+        "dom_nau_tam_nhat_xam=co"
+      ],
+      "thi": "suy_luan=nghi_dom_nau",
+      "nguon": {
+        "ma": "S3",
+        "muc": "Mục triệu chứng"
+      }
+    },
+    {
+      "id": "DN04",
+      "loai": "chan_doan",
+      "neu": [
+        "dom_nau_tren_be_la=co"
+      ],
+      "thi": "suy_luan=nghi_dom_nau",
+      "nguon": {
+        "ma": "S3",
+        "muc": "Mục triệu chứng"
+      }
+    },
+    {
+      "id": "DN05",
+      "loai": "nguy_co",
+      "neu": [
+        "cay_gan_truong_thanh_la_gia_hoa=co"
+      ],
+      "thi": "yeu_to_nguy_co=dom_nau",
+      "nguon": {
+        "ma": "S3",
+        "muc": "Mục bộ phận cây và giai đoạn sinh trưởng bị ảnh hưởng; Mục triệu chứng"
+      }
+    },
+    {
+      "id": "DN06",
+      "loai": "trung_gian",
+      "neu": [
+        "dom_nau_tren_diep_tieu=co"
+      ],
+      "thi": "can_kiem_tra=dom_nau",
+      "nguon": {
+        "ma": "S3",
+        "muc": "Mục triệu chứng"
+      }
+    },
+    {
+      "id": "DN07",
+      "loai": "chan_doan",
+      "neu": [
+        "dom_nau_tren_vo_trau=co"
+      ],
+      "thi": "suy_luan=nghi_dom_nau",
+      "nguon": {
+        "ma": "S3",
+        "muc": "Mục bộ phận cây và giai đoạn sinh trưởng bị ảnh hưởng; Mục triệu chứng"
+      }
+    },
+    {
+      "id": "DN08",
+      "loai": "chan_doan",
+      "neu": [
+        "hat_lep_nhe_hoac_phoi_bot=co"
+      ],
+      "thi": "suy_luan=nghi_dom_nau",
+      "nguon": {
+        "ma": "S3",
+        "muc": "Mục bộ phận cây và giai đoạn sinh trưởng bị ảnh hưởng; Mục triệu chứng"
+      }
+    },
+    {
+      "id": "DO12",
+      "loai": "khuyen_nghi",
+      "neu": [
+        "suy_luan=nghi_dao_on"
+      ],
+      "thi": "khuyen_nghi=theo_doi_ruong_thuong_xuyen",
+      "nguon": {
+        "ma": "S1",
+        "muc": "Mục 3, theo dõi ruộng thường xuyên và phát hiện bệnh sớm"
+      }
+    },
+    {
+      "id": "BL06",
+      "loai": "khuyen_nghi",
+      "neu": [
+        "suy_luan=nghi_bac_la"
+      ],
+      "thi": "khuyen_nghi=chon_hat_giong_sach_benh",
+      "nguon": {
+        "ma": "S2",
+        "muc": "Mục biện pháp canh tác, dùng hạt giống sạch bệnh"
+      }
+    },
+    {
+      "id": "DN09",
+      "loai": "khuyen_nghi",
+      "neu": [
+        "suy_luan=nghi_dom_nau"
+      ],
+      "thi": "khuyen_nghi=quan_ly_co_dai_va_luan_canh",
+      "nguon": {
+        "ma": "S3",
+        "muc": "Mục quản lý bệnh, quản lý cỏ dại và luân canh"
+      }
+    }
   ]
 }

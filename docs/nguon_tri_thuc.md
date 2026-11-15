@@ -1,51 +1,78 @@
-# Tri thức hệ luật TV2
+# Tri thức hệ luật CN2
 
-## Phạm vi và cách dùng
+## Cách biểu diễn
 
-Bộ luật trong `src/rules/rules.json` có 24 luật dựa trên triệu chứng và yếu tố môi trường trong các nguồn dưới đây. Đây là dấu hiệu gợi ý phục vụ bài tập, không phải chẩn đoán xác định hay chỉ dẫn can thiệp. Nhiều bệnh và phi bệnh có biểu hiện gần nhau; khi dữ kiện chưa đủ, để kết quả chưa xác định và nhờ cán bộ chuyên môn kiểm tra. Không dùng việc thiếu một dấu hiệu để kết luận cây khỏe.
+`src/rules/rules.json` dùng schema thống nhất gồm `id`, `loai`, `neu`, `thi` và
+`nguon`. Mỗi sự kiện có dạng `thuoc_tinh=gia_tri`; nhiều phần tử `neu` được nối
+bằng AND. `nguon` là đối tượng `{ "ma": "S1", "muc": "..." }`, trỏ tới mã
+nguồn và mục cụ thể trong `src/rules/sources.json`.
 
-Trong schema, các điều kiện trong `nếu` kết hợp bằng AND. Mã sự kiện là quy ước máy đọc được, không khẳng định một triệu chứng tự nó xác nhận bệnh. Các kết quả `goi_y_*`, `can_xem_xet_*` và `dieu_kien_*` phải được diễn giải riêng biệt.
+`src/rules/vocabulary.json` phân biệt dữ kiện người dùng (`du_kien_nguoi_dung`)
+với sự kiện suy ra (`su_kien_suy_ra`). Mọi câu hỏi đầu vào có câu hỏi tiếng Việt,
+các lựa chọn Có/Không/Chưa biết. “Chưa biết” không được hiểu là Không. Sự kiện
+suy ra không tạo câu hỏi cho người dùng.
 
-## Bảng nguồn
+Các luật chẩn đoán chỉ tạo gợi ý nghi bệnh; không có ngưỡng hoặc cụm “khả năng
+cao”. Luật khuyến nghị chỉ chứa biện pháp canh tác được trích nguồn. Bộ luật
+không chứa tên sản phẩm, hoạt chất, liều lượng hoặc nồng độ.
 
-| Mã | Tài liệu và đơn vị | Phần dùng | Phạm vi |
+## Danh mục nguồn
+
+| Mã | Tài liệu, cơ quan | Năm | Phần dùng và cách đối chiếu |
+|---|---|---:|---|
+| S1 | “Phòng trừ bệnh đạo ôn hại lúa”, Trung tâm Khuyến nông Quốc gia. [Trang tài liệu](https://khuyennongvn.gov.vn/khoa-hoc-cong-nghe/khcn-trong-nuoc/phong-tru-benh-dao-on-hai-lua-21414.html) | 2021 | Mục 1: vết lá, cổ lá, đốt thân, cổ bông. Mục 2: điều kiện thuận lợi. Mục 3: vệ sinh đồng ruộng, theo dõi và phát hiện sớm. Trang ghi cập nhật ngày 20/08/2021. |
+| S2 | “Bệnh bạc lá vi khuẩn trên lúa”, Trung tâm Nghiên cứu Bảo vệ cây trồng, Đại học Nông nghiệp Tamil Nadu. [Trang HTML](https://www.agritech.tnau.ac.in/expert_system/paddy/cpdisblb.html) | **Thiếu năm xuất bản xác minh** | Mục Triệu chứng: vết úng nước đến vàng, bắt đầu gần chóp lá, mép lượn sóng, vàng đến trắng khi bệnh tiến triển, héo cây mạ. Mục biện pháp canh tác: hạt giống sạch bệnh. Trang không ghi năm xuất bản; danh mục máy chủ ghi ngày tệp 17/11/2020, không dùng ngày này làm năm xuất bản. |
+| S3 | “Bệnh đốm nâu”, Viện Nghiên cứu và Phát triển Lúa, Bộ Nông nghiệp Sri Lanka. [Trang tài liệu](https://doa.gov.lk/rrdi_ricediseases_brownspot/) | **Không ghi năm** | Mục Triệu chứng: đốm trên bẹ lá, diệp tiêu, vỏ trấu; hoa non bị bệnh có thể làm hạt phát triển kém hoặc nhẹ/dạng phấn. Mục điều kiện phát sinh và quản lý bệnh: cây gần trưởng thành, lá già hóa; quản lý cỏ dại, luân canh. Trang không nêu ngày xuất bản. |
+| S4 | “Hướng dẫn quản lý dịch hại lúa: bệnh đạo ôn”, Chương trình Quản lý dịch hại tổng hợp, Đại học California. [Trang tài liệu](https://ipm.ucanr.edu/agriculture/rice/rice-blast/) | 2024 | Mục Triệu chứng trên lá: vết hình thoi, tâm xám/trắng, viền nâu. Trang ghi nội dung cập nhật 07/2024. |
+
+Ngày rà soát nguồn: 15/11/2026. Bộ luật dùng bốn tài liệu từ cơ quan/đơn vị
+nghiên cứu và khuyến nông phù hợp. S2 và S3 chưa xác định được năm xuất bản;
+thông tin này được ghi rõ là thiếu, không suy đoán năm. Các nguồn ngoài Việt Nam
+chỉ dùng cho mô tả triệu chứng hoặc canh tác chung; cần chuyên gia địa phương
+rà soát trước khi áp dụng thực tế.
+
+## Ma trận bệnh × thông tin và đối chiếu luật
+
+| Bệnh / nhóm | Dữ kiện hoặc sự kiện | Luật | Nguồn, mục |
 |---|---|---|---|
-| S1 | Trung tâm Khuyến nông Quốc gia, “Phòng trừ bệnh đạo ôn hại lúa”, cập nhật 20/08/2021. [Trang tài liệu](https://khuyennongvn.gov.vn/khoa-hoc-cong-nghe/khcn-trong-nuoc/phong-tru-benh-dao-on-hai-lua-21414.html) | Mục 1: lá, cổ lá, đốt thân, cổ bông; mục 2: thời tiết, thiếu nước, sạ dày, thừa đạm. | Nguồn Việt Nam cho đạo ôn. |
-| S2 | Đại học Nông nghiệp Tamil Nadu (TNAU), Trung tâm Nghiên cứu Bảo vệ cây trồng, “Bệnh bạc lá vi khuẩn trên lúa” (*Bacterial leaf blight*). [Trang HTML](https://www.agritech.tnau.ac.in/expert_system/paddy/cpdisblb.html) | Mục Triệu chứng: héo cây mạ; vết úng nước đến vàng chạy từ chóp lá, có mép lượn sóng; vùng bệnh chuyển vàng/trắng; dịch vi khuẩn trên vết non. | Nguồn hướng dẫn kỹ thuật của đại học; chỉ dùng mô tả triệu chứng, không dùng phần xử lý. |
-| S3 | Viện Nghiên cứu và Phát triển Lúa, Bộ Nông nghiệp Sri Lanka, “Bệnh đốm nâu” (*Brown Spot*). [Trang tài liệu](https://doa.gov.lk/rrdi_ricediseases_brownspot/) | Triệu chứng; bộ phận cây và giai đoạn sinh trưởng bị ảnh hưởng. | Đốm nâu trên mạ, lá, bẹ, bông/vỏ trấu và giai đoạn cây trưởng thành. |
-| S4 | Chương trình Quản lý dịch hại tổng hợp toàn bang California, Đại học California, “Bệnh đạo ôn lúa” (*Rice Blast*). [Trang tài liệu](https://ipm.ucanr.edu/agriculture/rice/rice-blast/) | Triệu chứng; thông tin về bệnh. | Đối chiếu hình dạng vết đạo ôn, cổ lá, đốt và cổ bông. |
+| Đạo ôn – triệu chứng lá | Hình thoi; tâm xám khô; viền nâu | DO01–DO03 | S1, mục 1; S4, triệu chứng trên lá |
+| Đạo ôn – cổ lá, thân, bông | Cổ lá nâu đỏ; đốt teo nâu; cổ bông thối nâu; bông lép trắng sớm cần kiểm tra | DO04–DO07 | S1, mục 1 |
+| Đạo ôn – điều kiện thuận lợi | Âm u/sương sớm; thiếu nước; sạ dày; thừa đạm | DO08–DO11 | S1, mục 2 |
+| Đạo ôn – khuyến nghị | Theo dõi ruộng thường xuyên, phát hiện bệnh sớm | DO12 | S1, mục 3 |
+| Bạc lá – triệu chứng | Vết úng nước; vệt kéo dài từ chóp; vàng/trắng khi tiến triển; mép lượn sóng; héo mạ cần kiểm tra | BL01–BL05 | S2, mục Triệu chứng |
+| Bạc lá – khuyến nghị | Sử dụng hạt giống sạch bệnh | BL06 | S2, mục Biện pháp canh tác |
+| Đốm nâu – hình dạng, vị trí | Đốm tròn/bầu dục, viền sẫm, tâm nhạt/xám; vết trên bẹ lá, diệp tiêu, vỏ trấu | DN01–DN04, DN06–DN07 | S3, mục Triệu chứng |
+| Đốm nâu – giai đoạn/nguy cơ và ảnh hưởng hạt | Cây gần trưởng thành/lá già hóa; hạt nhẹ hoặc dạng phấn | DN05, DN08 | S3, mục Điều kiện phát sinh; mục Triệu chứng |
+| Đốm nâu – khuyến nghị | Quản lý cỏ dại và luân canh | DN09 | S3, mục Quản lý bệnh |
 
-Ngày đối chiếu trực tuyến: 12/11/2026. Mỗi luật ghi mã nguồn và mục cụ thể; bảng này ánh xạ tới cơ quan, tài liệu, URL để kiểm tra. Nguồn chưa được chuyên gia địa phương duyệt; cần nhờ cán bộ bảo vệ thực vật rà soát trước khi dùng thực tế.
+### Các sửa đổi về nguồn và thuật ngữ
 
-## Ma trận bệnh × thông tin
+- `DO01` và `DO03` không còn trỏ nhầm triệu chứng đạo ôn tới S2 (nguồn bạc lá).
+  `DO01` trỏ S1, mục 1; `DO03` trỏ S4, mục triệu chứng trên lá.
+- `DN04` mô tả đốm trên **bẹ lá** theo nguồn; `DN06` dùng **diệp tiêu (bao mầm)**,
+  tương ứng bộ phận cây được mô tả là coleoptile; `DN08` mô tả ảnh hưởng lên hoa
+  non và hạt. Không còn dùng “bao tử”.
+- `BL02` và `BL03` chỉ nêu vệt bắt đầu gần chóp, tăng kích thước và chuyển màu
+  vàng/trắng khi bệnh tiến triển, theo đúng phần triệu chứng của S2.
 
-| Bệnh / nhóm thông tin | Dấu hiệu hoặc yếu tố mô hình hóa | Luật | Nguồn |
-|---|---|---|---|
-| Đạo ôn – lá | vết hình thoi; tâm xám khô; viền nâu | DO01–DO03 | S1, S2, S4 |
-| Đạo ôn – cổ lá, thân, bông | cổ lá nâu đỏ; đốt teo nâu; cổ bông thối nâu; bông lép trắng sớm (chỉ xem xét) | DO04–DO07 | S1, S4 |
-| Đạo ôn – điều kiện thuận lợi | âm u/sương; thiếu nước; sạ dày; thừa đạm | DO08–DO11 | S1, S4 |
-| Bạc lá – mép và diễn tiến vết | vết úng nước; vệt kéo dài từ chóp; màu vàng/trắng khi bệnh tiến triển; mép lượn sóng | BL01–BL04 | S2 |
-| Bạc lá – héo | héo lá/cây non, chỉ là dấu hiệu cần xem xét | BL05 | S2 |
-| Đốm nâu – hình dạng/màu | đốm tròn/bầu dục; viền sẫm; tâm nhạt/xám | DN01–DN03 | S3 |
-| Đốm nâu – vị trí/giai đoạn | bao tử; lá già; vỏ trấu; mạ mọc kém cùng đốm bao tử | DN04–DN08 | S3 |
+Mã lớp kết luận dùng thống nhất: `dao_on`, `bac_la`, `dom_nau`. `loai=chan_doan`
+tạo `suy_luan=nghi_<ma_benh>`; `loai=khuyen_nghi` tạo một khuyến nghị có nguồn.
+Các luật DO12, BL06, DN09 tạo chuỗi hai bước từ dữ kiện triệu chứng đến nghi
+bệnh rồi khuyến nghị. DO08–DO11 và DN05 chỉ tạo yếu tố nguy cơ, không xác nhận
+bệnh. DO07 và BL05 sinh dấu hiệu cần kiểm tra, không phải kết luận.
 
-## Ánh xạ và giới hạn diễn giải
+## Câu hỏi Q4 – Vì sao phải truy vết luật và nguồn?
 
-- `DO01`–`DO07`, `BL01`–`BL05`, `DN01`–`DN08`: mã điều kiện mô tả một đặc điểm theo nguồn. Luật đơn triệu chứng chỉ sinh gợi ý.
-- `DO08`–`DO11`: yếu tố thuận lợi là ngữ cảnh nguy cơ, không phải bằng chứng cây đang mắc bệnh.
-- `can_xem_xet_*` dùng cho dấu hiệu kém đặc hiệu; không gộp với gợi ý triệu chứng khi giải thích.
-- Bộ luật chưa bao phủ mọi bệnh, thiếu dữ liệu địa phương và chưa đo độ chính xác; không báo cáo hiệu năng hay độ tin cậy định lượng.
+Mỗi gợi ý cần truy ngược được tới các dữ kiện đã nhập, id luật đã khớp và mục
+tài liệu hỗ trợ. Cách làm này giúp người dùng kiểm tra căn cứ, giúp nhóm phát
+hiện luật dùng sai phạm vi và cập nhật tri thức có kiểm soát. Việc ghi nguồn
+không tự chứng minh luật đúng; nguồn vẫn cần được đối chiếu và rà soát chuyên
+môn. Xem phần trả lời dùng cho báo cáo tại `docs/cau_hoi/Q4.md`.
 
-## Câu hỏi Q4 và nội dung báo cáo
+## Giới hạn
 
-### Q4 – Vì sao phải truy vết luật và nguồn?
-
-Hệ chuyên gia dùng điều kiện triệu chứng để suy ra gợi ý. Người dùng cần biết gợi ý dựa trên dấu hiệu nào, luật nào đã khớp và tài liệu nào hỗ trợ dấu hiệu đó. Truy vết id luật và nguồn giúp kiểm tra lại, phát hiện luật áp dụng sai phạm vi, cập nhật tri thức khi nguồn thay đổi và tránh trình bày suy luận như kết luận chắc chắn. Nguồn trong JSON trỏ tới bảng nguồn này; khả năng truy vết không đồng nghĩa chuyên gia đã chứng thực nội dung.
-
-### Đoạn đưa vào chương “Tri thức, luật”
-
-Cơ sở tri thức được biểu diễn thành các luật IF–THEN. Mỗi luật có mã duy nhất, danh sách điều kiện kết hợp bằng AND, sự kiện kết luận, nguồn và ghi chú phạm vi. TV2 xây dựng 24 luật gợi ý nhận diện đạo ôn, bạc lá và đốm nâu từ tài liệu của Trung tâm Khuyến nông Quốc gia, IRRI và cơ quan nông nghiệp Sri Lanka. Luật mô tả triệu chứng và một số điều kiện thuận lợi; không chứa tên thuốc hay liều lượng. Bộ suy diễn tiến lặp đến khi không phát sinh sự kiện mới; bộ suy diễn lùi lần theo các luật có thể chứng minh mục tiêu, hỏi người dùng khi thiếu dữ kiện và không xem câu trả lời chưa biết là phủ định. Kết quả lưu id luật và nguồn để giải thích. Vì triệu chứng có thể chồng lấp và bộ luật chưa được thẩm định thực địa, kết quả chỉ là gợi ý, không thay thế cán bộ chuyên môn.
-
-## Kiểm tra và cập nhật
-
-Chạy `python -m scripts.check_rules` để kiểm tra schema, id, nguồn và dấu hiệu nội dung bị cấm. Tự động hóa không chứng minh URL còn tồn tại hoặc nguồn thực sự hỗ trợ luật; việc đó cần đối chiếu thủ công. Khi sửa luật, cập nhật bảng nguồn, ma trận, ghi chú phạm vi và kiểm thử. Không thêm tri thức từ suy đoán, không đưa tên thuốc/hoạt chất/liều vào các trường luật.
+Bộ luật có 27 luật và bao phủ ba bệnh mục tiêu ở mức gợi ý. Chưa có kiểm định
+thực địa hay số liệu đo độ chính xác; không gán xác suất hoặc khẳng định bệnh
+chắc chắn. Công cụ kiểm tra cấu trúc, nguồn, từ vựng, số luật, chu trình và
+chuỗi suy diễn; việc nguồn có thực sự hỗ trợ từng phát biểu vẫn cần con người
+đối chiếu.

@@ -23,7 +23,7 @@ def main() -> None:
     try:
         print("CN2:", diagnose(top3, lambda cau_hoi: None))
     except NotImplementedError:
-        print("CN2: chưa cài đặt")
+        print("CN2 chẩn đoán tích hợp: chưa cài đặt (suy diễn luật chạy riêng được)")
     print("Mạng Bayes và ứng dụng tích hợp: chưa cài đặt")
 
 

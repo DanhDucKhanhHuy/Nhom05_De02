@@ -4,7 +4,7 @@
 
 Đồ án cuối kỳ – Học kỳ 1, năm học 2026 – 2027 · Thời gian thực hiện: 02/11 – 06/12/2026
 
-> **Trạng thái:** khung repo, chưa cài thuật toán. Demo chạy bằng thư viện chuẩn; dự đoán CNN là **GIẢ**. Môi trường TensorFlow **chưa cài thử**; xem `docs/kiem_chung.md`.
+> **Trạng thái:** CN2 đã có 27 luật có nguồn, từ vựng thuộc tính, suy diễn tiến/lùi và script kiểm tra. Chẩn đoán tích hợp, mạng Bayes, CN1, CNN và ứng dụng vẫn đang phát triển; dự đoán CNN hiện là **GIẢ**. Môi trường TensorFlow **chưa cài thử**; xem `docs/kiem_chung.md`.
 
 ---
 
@@ -59,6 +59,8 @@ Nhom05_De02/
 │   ├── rules/             # TV2/TV3 – CN2
 │   │   ├── __init__.py
 │   │   ├── rules.json
+│   │   ├── sources.json
+│   │   ├── vocabulary.json
 │   │   ├── forward.py
 │   │   ├── backward.py
 │   │   ├── bayes.py
@@ -141,7 +143,7 @@ Nguồn: [TensorFlow 2.16.1](https://pypi.org/project/tensorflow/2.16.1/),
 
 - **Ảnh lá lúa:** bộ dữ liệu công khai (Kaggle, Mendeley Data), tối thiểu 4 lớp: đạo ôn, bạc lá, đốm nâu, lá khỏe. Đường dẫn tải và giấy phép ghi trong `docs/du_lieu.md`. Tải về và giải nén vào `data/raw/`.
 - **Ảnh thực tế:** ≥ 20 ảnh tự chụp hoặc sưu tầm trong `data/anh_thuc_te/`; nguồn từng ảnh ghi trong `data/anh_thuc_te/nguon.csv`.
-- **Tri thức cho hệ chuyên gia:** lấy từ tài liệu khuyến nông, bảo vệ thực vật chính thống; danh mục nguồn trong `docs/nguon_tri_thuc.md`. Mỗi luật ghi nguồn; hệ thống **không tự đặt tên thuốc hay liều lượng**.
+- **Tri thức cho hệ chuyên gia:** 27 luật có tham chiếu tới bốn nguồn trong `src/rules/sources.json`; từ vựng thuộc tính và lựa chọn nằm trong `src/rules/vocabulary.json`. Cách đối chiếu từng luật xem `docs/nguon_tri_thuc.md`. Luật không chứa tên thuốc, hoạt chất hay liều lượng.
 
 ## 6. Cách chạy khung hiện tại
 
@@ -155,17 +157,18 @@ python -m scripts.check_rules
 ```
 
 Nếu ruff chưa có trong PATH dùng `python -m ruff check .`. Demo đọc bản đồ 4 × 4,
-in dự đoán **GIẢ** và báo “chưa cài đặt” cho CN1/CN2/Bayes/ứng dụng.
-Bản giả không đọc ảnh.
+in dự đoán **GIẢ** và báo “chưa cài đặt” cho CN1, chẩn đoán tích hợp, mạng
+Bayes và ứng dụng. Suy diễn luật CN2 có thể chạy riêng; bản dự đoán giả không
+đọc ảnh.
 
-Các file ở `src/search/`, `src/rules/`, `src/model/`, `src/app/` hiện cung cấp
-hàm khung, **chưa có CLI xử lý tham số**. Nhóm triển khai CLI rồi bổ sung ví dụ
-`python -m src.*` tương ứng; không coi các module khung là chức năng đã hoàn thành.
-Hàm chưa làm ném `NotImplementedError`.
+Các module chưa cung cấp CLI xử lý tham số. Một số thuật toán CN1/CN2 và mô hình
+đã có hàm thư viện; các hàm chưa triển khai ném `NotImplementedError`. Không coi
+các phần chưa triển khai là chức năng hoàn thành.
 
-Test thuật toán dùng xfail “chưa cài đặt”; kết quả sai vẫn fail. Khi hoàn thành,
-bỏ dấu xfail tương ứng; XPASS là lỗi để nhắc cập nhật trạng thái. Luật rỗng đạt
-schema nhưng chưa đủ ≥20 luật; script báo thiếu và test số lượng hiện xfail.
+Các test của thuật toán chưa triển khai còn đánh dấu xfail; test CN2 không còn
+xfail. `python -m scripts.check_rules` kiểm tra schema, tối thiểu 20 luật,
+mã nguồn, từ vựng, chu trình, chuỗi suy diễn chẩn đoán–khuyến nghị và nội dung
+cấm. Tiêu chí bắt buộc không đạt sẽ trả mã lỗi.
 
 ## 7. Quy ước dữ liệu giữa các module
 

@@ -20,14 +20,21 @@ class BanDo(TypedDict):
     cells: list[list[int]]
 
 
+class NguonLuat(TypedDict):
+    """Trích dẫn nguồn cụ thể gắn với một luật."""
+
+    ma: str
+    muc: str
+
+
 class Luat(TypedDict):
-    """Luật dùng khóa tiếng Việt đúng schema, khởi tạo bằng từ điển."""
+    """Luật dạng thuộc_tính=giá_trị theo hợp đồng CN2."""
 
     id: str
-    nếu: list[str]
-    thì: str
-    nguon: str
-    ghi_chu: str
+    loai: Literal["chan_doan", "nguy_co", "trung_gian", "khuyen_nghi"]
+    neu: list[str]
+    thi: str
+    nguon: NguonLuat
 
 
 class ChanDoan(TypedDict):

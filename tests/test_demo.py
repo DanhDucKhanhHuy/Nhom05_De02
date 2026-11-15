@@ -11,4 +11,4 @@ def test_demo_runs():
     assert result.returncode == 0, result.stderr
     assert "dự đoán GIẢ" in result.stdout
     assert "CN1: chưa cài đặt" in result.stdout
-    assert "CN2: chưa cài đặt" in result.stdout
+    assert "CN2 chẩn đoán tích hợp: chưa cài đặt" in result.stdout

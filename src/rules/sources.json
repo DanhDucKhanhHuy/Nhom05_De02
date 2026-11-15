@@ -1,0 +1,36 @@
+{
+  "nguon": [
+    {
+      "ma": "S1",
+      "ten": "Phòng trừ bệnh đạo ôn hại lúa",
+      "co_quan": "Trung tâm Khuyến nông Quốc gia",
+      "nam": 2021,
+      "url": "https://khuyennongvn.gov.vn/khoa-hoc-cong-nghe/khcn-trong-nuoc/phong-tru-benh-dao-on-hai-lua-21414.html",
+      "ghi_chu": "Cập nhật ngày 20/08/2021."
+    },
+    {
+      "ma": "S2",
+      "ten": "Bệnh bạc lá vi khuẩn trên lúa",
+      "co_quan": "Trung tâm Nghiên cứu Bảo vệ cây trồng, Đại học Nông nghiệp Tamil Nadu",
+      "nam": null,
+      "url": "https://www.agritech.tnau.ac.in/expert_system/paddy/cpdisblb.html",
+      "ghi_chu": "Danh mục máy chủ ghi ngày tệp 17/11/2020, nhưng trang không ghi năm xuất bản; thiếu năm xuất bản đã xác minh. Dùng phần triệu chứng và biện pháp canh tác."
+    },
+    {
+      "ma": "S3",
+      "ten": "Bệnh đốm nâu",
+      "co_quan": "Viện Nghiên cứu và Phát triển Lúa, Bộ Nông nghiệp Sri Lanka",
+      "nam": null,
+      "url": "https://doa.gov.lk/rrdi_ricediseases_brownspot/",
+      "ghi_chu": "Trang không ghi năm xuất bản; ngày truy cập 15/11/2026."
+    },
+    {
+      "ma": "S4",
+      "ten": "Hướng dẫn quản lý dịch hại lúa: bệnh đạo ôn",
+      "co_quan": "Chương trình Quản lý dịch hại tổng hợp, Đại học California",
+      "nam": 2024,
+      "url": "https://ipm.ucanr.edu/agriculture/rice/rice-blast/",
+      "ghi_chu": "Trang ghi nội dung cập nhật 07/2024."
+    }
+  ]
+}

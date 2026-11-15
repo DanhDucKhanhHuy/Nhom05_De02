@@ -7,9 +7,9 @@ def forward(facts: set[str], rules: list[Luat]) -> set[str]:
     known = set(facts)
     while True:
         inferred = {
-            rule["thì"]
+            rule["thi"]
             for rule in rules
-            if all(condition in known for condition in rule["nếu"])
+            if all(condition in known for condition in rule["neu"])
         }
         new_facts = inferred - known
         if not new_facts:
