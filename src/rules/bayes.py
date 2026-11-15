@@ -5,9 +5,26 @@ from __future__ import annotations
 
 import argparse
 import itertools
+import json
+import math
+from pathlib import Path
 from typing import Iterable, Mapping
 
 MA_BENH_BAYES = {"dao_on": "DaoOn", "bac_la": "BacLa", "dom_nau": "DomNau"}
+VOCABULARY_PATH = Path(__file__).with_name("vocabulary.json")
+
+# Căn cứ định tính cho cấu trúc/nhóm triệu chứng; không có nguồn nào cung cấp
+# các tần suất số dùng trong CPD. Các con số CPD và prior nút gốc là giả định.
+NGUON_CPD = {
+    "DaoOn": ("S1", "S4"),
+    "BacLa": ("S2",),
+    "DomNau": ("S3",),
+    "TrieuChung": ("S1", "S2", "S3", "S4"),
+    "ThoiTiet": (),
+    "BonDam": (),
+    "Giong": (),
+    "DinhDuong": (),
+}
 
 #: Đặc tả mạng: giá trị của từng nút, nút cha và bảng CPD.
 #: Khóa của ``cpd`` là tổ hợp giá trị các nút cha (theo đúng thứ tự ``cha``);
@@ -94,59 +111,144 @@ NUT: dict[str, dict] = {
 #: Ánh xạ sự kiện của hệ luật sang bằng chứng của mạng Bayes.
 ANH_XA_BANG_CHUNG: dict[str, tuple[str, str]] = {
     "tc_vet_thoi": ("TrieuChung", "vet_thoi"),
-    "tc_qua_quang_vang": ("TrieuChung", "vet_thoi"),
     "tc_chop_la_kho": ("TrieuChung", "chop_la_kho"),
-    "tc_vien_la_nau": ("TrieuChung", "chop_la_kho"),
-    "tc_giot_vi_khuan": ("TrieuChung", "chop_la_kho"),
     "tc_dom_tron": ("TrieuChung", "dom_tron"),
     "tc_dom_nhieu": ("TrieuChung", "dom_tron"),
     "tc_khong_co": ("TrieuChung", "khong"),
     "tt_am_do_cao": ("ThoiTiet", "mua_am"),
     "tt_suong_mu": ("ThoiTiet", "mua_am"),
     "tt_mua_nhieu": ("ThoiTiet", "mua_am"),
-    "tt_gio_manh": ("ThoiTiet", "mua_am"),
-    "tt_nang_mua_xen_ke": ("ThoiTiet", "mua_am"),
     "tt_kho_han": ("ThoiTiet", "kho"),
     "tq_dam_cao": ("BonDam", "cao"),
     "tq_giong_nhiem": ("Giong", "nhiem"),
     "tq_dat_ngheo": ("DinhDuong", "thieu"),
     "tq_thieu_kali": ("DinhDuong", "thieu"),
-    "tq_ruong_ngap": ("ThoiTiet", "mua_am"),
 }
 
 
-def bang_chung_bayes(
-    bang_chung: Mapping[str, float] | Iterable[str] | None,
-) -> tuple[dict[str, str], list[str]]:
-    """Chuyển bằng chứng của hệ luật thành bằng chứng nút mạng Bayes.
+# Ánh xạ trực tiếp thuộc tính chung trong vocabulary.json sang trạng thái nút.
+# Chỉ ánh xạ khi ngữ nghĩa tương đương; phủ định một triệu chứng không đồng nghĩa
+# với "không có triệu chứng".
+ANH_XA_THUOC_TINH: dict[str, dict[str, tuple[str, str] | None]] = {
+    "vet_la_hinh_thoi": {
+        "co": ("TrieuChung", "vet_thoi"),
+        "khong": None,
+        "chua_biet": None,
+    },
+    "vet_la_tam_xam_kho": {
+        "co": ("TrieuChung", "vet_thoi"),
+        "khong": None,
+        "chua_biet": None,
+    },
+    "vet_la_vien_nau": {
+        "co": ("TrieuChung", "vet_thoi"),
+        "khong": None,
+        "chua_biet": None,
+    },
+    "dom_tron_hoac_bau_duc_nau": {
+        "co": ("TrieuChung", "dom_tron"),
+        "khong": None,
+        "chua_biet": None,
+    },
+    "dom_nau_vien_sam": {
+        "co": ("TrieuChung", "dom_tron"),
+        "khong": None,
+        "chua_biet": None,
+    },
+    "dom_nau_tam_nhat_xam": {
+        "co": ("TrieuChung", "dom_tron"),
+        "khong": None,
+        "chua_biet": None,
+    },
+    "am_u_va_suong_som": {
+        "co": ("ThoiTiet", "mua_am"),
+        "khong": ("ThoiTiet", "kho"),
+        "chua_biet": None,
+    },
+    "thua_dam": {
+        "co": ("BonDam", "cao"),
+        "khong": ("BonDam", "thap"),
+        "chua_biet": None,
+    },
+}
 
-    Sự kiện không ánh xạ được (giai đoạn, tàn dư bệnh...) sẽ bị bỏ qua và ghi chú,
-    vì mạng Bayes ở đây chỉ mô hình hóa thời tiết, đạm, giống, dinh dưỡng, triệu chứng.
-    Trả về ``(bằng_chứng, ghi_chú)``.
+TRANG_THAI_BANG_CHUNG = {"co", "khong", "chua_biet"}
+
+
+def _thuoc_tinh_trong_vocabulary(key: str) -> bool:
+    try:
+        document = json.loads(VOCABULARY_PATH.read_text(encoding="utf-8"))
+        definition = document.get("thuoc_tinh", {}).get(key, {})
+        return definition.get("loai") == "du_kien_nguoi_dung"
+    except (OSError, ValueError):
+        return False
+
+
+def bang_chung_bayes(
+    bang_chung: Mapping[str, object] | Iterable[str] | None,
+) -> tuple[dict[str, str], list[str]]:
+    """Chuẩn hóa bằng chứng TV2/TV3 theo thứ tự bất biến.
+
+    - Mapping hỗ trợ ``thuoc_tinh: co|khong|chua_biet``.
+    - Iterable hỗ trợ mã sự kiện cũ hoặc ``thuoc_tinh=gia_tri``.
+    - ``chua_biet`` được bỏ qua; thuộc tính không có ánh xạ được ghi chú.
+    - Nếu các dữ kiện mâu thuẫn cùng một nút Bayes, loại toàn bộ nút đó.
+      Quy tắc này không phụ thuộc thứ tự nhập.
     """
-    if not bang_chung:
+    if bang_chung is None:
         return {}, []
     if isinstance(bang_chung, Mapping):
-        ds_su_kien = list(bang_chung)
+        entries = [(str(key), value) for key, value in bang_chung.items()]
     else:
-        ds_su_kien = list(bang_chung)
+        entries = []
+        for item in bang_chung:
+            if not isinstance(item, str):
+                raise ValueError("Bằng chứng dạng danh sách phải là chuỗi.")
+            if "=" in item:
+                key, value = item.split("=", 1)
+                entries.append((key.strip(), value.strip()))
+            else:
+                entries.append((item, True))
 
-    bang_chung_nut: dict[str, str] = {}
-    ghi_chu: list[str] = []
-    for su_kien in ds_su_kien:
-        if su_kien not in ANH_XA_BANG_CHUNG:
-            ghi_chu.append(f"Bỏ qua {su_kien}: không có nút tương ứng trong mạng Bayes.")
-            continue
-        nut, gia_tri = ANH_XA_BANG_CHUNG[su_kien]
-        if nut in bang_chung_nut and bang_chung_nut[nut] != gia_tri:
-            ghi_chu.append(
-                f"Bỏ qua bằng chứng mâu thuẫn cho nút {nut}: "
-                f"{bang_chung_nut[nut]} và {gia_tri}."
+    candidates: dict[str, set[str]] = {}
+    notes: set[str] = set()
+    for key, raw_value in entries:
+        if key in ANH_XA_THUOC_TINH or _thuoc_tinh_trong_vocabulary(key):
+            value = str(raw_value).lower()
+            if value not in TRANG_THAI_BANG_CHUNG:
+                raise ValueError(
+                    f"Trạng thái của thuộc tính {key} không hợp lệ: {raw_value!r}."
+                )
+            if value == "chua_biet":
+                notes.add(f"Bỏ qua {key}=chua_biet: người dùng chưa xác định trạng thái.")
+                continue
+            mapped = ANH_XA_THUOC_TINH.get(key, {}).get(value)
+            if mapped is None:
+                notes.add(
+                    f"Bỏ qua {key}={value}: thuộc tính có trong vocabulary nhưng "
+                    "chưa có ánh xạ tương đương trong mạng Bayes."
+                )
+                continue
+            node, state = mapped
+        else:
+            if key not in ANH_XA_BANG_CHUNG:
+                notes.add(f"Bỏ qua {key}: không có trong vocabulary hoặc mã sự kiện Bayes.")
+                continue
+            node, state = ANH_XA_BANG_CHUNG[key]
+
+        candidates.setdefault(node, set()).add(state)
+
+    result: dict[str, str] = {}
+    for node in sorted(candidates):
+        states = candidates[node]
+        if len(states) == 1:
+            result[node] = next(iter(states))
+        else:
+            notes.add(
+                f"Bỏ qua nút {node}: bằng chứng mâu thuẫn "
+                f"({', '.join(sorted(states))})."
             )
-            bang_chung_nut.pop(nut)
-            continue
-        bang_chung_nut[nut] = gia_tri
-    return bang_chung_nut, ghi_chu
+    return result, sorted(notes)
 
 
 def _xac_suat_dong_nhat(dong: dict[str, str]) -> float:
@@ -161,14 +263,19 @@ def _xac_suat_dong_nhat(dong: dict[str, str]) -> float:
 def kiem_tra_cpd() -> None:
     """Kiểm tra mỗi bảng CPD có đủ tổ hợp cha và tổng xác suất bằng 1."""
     for ten_nut, dac_ta in NUT.items():
-        so_to_hop = 1
-        for cha in dac_ta["cha"]:
-            so_to_hop *= len(NUT[cha]["gia_tri"])
-        if len(dac_ta["cpd"]) != so_to_hop:
-            raise ValueError(f"CPD của {ten_nut} có {len(dac_ta['cpd'])} tổ hợp, cần {so_to_hop}.")
+        to_hop_mong_doi = set(itertools.product(
+            *[NUT[cha]["gia_tri"] for cha in dac_ta["cha"]]
+        )) if dac_ta["cha"] else {()}
+        if set(dac_ta["cpd"]) != to_hop_mong_doi:
+            raise ValueError(
+                f"CPD của {ten_nut} thiếu hoặc thừa tổ hợp trạng thái cha."
+            )
         for khoa, gia_tri in dac_ta["cpd"].items():
             if len(gia_tri) != len(dac_ta["gia_tri"]):
                 raise ValueError(f"CPD của {ten_nut} tại {khoa} sai số giá trị.")
+            if any(not isinstance(value, (int, float)) or not math.isfinite(value)
+                   or not 0.0 <= value <= 1.0 for value in gia_tri):
+                raise ValueError(f"CPD của {ten_nut} tại {khoa} có xác suất ngoài [0, 1].")
             if abs(sum(gia_tri) - 1.0) > 1e-6:
                 raise ValueError(f"CPD của {ten_nut} tại {khoa} không cộng lại bằng 1.")
     tong = sum(_xac_suat_dong_nhat(dong) for dong in _tat_ca_dong_nhat())
@@ -247,69 +354,135 @@ def xay_dung_mang_pgmpy():
     return mang
 
 
+def _truy_van_joint_liet_ke(bang_chung: dict[str, str]) -> dict[tuple[str, str, str], float]:
+    """Phân phối đồng thời chính xác của ba biến bệnh khi có bằng chứng."""
+    disease_nodes = ("DaoOn", "BacLa", "DomNau")
+    total = 0.0
+    joint = {
+        states: 0.0
+        for states in itertools.product(*[NUT[node]["gia_tri"] for node in disease_nodes])
+    }
+    for row in _tat_ca_dong_nhat():
+        if any(row[node] != state for node, state in bang_chung.items()):
+            continue
+        probability = _xac_suat_dong_nhat(row)
+        total += probability
+        joint[(row["DaoOn"], row["BacLa"], row["DomNau"])] += probability
+    if total <= 0:
+        raise ValueError(f"Bằng chứng không thể xảy ra: {bang_chung}")
+    return {states: value / total for states, value in joint.items()}
+
+
+def _truy_van_joint_pgmpy(bang_chung: dict[str, str]) -> dict[tuple[str, str, str], float]:
+    """Truy vấn phân phối đồng thời ba bệnh bằng VariableElimination."""
+    from pgmpy.inference import VariableElimination
+
+    network = xay_dung_mang_pgmpy()
+    factor = VariableElimination(network).query(
+        variables=["DaoOn", "BacLa", "DomNau"],
+        evidence=bang_chung or None,
+        show_progress=False,
+    )
+    states = itertools.product(
+        *(NUT[node]["gia_tri"] for node in ("DaoOn", "BacLa", "DomNau"))
+    )
+    result = {}
+    for state_tuple in states:
+        assignment = dict(zip(("DaoOn", "BacLa", "DomNau"), state_tuple))
+        result[state_tuple] = float(factor.get_value(**assignment))
+    total = sum(result.values())
+    if total <= 0:
+        raise ValueError("Phân phối đồng thời pgmpy có tổng bằng 0.")
+    return {key: value / total for key, value in result.items()}
+
+
+def _phan_phoi_bon_lop(
+    joint: Mapping[tuple[str, str, str], float],
+) -> tuple[dict[str, float], float]:
+    """Đổi 3 biến bệnh có thể đồng mắc thành bốn lớp loại trừ nhau.
+
+    Lớp bệnh tương ứng đúng một bệnh; lá khỏe tương ứng không bệnh nào.
+    Khối lượng xác suất đồng mắc từ hai bệnh trở lên được báo riêng và loại
+    khỏi mẫu số phân loại bốn lớp, sau đó bốn lớp được chuẩn hóa có điều kiện.
+    """
+    class_mass = {"dao_on": 0.0, "bac_la": 0.0, "dom_nau": 0.0, "la_khoe": 0.0}
+    multi_mass = 0.0
+    for states, probability in joint.items():
+        present = [node for node, state in zip(("DaoOn", "BacLa", "DomNau"), states)
+                   if state == "co"]
+        if len(present) == 0:
+            class_mass["la_khoe"] += probability
+        elif len(present) == 1:
+            class_label = {
+                "DaoOn": "dao_on",
+                "BacLa": "bac_la",
+                "DomNau": "dom_nau",
+            }[present[0]]
+            class_mass[class_label] += probability
+        else:
+            multi_mass += probability
+    valid_mass = sum(class_mass.values())
+    if valid_mass <= 0:
+        raise ValueError("Không có khối lượng xác suất cho bốn lớp đơn bệnh/lá khỏe.")
+    return ({label: value / valid_mass for label, value in class_mass.items()}, multi_mass)
+
+
 def truy_van(
-    bang_chung: Mapping[str, float] | Iterable[str] | None = None,
+    bang_chung: Mapping[str, object] | Iterable[str] | None = None,
     su_dung_pgmpy: bool = True,
 ) -> dict:
-    """Truy vấn xác suất hậu nghiệm của 3 bệnh khi biết bằng chứng.
+    """Truy vấn hậu nghiệm và phân phối bốn lớp loại trừ nhau.
 
-    Trả về ``xac_suat`` (theo mã bệnh dùng chung), ``chi_tiet`` (phân phối từng nút),
-    ``phuong_phap`` và ``ghi_chu``.
+    Mạng nền cho phép nhiều bệnh đồng thời. Để tương thích đầu ra CNN bốn lớp,
+    chỉ các trạng thái không bệnh hoặc đúng một bệnh được đưa vào phân phối lớp;
+    xác suất đồng mắc được trả riêng ở ``xac_suat_dong_mac``.
     """
     kiem_tra_cpd()
-    bang_chung_nut, ghi_chu = bang_chung_bayes(bang_chung)
-    phuong_phap = "Liệt kê toàn bộ phân phối đồng thời (fallback, không cần pgmpy)"
-
+    evidence, notes = bang_chung_bayes(bang_chung)
+    method = "Liệt kê độc lập toàn bộ phân phối đồng thời"
+    joint = None
     if su_dung_pgmpy:
         try:
-            from pgmpy.inference import VariableElimination
-
-            mang = xay_dung_mang_pgmpy()
-            bo_suy_dien = VariableElimination(mang)
-            chi_tiet: dict[str, dict[str, float]] = {}
-            for ten_nut, dac_ta in NUT.items():
-                if ten_nut in bang_chung_nut:
-                    # Nút đã là bằng chứng: pgmpy không cho vừa truy vấn vừa làm bằng chứng.
-                    gia_tri_da_biet = bang_chung_nut[ten_nut]
-                    chi_tiet[ten_nut] = {
-                        gia_tri: 1.0 if gia_tri == gia_tri_da_biet else 0.0
-                        for gia_tri in dac_ta["gia_tri"]
-                    }
-                    continue
-                phan_phoi = bo_suy_dien.query(
-                    variables=[ten_nut],
-                    evidence=bang_chung_nut or None,
-                    show_progress=False,
-                )
-                chi_tiet[ten_nut] = {
-                    gia_tri: float(phan_phoi.values[dac_ta["gia_tri"].index(gia_tri)])
-                    for gia_tri in dac_ta["gia_tri"]
-                }
-            phuong_phap = "pgmpy – VariableElimination"
+            joint = _truy_van_joint_pgmpy(evidence)
+            method = "pgmpy – VariableElimination (truy vấn đồng thời)"
         except ImportError:
-            ghi_chu.append("Chưa cài pgmpy: dùng phép liệt kê tự cài đặt, kết quả tương đương.")
-            chi_tiet = _truy_van_liet_ke(bang_chung_nut)
-        except Exception as loi:  # noqa: BLE001 - pgmpy có thể lỗi phiên bản
-            ghi_chu.append(f"pgmpy lỗi ({loi}): dùng phép liệt kê tự cài đặt.")
-            chi_tiet = _truy_van_liet_ke(bang_chung_nut)
-    else:
-        chi_tiet = _truy_van_liet_ke(bang_chung_nut)
+            notes.append("Chưa cài pgmpy: dùng phép liệt kê độc lập.")
+        except Exception as error:  # fallback minh bạch cho lỗi tương thích
+            notes.append(f"pgmpy không truy vấn được ({error}); dùng phép liệt kê độc lập.")
+    if joint is None:
+        joint = _truy_van_joint_liet_ke(evidence)
 
-    xac_suat = {ma: chi_tiet[ten]["co"] for ma, ten in MA_BENH_BAYES.items()}
-    # Ước lượng xác suất lá khỏe: xác suất đồng thời không mắc cả 3 bệnh,
-    # giả định ba bệnh độc lập có điều kiện khi đã biết bằng chứng.
-    xac_suat["la_khoe"] = round(
-        (1 - xac_suat["dao_on"]) * (1 - xac_suat["bac_la"]) * (1 - xac_suat["dom_nau"]), 4
-    )
+    classes, multi_mass = _phan_phoi_bon_lop(joint)
+    exact_healthy_mass = joint[("khong", "khong", "khong")]
+    marginals = {
+        node: {
+            state: sum(prob for states, prob in joint.items()
+                       if states[index] == state)
+            for state in NUT[node]["gia_tri"]
+        }
+        for index, node in enumerate(("DaoOn", "BacLa", "DomNau"))
+    }
     return {
-        "xac_suat": {ma: round(p, 4) for ma, p in xac_suat.items()},
-        "chi_tiet": chi_tiet,
-        "bang_chung": bang_chung_nut,
-        "phuong_phap": phuong_phap,
-        "ghi_chu": ghi_chu,
+        "xac_suat": {label: round(value, 10) for label, value in classes.items()},
+        "chi_tiet": marginals,
+        "phan_phoi_dong_thoi": {
+            "|".join(states): round(probability, 10)
+            for states, probability in joint.items()
+        },
+        "xac_suat_dong_mac": round(multi_mass, 10),
+        "xac_suat_la_khoe_dong_thoi": round(exact_healthy_mass, 10),
+        "bang_chung": evidence,
+        "phuong_phap": method,
+        "ghi_chu": sorted(set(notes)),
         "ghi_chu_la_khoe": (
-            "P(lá khỏe) là ước lượng P(¬đạo ôn)·P(¬bạc lá)·P(¬đốm nâu) "
-            "theo giả định độc lập có điều kiện."
+            "P(lá khỏe) đồng thời là P(¬đạo ôn, ¬bạc lá, ¬đốm nâu), "
+            "lấy trực tiếp từ phân phối đồng thời; không nhân các xác suất biên. "
+            "Phân phối bốn lớp dùng thêm điều kiện không có đồng mắc."
+        ),
+        "gia_dinh_phan_lop": (
+            "Mạng cho phép đồng mắc. Đầu ra bốn lớp là phân phối có điều kiện "
+            "trên các trạng thái không bệnh hoặc đúng một bệnh; xác suất đồng mắc "
+            "được báo riêng."
         ),
     }
 
@@ -320,8 +493,8 @@ def in_cau_truc() -> None:
         cha = ", ".join(dac_ta["cha"]) or "—"
         print(f"  {ten_nut:<11} | cha: {cha:<28} | giá trị: {', '.join(dac_ta['gia_tri'])}")
     print(
-        "\nGhi chú: các CPD được ước lượng định tính từ mô tả điều kiện phát bệnh của IRRI "
-        "(S1–S3), cần hiệu chỉnh khi có dữ liệu đồng ruộng.\n"
+        "\nGhi chú: CPD là giả định định tính; S1–S4 chỉ hỗ trợ cấu trúc và nhóm triệu chứng, "
+        "không cung cấp tần suất số trong bảng. Cần hiệu chuẩn bằng dữ liệu đồng ruộng.\n"
     )
 
 
@@ -344,7 +517,10 @@ def main(argv: list[str] | None = None) -> int:
     ds = args.bang_chung
     for nhan, bang_chung in (
         ("Truy vấn 1: chưa có bằng chứng (tiên nghiệm)", None),
-        ("Truy vấn 2: vết hình thoi + mưa ẩm + bón nhiều đạm", ds or ["tc_vet_thoi", "tt_am_do_cao", "tq_dam_cao"]),
+        (
+            "Truy vấn 2: vết hình thoi + mưa ẩm + bón nhiều đạm",
+            ds or ["tc_vet_thoi", "tt_am_do_cao", "tq_dam_cao"],
+        ),
     ):
         ket_qua = truy_van(bang_chung, su_dung_pgmpy=not args.khong_pgmpy)
         print(f"{nhan}")

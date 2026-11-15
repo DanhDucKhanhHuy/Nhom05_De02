@@ -1,22 +1,14 @@
 """
-C6 – Kết hợp xác suất CNN + mạng Bayes cho 4 lớp bệnh lá lúa.
+C6 – Kết hợp xác suất CNN và mạng Bayes trên bốn lớp loại trừ nhau.
 
-Đầu vào CNN: top-3 [(ma_benh, probability), ...] với đúng 3 lớp khác nhau.
-Lớp thứ tư được gán phần xác suất còn lại của softmax.
-Đầu vào Bayes: bằng chứng theo mã sự kiện của hệ thống, được xử lý bởi
-src.rules.bayes.truy_van().
-
-Phương pháp: trung bình có trọng số giữa phân phối CNN và phân phối Bayes.
-Đây là phương pháp kết hợp heuristic phục vụ tích hợp đồ án, không phải
-một phép suy luận Bayes đầy đủ vì hai nguồn thông tin có thể phụ thuộc nhau.
-
-Chạy:
-    python -m src.rules.ket_hop
-    python -m src.rules.ket_hop --top3 dao_on:0.55,dom_nau:0.40,bac_la:0.03
+Công thức: P(C|ảnh, điều kiện) ∝ P_CNN(C) × P(C|điều kiện).
+Nếu CNN được huấn luyện với prior lớp không cân bằng, chia P_CNN cho
+prior huấn luyện trước khi nhân để giảm ảnh hưởng prior bị lặp.
 """
 from __future__ import annotations
 
 import argparse
+import math
 from typing import Iterable, Mapping
 
 from .bayes import truy_van
@@ -28,118 +20,156 @@ TEN_BENH = {
     "dom_nau": "Đốm nâu",
     "la_khoe": "Lá khỏe",
 }
-TRONG_SO_MAC_DINH = {"cnn": 0.6, "bayes": 0.4}
-VI_DU_CNN = [
-    ("dao_on", 0.55),
-    ("dom_nau", 0.40),
-    ("bac_la", 0.03),
+NGUONG_KET_LUAN = 0.60
+VI_DU_CNN = [("dao_on", 0.55), ("dom_nau", 0.40), ("bac_la", 0.03)]
+VI_DU_BANG_CHUNG = [
+    "vet_la_hinh_thoi=co",
+    "am_u_va_suong_som=co",
+    "thua_dam=co",
 ]
-VI_DU_BANG_CHUNG = ["tc_vet_thoi", "tt_am_do_cao", "tq_dam_cao"]
 
 
-def chuan_hoa_cnn_top3(
-    cnn_top3: Iterable[tuple[str, float]],
-) -> dict[str, float]:
-    """Chuẩn hóa top-3 CNN thành phân phối trên đúng 4 lớp."""
+def chuan_hoa_cnn_top3(cnn_top3: Iterable[tuple[str, float]]) -> dict[str, float]:
+    """Kiểm tra top-3 nghiêm ngặt và suy ra phần còn lại cho lớp bị lược."""
     items = list(cnn_top3)
     if len(items) != 3:
         raise ValueError("CNN phải cung cấp đúng 3 lớp dự đoán (top-3).")
-
     result: dict[str, float] = {}
     for item in items:
         if not isinstance(item, (tuple, list)) or len(item) != 2:
             raise ValueError("Mỗi phần tử CNN phải có dạng (ma_benh, xac_suat).")
         label, probability = item
-        if label not in MA_BENH:
+        if not isinstance(label, str) or label not in MA_BENH:
             raise ValueError(f"Mã lớp CNN không hợp lệ: {label!r}.")
         if label in result:
             raise ValueError(f"Mã lớp CNN bị trùng: {label}.")
+        if isinstance(probability, bool) or not isinstance(probability, (int, float)):
+            raise ValueError("Xác suất CNN phải là số thực hữu hạn.")
         probability = float(probability)
-        if not 0.0 <= probability <= 1.0:
-            raise ValueError(f"Xác suất CNN phải thuộc [0, 1]: {probability}.")
+        if not math.isfinite(probability) or not 0.0 <= probability <= 1.0:
+            raise ValueError(f"Xác suất CNN phải hữu hạn và thuộc [0, 1]: {probability}.")
         result[label] = probability
 
     missing = set(MA_BENH) - set(result)
     if len(missing) != 1:
-        raise ValueError("Top-3 phải gồm 3/4 lớp bệnh đã quy ước.")
+        raise ValueError("Top-3 phải gồm đúng 3 lớp khác nhau trong 4 lớp đã quy ước.")
     total = sum(result.values())
-    if total <= 0:
-        raise ValueError("Tổng xác suất CNN phải lớn hơn 0.")
-
-    omitted_label = next(iter(missing))
-    if total <= 1.0 + 1e-6:
-        result[omitted_label] = max(0.0, 1.0 - total)
-    else:
-        # Một số CNN có thể trả xác suất làm tròn khiến tổng hơi vượt 1.
-        result = {label: value / total for label, value in result.items()}
-        result[omitted_label] = 0.0
-
+    if total <= 0.0 or total > 1.0 + 1e-9:
+        raise ValueError("Tổng xác suất top-3 phải thuộc (0, 1].")
+    omitted = next(iter(missing))
+    result[omitted] = max(0.0, 1.0 - total)
     normalizer = sum(result.values())
+    if normalizer <= 0:
+        raise ValueError("Không thể chuẩn hóa phân phối CNN.")
     return {label: value / normalizer for label, value in result.items()}
 
 
 def chuan_hoa_bayes(
-    bang_chung: Mapping[str, float] | Iterable[str] | None = None,
+    bang_chung: Mapping[str, object] | Iterable[str] | None = None,
     su_dung_pgmpy: bool = True,
 ) -> tuple[dict[str, float], dict]:
-    """Lấy và chuẩn hóa phân phối 4 lớp từ mạng Bayes C5."""
+    """Lấy phân phối bốn lớp đã chuẩn hóa từ mạng Bayes."""
     result = truy_van(bang_chung, su_dung_pgmpy=su_dung_pgmpy)
     raw = {label: float(result["xac_suat"].get(label, 0.0)) for label in MA_BENH}
-    if any(value < 0 for value in raw.values()):
-        raise ValueError("Xác suất Bayes không được âm.")
+    if any(not math.isfinite(value) or value < 0.0 for value in raw.values()):
+        raise ValueError("Xác suất Bayes phải hữu hạn và không âm.")
     total = sum(raw.values())
-    if total <= 0:
+    if total <= 0.0:
         raise ValueError("Mạng Bayes trả về tổng xác suất bằng 0.")
     return ({label: value / total for label, value in raw.items()}, result)
 
 
+def _chuan_hoa_prior(prior: Mapping[str, float] | None) -> dict[str, float]:
+    """Prior huấn luyện; mặc định cân bằng bốn lớp."""
+    if prior is None:
+        return {label: 0.25 for label in MA_BENH}
+    if set(prior) != set(MA_BENH):
+        raise ValueError("prior_cnn phải khai báo đủ và đúng bốn mã lớp.")
+    values = {}
+    for label, raw in prior.items():
+        if isinstance(raw, bool) or not isinstance(raw, (int, float)):
+            raise ValueError("Prior lớp phải là số thực hữu hạn dương.")
+        value = float(raw)
+        if not math.isfinite(value) or value <= 0.0:
+            raise ValueError("Prior lớp phải hữu hạn và lớn hơn 0.")
+        values[label] = value
+    total = sum(values.values())
+    if not math.isfinite(total) or total <= 0.0:
+        raise ValueError("Tổng prior CNN phải hữu hạn và lớn hơn 0.")
+    return {label: value / total for label, value in values.items()}
+
+
 def ket_hop_cnn_bayes(
     cnn_top3: Iterable[tuple[str, float]],
-    bang_chung: Mapping[str, float] | Iterable[str] | None = None,
-    trong_so: Mapping[str, float] | None = None,
+    bang_chung: Mapping[str, object] | Iterable[str] | None = None,
+    prior_cnn: Mapping[str, float] | None = None,
+    nguong: float = NGUONG_KET_LUAN,
     su_dung_pgmpy: bool = True,
 ) -> dict:
     """
-    Kết hợp CNN và Bayes theo trung bình có trọng số.
+    Nhân likelihood CNN đã hiệu chỉnh prior với hậu nghiệm Bayes theo điều kiện.
 
-    Trong số mặc định: CNN=0.6, Bayes=0.4.
-    Có thể truyền trọng số khác nhưng tổng phải bằng 1.
+    Giả định: ảnh và điều kiện ruộng độc lập có điều kiện khi biết lớp bệnh.
+    Nếu không có prior_cnn, giả định tập huấn luyện cân bằng bốn lớp.
     """
-    cnn = chuan_hoa_cnn_top3(cnn_top3)
-    weights = dict(TRONG_SO_MAC_DINH)
-    if trong_so:
-        weights.update({key: float(value) for key, value in trong_so.items()})
-    if set(weights) != {"cnn", "bayes"}:
-        raise ValueError("Chỉ chấp nhận hai trọng số 'cnn' và 'bayes'.")
-    if any(value < 0 for value in weights.values()):
-        raise ValueError("Trọng số không được âm.")
-    if abs(sum(weights.values()) - 1.0) > 1e-6:
-        raise ValueError("Tổng trọng số CNN và Bayes phải bằng 1.")
+    if isinstance(nguong, bool) or not isinstance(nguong, (int, float)):
+        raise ValueError("Ngưỡng kết luận phải là số thuộc [0, 1].")
+    nguong = float(nguong)
+    if not math.isfinite(nguong) or not 0.0 <= nguong <= 1.0:
+        raise ValueError("Ngưỡng kết luận phải hữu hạn và thuộc [0, 1].")
 
+    cnn = chuan_hoa_cnn_top3(cnn_top3)
     bayes, bayes_detail = chuan_hoa_bayes(bang_chung, su_dung_pgmpy)
-    combined = {
-        label: weights["cnn"] * cnn[label] + weights["bayes"] * bayes[label]
+    training_prior = _chuan_hoa_prior(prior_cnn)
+
+    unnormalized = {
+        label: (cnn[label] / training_prior[label]) * bayes[label]
         for label in MA_BENH
     }
-    # Khử sai số số học và bảo đảm tổng bằng 1.
-    total = sum(combined.values())
-    combined = {label: value / total for label, value in combined.items()}
-    ranking = sorted(combined.items(), key=lambda item: item[1], reverse=True)
+    normalizer = sum(unnormalized.values())
+    if not math.isfinite(normalizer) or normalizer <= 0.0:
+        raise ValueError("Tổng tích CNN–Bayes bằng 0 hoặc không hữu hạn.")
+    combined = {label: value / normalizer for label, value in unnormalized.items()}
+    ranking = sorted(combined.items(), key=lambda item: (-item[1], item[0]))
+    tied = len(ranking) > 1 and math.isclose(
+        ranking[0][1], ranking[1][1], rel_tol=0.0, abs_tol=1e-12
+    )
+    multi_mass = float(bayes_detail["xac_suat_dong_mac"])
+    # CNN chỉ có bốn lớp đơn bệnh/lá khỏe; giảm độ chắc nếu Bayes dự báo đồng mắc.
+    confidence = ranking[0][1] * max(0.0, 1.0 - multi_mass)
+    confident = confidence >= nguong and not tied
+    conclusion = ranking[0][0] if confident else None
+    status = "da_ket_luan" if confident else "chua_du_chac"
 
     return {
         "xac_suat_cnn": cnn,
         "xac_suat_bayes": bayes,
+        "prior_cnn": training_prior,
         "xac_suat_ket_hop": combined,
         "top3_ket_qua": ranking[:3],
-        "ket_luan": ranking[0][0],
-        "trong_so": weights,
+        "ket_luan": conclusion,
+        "trang_thai": status,
+        "nguong_ket_luan": nguong,
+        "do_tin_cay_dieu_chinh": confidence,
+        "hoa": tied,
         "phuong_phap_bayes": bayes_detail["phuong_phap"],
         "bang_chung_bayes": bayes_detail["bang_chung"],
         "ghi_chu": bayes_detail["ghi_chu"],
-        "phuong_phap": "Trung bình có trọng số CNN + Bayes",
+        "xac_suat_dong_mac": multi_mass,
+        "phuong_phap": (
+            "P(lớp|ảnh, điều kiện) ∝ "
+            "P_CNN(ảnh|lớp) × P(lớp|điều kiện), chuẩn hóa"
+        ),
+        "gia_dinh": (
+            "Giả định ảnh và điều kiện ruộng độc lập có điều kiện khi biết lớp. "
+            "P_CNN được xem là posterior; chia prior huấn luyện để xấp xỉ likelihood. "
+            "Nếu không truyền prior_cnn, giả định tập CNN cân bằng bốn lớp. "
+            "Độ chắc quyết định còn được giảm theo khối lượng đồng mắc vì CNN chỉ có "
+            "bốn lớp đơn bệnh/lá khỏe."
+        ),
         "canh_bao": (
-            "Kết quả là hỗ trợ tham khảo; CPD hiện là ước lượng định tính, "
-            "cần hiệu chỉnh bằng dữ liệu đồng ruộng."
+            "CPD Bayes là ước lượng định tính, chưa hiệu chuẩn từ dữ liệu đồng ruộng; "
+            "kết quả chỉ hỗ trợ tham khảo, không thay thế chẩn đoán chuyên môn."
         ),
     }
 
@@ -163,27 +193,29 @@ def main(argv: list[str] | None = None) -> int:
         "--bang-chung",
         nargs="*",
         default=VI_DU_BANG_CHUNG,
-        help="Mã sự kiện, ví dụ tc_vet_thoi tt_am_do_cao tq_dam_cao",
+        help="Mã sự kiện cũ hoặc thuộc_tính=co|khong|chua_biet",
     )
+    parser.add_argument("--nguong", type=float, default=NGUONG_KET_LUAN)
     parser.add_argument("--khong-pgmpy", action="store_true")
     args = parser.parse_args(argv)
 
     result = ket_hop_cnn_bayes(
         _parse_top3(args.top3),
         args.bang_chung,
+        nguong=args.nguong,
         su_dung_pgmpy=not args.khong_pgmpy,
     )
     print("=== KẾT QUẢ KẾT HỢP CNN + BAYES ===")
-    print("CNN:", result["xac_suat_cnn"])
-    print("Bayes:", result["xac_suat_bayes"])
-    print("\nXác suất kết hợp:")
     for label, probability in result["top3_ket_qua"]:
         print(f"  {TEN_BENH[label]:<12}: {probability:.2%}")
-    print("Kết luận:", TEN_BENH[result["ket_luan"]])
-    print("Phương pháp Bayes:", result["phuong_phap_bayes"])
-    print("Bằng chứng:", result["bang_chung_bayes"])
+    print("Điểm quyết định:", f'{result["do_tin_cay_dieu_chinh"]:.2%}')
+    print("Trạng thái:", result["trang_thai"])
+    print("Kết luận:", TEN_BENH[result["ket_luan"]] if result["ket_luan"] else "Chưa đủ chắc")
+    print("Bằng chứng Bayes:", result["bang_chung_bayes"])
+    print("Xác suất đồng mắc:", result["xac_suat_dong_mac"])
     for note in result["ghi_chu"]:
         print("Ghi chú:", note)
+    print("Giả định:", result["gia_dinh"])
     print("Cảnh báo:", result["canh_bao"])
     return 0
 
