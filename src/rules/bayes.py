@@ -140,7 +140,8 @@ ANH_XA_THUOC_TINH: dict[str, dict[str, tuple[str, str] | None]] = {
         "chua_biet": None,
     },
     "vet_bac_ung_nuoc_tren_phien_la": {
-        "co": ("TrieuChung", "vet_thoi"),
+        # Vệt úng nước không tương đương vết hình thoi. Chờ nút/CPD riêng.
+        "co": None,
         "khong": None,
         "chua_biet": None,
     },

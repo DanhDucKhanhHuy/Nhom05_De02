@@ -157,10 +157,13 @@ def test_brown_spot_grain_attribute_matches_source_concept():
 def test_compound_symptoms_keep_source_meaning_in_question_and_description():
     vocabulary = json.loads((ROOT / "src/rules/vocabulary.json").read_text(encoding="utf-8"))
     attributes = vocabulary["thuoc_tinh"]
-    panicle = attributes["bong_lek_trang_khi_benh_xuat_hien_som"]
+    panicle = attributes["bong_hoac_gie_lep_trang"]
     assert "bong_lek_trang_som" not in attributes
-    assert "bệnh đạo ôn xuất hiện sớm" in panicle["mo_ta"]
-    assert "Nếu bệnh đạo ôn xuất hiện sớm" in panicle["cau_hoi"]
+    assert "bong_lek_trang_khi_benh_xuat_hien_som" not in attributes
+    assert panicle["mo_ta"] == "Toàn bộ bông hoặc từng gié bị lép trắng"
+    assert "đạo ôn" not in panicle["cau_hoi"]
+    assert "bệnh xuất hiện sớm" not in panicle["cau_hoi"]
+    assert panicle["phep_ghep"] == "OR"
     center = attributes["dom_nau_tam_nhat_xam"]
     assert "nâu đỏ nhạt hoặc xám" in center["mo_ta"]
     assert "nâu đỏ nhạt hoặc xám" in center["cau_hoi"]

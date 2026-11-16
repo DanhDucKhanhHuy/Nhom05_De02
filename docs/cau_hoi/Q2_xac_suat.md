@@ -77,16 +77,16 @@ Nguồn từ điển thuộc tính đầu vào là `src/rules/vocabulary.json`. 
 }
 ```
 
-Các ánh xạ đã có ngữ nghĩa tương đương:
+Các ánh xạ hiện có và thuộc tính chưa được mô hình hỗ trợ:
 
 | Thuộc tính TV2 | Trạng thái | Bằng chứng Bayes |
 |---|---|---|
-| `vet_bac_ung_nuoc_tren_phien_la` | `co` | `TrieuChung=vet_thoi` |
+| `vet_bac_ung_nuoc_tren_phien_la` | `co` | Chưa có nút/CPD tương đương; bỏ qua và ghi chú |
 | `dom_tron_hoac_bau_duc_nau` | `co` | `TrieuChung=dom_tron` |
 | `am_u_va_suong_som` | `co` | `ThoiTiet=mua_am` |
 | `thua_dam` | `co` | `BonDam=cao` |
 
-Chỉ ánh xạ thuộc tính khi nghĩa của trạng thái khớp nút Bayes. Vết hình thoi, tâm vết xám khô và viền nâu hiện không có trạng thái triệu chứng tương đương nên được ghi chú và bỏ qua. `am_u_va_suong_som=khong` không đủ để kết luận thời tiết khô; `thua_dam=khong` không đủ để kết luận đạm thấp. `chua_biet` và thuộc tính chưa có ánh xạ cũng được bỏ qua.
+Chỉ ánh xạ thuộc tính khi nghĩa của trạng thái khớp nút Bayes. Vệt úng nước của bạc lá không phải vết hình thoi; ánh xạ cũ sang `vet_thoi` đã bị bỏ. Vết hình thoi, tâm vết xám khô và viền nâu hiện được ghi chú và bỏ qua; đợt sửa này không mở rộng nút/CPD triệu chứng. Dữ kiện bị Bayes bỏ qua vẫn được hệ luật sử dụng. `am_u_va_suong_som=khong` không đủ để kết luận thời tiết khô; `thua_dam=khong` không đủ để kết luận đạm thấp. `chua_biet` và thuộc tính chưa có ánh xạ cũng được bỏ qua.
 
 Nếu nhiều bằng chứng đưa ra trạng thái trái ngược cho cùng một nút Bayes, toàn bộ bằng chứng của nút đó bị loại và ghi chú mâu thuẫn. Việc tổng hợp theo tập trạng thái và sắp xếp ghi chú giúp kết quả không phụ thuộc thứ tự nhập. Mã thời tiết do bộ lấy thời tiết tạo (ví dụ `tt_am_do_cao`) vẫn được nhận; triệu chứng dùng chung lấy trực tiếp từ `vocabulary.json`.
 
@@ -201,9 +201,13 @@ print(result["xac_suat_ket_hop"])
 print(result["trang_thai"], result["ket_luan"])
 print("Điểm quyết định =", result["do_tin_cay_dieu_chinh"])
 print("P(đồng mắc) =", result["xac_suat_dong_mac"])
+print("Bằng chứng thực dùng =", result["bang_chung_bayes"])
+print("Ghi chú =", result["ghi_chu"])
 ```
 
-Với CPD hiện tại và phép liệt kê, bằng chứng được chuẩn hóa thành `TrieuChung=vet_thoi`, `ThoiTiet=mua_am`, `BonDam=cao`. Phân phối Bayes bốn lớp có điều kiện xấp xỉ: đạo ôn 92.16%, bạc lá 5.06%, đốm nâu 1.33%, lá khỏe 1.45%. Xác suất đồng thời chính xác của trạng thái không mắc cả ba bệnh là 0.40%; xác suất đồng mắc từ hai bệnh là 72.15%. Sau khi nhân với CNN và chuẩn hóa, phân phối lớp đơn bệnh/lá khỏe có đạo ôn xấp xỉ 98.61%. Tuy nhiên, mô hình đồng thời báo xác suất đồng mắc xấp xỉ 72.15%; điểm quyết định bảo thủ là 98.61% × (1 − 72.15%) ≈ 27.46%, thấp hơn ngưỡng 0.60. Vì vậy trạng thái trả về là `chua_du_chac`, không kết luận đạo ôn. Các con số này chỉ minh họa đúng CPD giả định hiện tại, không phải xác suất thực địa.
+Với CPD hiện tại và phép liệt kê, chỉ có `ThoiTiet=mua_am`, `BonDam=cao` được đưa vào mạng. Dữ kiện vệt úng nước được ghi chú là chưa có trạng thái tương đương, không chuyển thành vết hình thoi. Phân phối Bayes bốn lớp có điều kiện xấp xỉ: đạo ôn 26.06%, bạc lá 40.53%, đốm nâu 16.04%, lá khỏe 17.37%. Xác suất đồng thời của trạng thái không mắc cả ba bệnh là 6.24%; khối lượng đồng mắc từ hai bệnh là 64.08%.
+
+Sau khi kết hợp CNN giả và chuẩn hóa, phân phối bốn lớp xấp xỉ: đạo ôn 64.24%, bạc lá 5.45%, đốm nâu 28.75%, lá khỏe 1.56%. Điểm quyết định là 64.24% × (1 − 64.08%) ≈ 23.08%, thấp hơn ngưỡng 0.60. Kết quả là `trang_thai="chua_du_chac"`, `ket_luan=None`. Đây là ví dụ CPD giả định và CNN giả, không phải xác suất thực địa hay bằng chứng xác nhận đạo ôn. Test `test_q2_example_reports_the_evidence_actually_used` tái hiện các con số cùng ghi chú bỏ qua dữ kiện.
 
 ## 7. Cách chạy và kiểm thử
 

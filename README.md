@@ -143,7 +143,7 @@ Nguồn: [TensorFlow 2.16.1](https://pypi.org/project/tensorflow/2.16.1/),
 
 - **Ảnh lá lúa:** bộ dữ liệu công khai (Kaggle, Mendeley Data), tối thiểu 4 lớp: đạo ôn, bạc lá, đốm nâu, lá khỏe. Đường dẫn tải và giấy phép ghi trong `docs/du_lieu.md`. Tải về và giải nén vào `data/raw/`.
 - **Ảnh thực tế:** ≥ 20 ảnh tự chụp hoặc sưu tầm trong `data/anh_thuc_te/`; nguồn từng ảnh ghi trong `data/anh_thuc_te/nguon.csv`.
-- **Tri thức cho hệ chuyên gia:** 28 luật có tham chiếu tới bốn nguồn trong `src/rules/sources.json`; từ vựng thuộc tính và lựa chọn nằm trong `src/rules/vocabulary.json`. Cách đối chiếu từng luật xem `docs/nguon_tri_thuc.md`. Luật không chứa tên thuốc, hoạt chất hay liều lượng.
+- **Tri thức cho hệ chuyên gia:** 28 luật tham chiếu bốn nguồn chính S1–S4; danh mục `src/rules/sources.json` có thêm nguồn S5 bổ sung căn cứ giai đoạn chọn giống. Từ vựng và lựa chọn nằm trong `src/rules/vocabulary.json`. Xem [hồ sơ nguồn](docs/nguon_tri_thuc.md) và [đối chiếu 28 luật](docs/doi_chieu_luat.md). S2/S3 chưa có năm xuất bản xác minh; chưa có duyệt chuyên gia địa phương. Luật không chứa tên thuốc, hoạt chất hay liều lượng.
 
 ## 6. Cách chạy khung hiện tại
 

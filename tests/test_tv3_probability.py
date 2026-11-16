@@ -18,11 +18,12 @@ def test_tv2_attributes_are_accepted_and_order_independent():
         "vet_bac_ung_nuoc_tren_phien_la": "co",
     })
     assert first == second == {
-        "TrieuChung": "vet_thoi",
         "ThoiTiet": "mua_am",
         "BonDam": "cao",
     }
-    assert notes_first == notes_second == []
+    assert notes_first == notes_second
+    assert len(notes_first) == 1
+    assert "vet_bac_ung_nuoc_tren_phien_la=co" in notes_first[0]
 
 
 def test_unknown_unsupported_and_conflicting_evidence_are_deterministic():
@@ -60,12 +61,14 @@ def test_compound_weather_and_nitrogen_negatives_do_not_infer_opposites():
     assert any("không đồng nghĩa với lượng đạm thấp" in note for note in notes)
 
 
-def test_current_exact_bacterial_symptom_maps_to_bayes_and_unmatched_do_not():
+def test_bacterial_symptom_without_equivalent_bayes_node_is_reported():
     evidence, notes = bayes.bang_chung_bayes({
         "vet_bac_ung_nuoc_tren_phien_la": "co",
         "vet_la_hinh_thoi": "co",
     })
-    assert evidence == {"TrieuChung": "vet_thoi"}
+    assert evidence == {}
+    assert len(notes) == 2
+    assert any("vet_bac_ung_nuoc_tren_phien_la=co" in note for note in notes)
     assert any("vet_la_hinh_thoi=co" in note for note in notes)
 
 

@@ -150,15 +150,15 @@
       "phep_ghep": "AND_OR",
       "dien_giai_ghep": "Cổ bông hoặc cổ gié là các vị trí thay thế nhau; vị trí được thấy phải có vết nâu và thối tóp."
     },
-    "bong_lek_trang_khi_benh_xuat_hien_som": {
+    "bong_hoac_gie_lep_trang": {
       "loai": "du_kien_nguoi_dung",
-      "mo_ta": "Bông hoặc gié lép trắng khi bệnh đạo ôn xuất hiện sớm",
+      "mo_ta": "Toàn bộ bông hoặc từng gié bị lép trắng",
       "gia_tri": [
         "co",
         "khong",
         "chua_biet"
       ],
-      "cau_hoi": "Nếu bệnh đạo ôn xuất hiện sớm, bông hoặc gié có bị lép trắng không?",
+      "cau_hoi": "Bạn có thấy toàn bộ bông hoặc từng gié bị lép trắng không?",
       "lua_chon": [
         {
           "ma": "co",
@@ -174,7 +174,7 @@
         }
       ],
       "phep_ghep": "OR",
-      "dien_giai_ghep": "Bông hoặc gié bị lép trắng khi bệnh xuất hiện sớm đều tính là Có."
+      "dien_giai_ghep": "Toàn bộ bông hoặc từng gié bị lép trắng đều tính là Có. Đây là dấu hiệu không đặc hiệu, chỉ yêu cầu kiểm tra thêm; không xác nhận bệnh hay thời điểm bệnh xuất hiện."
     },
     "am_u_va_suong_som": {
       "loai": "du_kien_nguoi_dung",
@@ -275,7 +275,7 @@
           "nhan": "Chưa biết"
         }
       ],
-      "dien_giai_phu_dinh": "Không nghĩa là chưa xác nhận bón thừa; không đồng nghĩa với bón ít hoặc thiếu đạm."
+      "dien_giai_phu_dinh": "Chọn Không khi xác nhận lượng đạm bón không vượt khuyến cáo. Nếu thiếu ghi chép, không biết mức khuyến cáo hoặc không đủ căn cứ đối chiếu, chọn Chưa biết. Không vượt khuyến cáo không đồng nghĩa với bón ít hoặc thiếu đạm."
     },
     "vet_bac_ung_nuoc_tren_phien_la": {
       "loai": "du_kien_nguoi_dung",
@@ -461,7 +461,7 @@
       ],
       "cau_hoi": "Tâm đốm có màu nâu đỏ nhạt hoặc xám không?",
       "phep_ghep": "OR",
-      "dien_giai_ghep": "Tâm màu đỏ nhạt hoặc màu xám đều tính là Có.",
+      "dien_giai_ghep": "Tâm màu nâu đỏ nhạt hoặc màu xám đều tính là Có.",
       "lua_chon": [
         {
           "ma": "co",

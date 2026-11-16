@@ -30,9 +30,10 @@ không chứa tên sản phẩm, hoạt chất, liều lượng hoặc nồng đ
 | S2 | “Bệnh bạc lá vi khuẩn trên lúa”, Đại học Nông nghiệp Tamil Nadu (TNAU), cổng Agritech – Crop Protection. [Trang HTML](https://www.agritech.tnau.ac.in/expert_system/paddy/cpdisblb.html) | **Thiếu năm xuất bản xác minh** | Mục Symptoms: vệt úng nước đến vàng trên phiến lá hoặc bắt đầu ở chóp, mép lượn sóng; vùng hoại tử ở mép vàng trắng hoặc vàng kim. Không suy diễn trình tự đổi màu hay tăng kích thước từ mục này. Mục Cultural methods: hạt giống sạch bệnh. Trang không ghi năm xuất bản; danh mục máy chủ ghi ngày tệp 17/11/2020, không dùng ngày này làm năm xuất bản. |
 | S3 | “Bệnh đốm nâu”, Viện Nghiên cứu và Phát triển Lúa, Bộ Nông nghiệp Sri Lanka. [Trang tài liệu](https://doa.gov.lk/rrdi_ricediseases_brownspot/) | **Không ghi năm** | Mục Triệu chứng: đốm trên bẹ lá, diệp tiêu, vỏ trấu; hoa non bị bệnh có thể làm hạt phát triển kém hoặc nhẹ/dạng phấn. Mục điều kiện phát sinh và quản lý bệnh: cây gần trưởng thành, lá già hóa; cỏ dại trong vụ; luân canh cho vụ tiếp theo. Trang không nêu ngày xuất bản; © 2026 là năm bản quyền website, không xác nhận năm xuất bản tài liệu. |
 | S4 | “Hướng dẫn quản lý dịch hại lúa: bệnh đạo ôn”, Chương trình Quản lý dịch hại tổng hợp, Đại học California. [Trang tài liệu](https://ipm.ucanr.edu/agriculture/rice/rice-blast/) | 2024 | Mục Triệu chứng trên lá: vết hình thoi, tâm xám/trắng, viền nâu. Trang ghi nội dung cập nhật 07/2024. |
+| S5 | “Entrepreneurship Development Through Seed Production”, Technical Bulletin TB-ICN 109/2013, Indian Agricultural Research Institute, Regional Station, Karnal. [Ấn phẩm gốc](https://www.iari.res.in/files/Publication/Others/EDSP_Eng-21102013.pdf) | 2013 | Trích dẫn chuẩn/năm ở trang PDF 4; bài Safe Seed Storage ở trang in 28 / PDF 36 bổ sung căn cứ chọn hạt sạch bệnh để gieo. Chỉ bổ sung giai đoạn áp dụng BL06, không thay S2 về nội dung bạc lá. |
 
-Ngày rà soát nguồn: 16/11/2026. Bộ luật dùng bốn tài liệu từ cơ quan/đơn vị
-nghiên cứu và khuyến nông phù hợp. S2 và S3 chưa xác định được năm xuất bản;
+Ngày rà soát nguồn: 17/11/2026. Bộ luật dùng bốn nguồn chính S1–S4 và hồ sơ có
+một nguồn bổ sung S5 từ cơ quan nghiên cứu. S2 và S3 chưa xác định được năm xuất bản;
 thông tin này được ghi rõ là thiếu, không suy đoán năm. Dấu thời gian tệp S2
 trên danh mục máy chủ và © 2026 trên trang S3 không được xem là năm xuất bản.
 Các nguồn ngoài Việt Nam
@@ -44,17 +45,24 @@ rà soát trước khi áp dụng thực tế.
 | Bệnh / nhóm | Dữ kiện hoặc sự kiện | Luật | Nguồn, mục |
 |---|---|---|---|
 | Đạo ôn – triệu chứng lá | Hình thoi; tâm xám khô; viền nâu | DO01–DO03 | S1, mục 1; S4, triệu chứng trên lá |
-| Đạo ôn – cổ lá, thân, bông | Cổ lá nâu đỏ; đốt teo nâu; cổ bông thối nâu; bông lép trắng sớm cần kiểm tra | DO04–DO07 | S1, mục 1 |
+| Đạo ôn – cổ lá, thân, bông | Cổ lá nâu đỏ; đốt teo nâu; cổ bông thối nâu; bông hoặc gié lép trắng cần kiểm tra | DO04–DO07 | S1, mục 1 |
 | Đạo ôn – điều kiện thuận lợi | Âm u/sương sớm; thiếu nước; sạ dày; thừa đạm | DO08–DO11 | S1, mục 2 |
 | Đạo ôn – khuyến nghị | Theo dõi ruộng thường xuyên, phát hiện bệnh sớm | DO12 | S1, mục 3 |
 | Bạc lá – triệu chứng | Vệt úng nước đến vàng trên phiến lá; vệt bắt đầu ở chóp; vùng hoại tử vàng trắng/vàng kim ở mép; mép lượn sóng; héo mạ cần kiểm tra | BL01–BL05 | S2, mục Triệu chứng |
-| Bạc lá – khuyến nghị | Sử dụng hạt giống sạch bệnh | BL06 | S2, mục Biện pháp canh tác |
+| Bạc lá – khuyến nghị | Chọn hạt giống sạch bệnh khi chuẩn bị gieo trồng | BL06 | S2, Cultural methods; S5 bổ sung giai đoạn chọn giống, trang in 28 / PDF 36 |
 | Đốm nâu – hình dạng, vị trí | Đốm tròn/bầu dục, viền sẫm, tâm nhạt/xám; vết trên bẹ lá, diệp tiêu, vỏ trấu | DN01–DN04, DN06–DN07 | S3, mục Triệu chứng |
 | Đốm nâu – giai đoạn/nguy cơ và ảnh hưởng hạt | Bệnh phổ biến hơn khi cây gần trưởng thành/lá bắt đầu già hóa; hoa non nhiễm có thể làm cản trở phát triển hạt hoặc tạo hạt nhẹ/bạc phấn | DN05, DN08 | S3, mục bộ phận cây/giai đoạn bị ảnh hưởng; mục Triệu chứng |
 | Đốm nâu – khuyến nghị trong vụ | Quản lý cỏ dại trong vụ hiện tại | DN09 | S3, mục Quản lý bệnh trong vụ |
 | Đốm nâu – khuyến nghị cho vụ tiếp theo | Chỉ khi ruộng đã được xác nhận nhiễm: cân nhắc luân canh ở vụ tiếp theo | DN10 | S3, mục Disease Management, điều kiện “If the crop is infected” và danh sách biện pháp cho next season |
 
 ### Các sửa đổi về nguồn và thuật ngữ
+
+- `DO07` chỉ hỏi dấu hiệu quan sát `bong_hoac_gie_lep_trang`, không yêu cầu
+  người dùng biết trước bệnh hoặc thời điểm bệnh xuất hiện. S1 mô tả bông/gié
+  lép trắng khi bệnh xuất hiện sớm; chiều quan sát ngược không xác nhận bệnh.
+  Đây là quy tắc sàng lọc cần kiểm tra thêm, không phải dấu hiệu đặc hiệu hay
+  luật xác nhận đạo ôn. Mã cũ `bong_lek_trang_khi_benh_xuat_hien_som` không tự
+  chuyển sang mã mới; cần nhập lại quan sát theo câu hỏi mới.
 
 - `DO01` và `DO03` không còn trỏ nhầm triệu chứng đạo ôn tới S2 (nguồn bạc lá).
   `DO01` trỏ S1, mục 1; `DO03` trỏ S4, mục triệu chứng trên lá.
@@ -73,16 +81,22 @@ rà soát trước khi áp dụng thực tế.
   BL01 chỉ hỏi sự hiện diện trên phiến lá, còn vị trí bắt đầu được hỏi riêng ở
   BL02.
 - `DN08` dùng “hạt nhẹ hoặc bạc phấn” theo S3; không gọi là hạt lép hoặc “phôi bột”.
+- `thua_dam=khong` chỉ dùng khi xác nhận lượng bón không vượt khuyến cáo;
+  nếu chưa đủ căn cứ đối chiếu thì chọn `chua_biet`. Không suy ra thiếu đạm.
 - `BL06`: S2 có khuyến nghị dùng hạt giống sạch bệnh nhưng không chỉ rõ thời điểm
-  mùa vụ; thời điểm áp dụng vẫn chưa được nguồn xác minh.
+  mùa vụ. S5 bổ sung căn cứ chọn hạt sạch bệnh để gieo: áp dụng khi chuẩn bị
+  lần gieo trồng sắp tới, không phải điều trị cây đang bị bệnh. Chưa xác minh
+  tháng/vụ lúa cụ thể cho địa phương Việt Nam; không tự đặt lịch mùa vụ.
 - `S2` không ghi năm xuất bản; `S3` cũng không ghi năm. Không dùng ngày tệp máy
   chủ hoặc năm bản quyền trang thay cho năm xuất bản.
 
 ### Dùng chung bằng chứng với mạng Bayes
 
 Bayes chỉ nhận ánh xạ được ghi trong `src/rules/bayes.py` khi khái niệm trùng
-trạng thái nút. Vệt úng nước trên phiến lá và đốm tròn/bầu dục có ánh xạ triệu
-chứng; điều kiện âm u **và** sương sớm chỉ có thể ánh xạ sang thời tiết ẩm khi
+trạng thái nút. Vệt úng nước trên phiến lá chưa có nút/CPD tương đương, nên được
+ghi chú và bỏ qua ở Bayes; bộ luật vẫn dùng dữ kiện này cho BL01. Không chuyển
+vệt úng nước thành `TrieuChung=vet_thoi`. Đốm tròn/bầu dục hiện có ánh xạ sang
+`TrieuChung=dom_tron`; điều kiện âm u **và** sương sớm chỉ có thể ánh xạ sang thời tiết ẩm khi
 cả hai cùng được xác nhận; thừa đạm chỉ ánh xạ sang đạm cao khi được xác nhận.
 Các dấu hiệu không khớp loại triệu chứng tổng quát của Bayes được bỏ qua và ghi
 chú. `am_u_va_suong_som=khong` không trở thành trời khô; `thua_dam=khong` không
@@ -94,6 +108,30 @@ Các luật DO12, BL06 và DN09 tạo chuỗi hai bước từ triệu chứng �
 khuyến nghị. DN10 chỉ chạy khi dữ kiện người dùng xác nhận ruộng đã nhiễm bệnh;
 không chạy từ `suy_luan=nghi_dom_nau`. DO08–DO11 và DN05 chỉ tạo yếu tố nguy cơ,
 không xác nhận bệnh. DO07 và BL05 sinh dấu hiệu cần kiểm tra, không phải kết luận.
+
+Lượt đối chiếu ngày 17/11/2026 mở lại S1, S2 (địa chỉ không có `www`) và S3.
+Chưa tìm thấy năm xuất bản xác minh cho S2/S3; vẫn để `nam=null`. Không dùng ngày
+tệp máy chủ, ngày công cụ tìm kiếm thu thập hay năm bản quyền làm năm xuất bản.
+S2 đặt hạt giống sạch bệnh trong Cultural methods nhưng không ghi mùa vụ;
+S5 bổ sung giai đoạn chọn giống để gieo. Đây không phải bằng chứng năm xuất
+bản S2 hoặc lịch mùa vụ của Việt Nam.
+
+## Hồ sơ đối chiếu và nghiệm thu
+
+[Phiếu đối chiếu từng luật](doi_chieu_luat.md) liệt kê đủ 28 id, mục nguồn,
+căn cứ và giới hạn. Phân biệt nội dung mô tả trong nguồn với cách nhóm tổ chức
+gợi ý, sàng lọc cần kiểm tra và kích hoạt khuyến nghị. Không tuyên bố nguồn
+chứng minh mọi quan hệ ngược từ triệu chứng tới bệnh.
+
+Phạm vi khuyến nghị: DO12 theo dõi trong vụ; BL06 chuẩn bị giống trước gieo
+trồng; DN09 quản lý cỏ dại trong vụ; DN10 luân canh vụ sau khi vụ hiện tại đã
+được xác nhận nhiễm. Phạm vi này cần giữ khi trình bày kết quả cho người dùng.
+Nguồn bổ sung S5 hiện thuộc hồ sơ, chưa được `diagnose()` tự thêm vào trích dẫn
+của BL06; luật vẫn giữ nguồn chính S2 và schema một đối tượng `nguon`.
+
+Hồ sơ đã đối chiếu nội dung và ghi rõ khoảng trống. Chưa có năm xuất bản S2/S3,
+lịch mùa vụ địa phương hoặc biên bản chuyên gia ký duyệt. Nếu tiêu chí nghiệm
+thu yêu cầu tất cả nguồn có năm xác định thì tiêu chí đó chưa hoàn tất.
 
 ## Câu hỏi Q4 – Vì sao phải truy vết luật và nguồn?
 
