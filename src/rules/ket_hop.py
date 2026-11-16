@@ -23,7 +23,7 @@ TEN_BENH = {
 NGUONG_KET_LUAN = 0.60
 VI_DU_CNN = [("dao_on", 0.55), ("dom_nau", 0.40), ("bac_la", 0.03)]
 VI_DU_BANG_CHUNG = [
-    "vet_la_hinh_thoi=co",
+    "vet_bac_ung_nuoc_tren_phien_la=co",
     "am_u_va_suong_som=co",
     "thua_dam=co",
 ]

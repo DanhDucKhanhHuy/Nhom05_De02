@@ -8,14 +8,14 @@ from src.rules import bayes, ket_hop
 
 def test_tv2_attributes_are_accepted_and_order_independent():
     first, notes_first = bayes.bang_chung_bayes({
-        "vet_la_hinh_thoi": "co",
+        "vet_bac_ung_nuoc_tren_phien_la": "co",
         "thua_dam": "co",
         "am_u_va_suong_som": "co",
     })
     second, notes_second = bayes.bang_chung_bayes({
         "am_u_va_suong_som": "co",
         "thua_dam": "co",
-        "vet_la_hinh_thoi": "co",
+        "vet_bac_ung_nuoc_tren_phien_la": "co",
     })
     assert first == second == {
         "TrieuChung": "vet_thoi",
@@ -48,6 +48,42 @@ def test_negative_symptom_is_not_misread_as_no_symptoms():
     evidence, notes = bayes.bang_chung_bayes({"vet_la_hinh_thoi": "khong"})
     assert evidence == {}
     assert notes
+
+
+def test_compound_weather_and_nitrogen_negatives_do_not_infer_opposites():
+    evidence, notes = bayes.bang_chung_bayes({
+        "am_u_va_suong_som": "khong",
+        "thua_dam": "khong",
+    })
+    assert evidence == {}
+    assert any("không đồng nghĩa với thời tiết khô" in note for note in notes)
+    assert any("không đồng nghĩa với lượng đạm thấp" in note for note in notes)
+
+
+def test_current_exact_bacterial_symptom_maps_to_bayes_and_unmatched_do_not():
+    evidence, notes = bayes.bang_chung_bayes({
+        "vet_bac_ung_nuoc_tren_phien_la": "co",
+        "vet_la_hinh_thoi": "co",
+    })
+    assert evidence == {"TrieuChung": "vet_thoi"}
+    assert any("vet_la_hinh_thoi=co" in note for note in notes)
+
+
+def test_bayes_vocabulary_mappings_reference_existing_attributes_and_states():
+    import json
+    from pathlib import Path
+
+    vocabulary = json.loads(
+        (Path(bayes.__file__).with_name("vocabulary.json")).read_text(encoding="utf-8")
+    )["thuoc_tinh"]
+    for attribute, states in bayes.ANH_XA_THUOC_TINH.items():
+        assert attribute in vocabulary
+        assert set(states) == {"co", "khong", "chua_biet"}
+        for mapping in states.values():
+            if mapping is not None:
+                node, state = mapping
+                assert node in bayes.NUT
+                assert state in bayes.NUT[node]["gia_tri"]
 
 
 def test_four_class_distribution_and_exact_joint_healthy_probability():

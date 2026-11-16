@@ -75,6 +75,9 @@ def _valid_vocabulary(vocabulary: object) -> tuple[dict[str, Any], list[str]]:
             errors.append(f"{prefix}: định nghĩa phải là đối tượng.")
             continue
         attribute_type = definition.get("loai")
+        description = definition.get("mo_ta")
+        if not isinstance(description, str) or not description.strip():
+            errors.append(f"{prefix}: thiếu mô tả ý nghĩa thuộc tính.")
         if not isinstance(attribute_type, str) or attribute_type not in {
             "du_kien_nguoi_dung", "su_kien_suy_ra"
         }:
@@ -111,6 +114,23 @@ def _valid_vocabulary(vocabulary: object) -> tuple[dict[str, Any], list[str]]:
                 errors.append(f"{prefix}: phải có lựa chọn Chưa biết.")
             if choice_map.get("co") != "Có" or choice_map.get("khong") != "Không":
                 errors.append(f"{prefix}: nhãn lựa chọn phải là Có và Không.")
+            has_and = " và " in question.lower() if isinstance(question, str) else False
+            has_or = " hoặc " in question.lower() if isinstance(question, str) else False
+            expected_join = (
+                "AND_OR" if has_and and has_or else "AND" if has_and
+                else "OR" if has_or else None
+            )
+            if expected_join:
+                if definition.get("phep_ghep") != expected_join:
+                    errors.append(
+                        f"{prefix}: câu hỏi ghép cần khai báo phép ghép {expected_join}."
+                    )
+                if not isinstance(definition.get("dien_giai_ghep"), str) or not definition[
+                    "dien_giai_ghep"
+                ].strip():
+                    errors.append(f"{prefix}: câu hỏi ghép cần diễn giải rõ ý nghĩa.")
+            elif "phep_ghep" in definition or "dien_giai_ghep" in definition:
+                errors.append(f"{prefix}: khai báo phép ghép nhưng câu hỏi không có từ nối tương ứng.")
         elif attribute_type == "su_kien_suy_ra" and any(
             key in definition for key in ("cau_hoi", "lua_chon")
         ):

@@ -110,16 +110,10 @@ NUT: dict[str, dict] = {
 
 #: Ánh xạ sự kiện của hệ luật sang bằng chứng của mạng Bayes.
 ANH_XA_BANG_CHUNG: dict[str, tuple[str, str]] = {
-    "tc_vet_thoi": ("TrieuChung", "vet_thoi"),
-    "tc_chop_la_kho": ("TrieuChung", "chop_la_kho"),
-    "tc_dom_tron": ("TrieuChung", "dom_tron"),
-    "tc_dom_nhieu": ("TrieuChung", "dom_tron"),
-    "tc_khong_co": ("TrieuChung", "khong"),
     "tt_am_do_cao": ("ThoiTiet", "mua_am"),
     "tt_suong_mu": ("ThoiTiet", "mua_am"),
     "tt_mua_nhieu": ("ThoiTiet", "mua_am"),
     "tt_kho_han": ("ThoiTiet", "kho"),
-    "tq_dam_cao": ("BonDam", "cao"),
     "tq_giong_nhiem": ("Giong", "nhiem"),
     "tq_dat_ngheo": ("DinhDuong", "thieu"),
     "tq_thieu_kali": ("DinhDuong", "thieu"),
@@ -127,20 +121,25 @@ ANH_XA_BANG_CHUNG: dict[str, tuple[str, str]] = {
 
 
 # Ánh xạ trực tiếp thuộc tính chung trong vocabulary.json sang trạng thái nút.
-# Chỉ ánh xạ khi ngữ nghĩa tương đương; phủ định một triệu chứng không đồng nghĩa
-# với "không có triệu chứng".
+# Chỉ ánh xạ khi thuộc tính và trạng thái Bayes cùng nghĩa; không biến phủ định
+# của một tổ hợp thành trạng thái đối lập của từng thành phần.
 ANH_XA_THUOC_TINH: dict[str, dict[str, tuple[str, str] | None]] = {
     "vet_la_hinh_thoi": {
-        "co": ("TrieuChung", "vet_thoi"),
+        "co": None,
         "khong": None,
         "chua_biet": None,
     },
     "vet_la_tam_xam_kho": {
-        "co": ("TrieuChung", "vet_thoi"),
+        "co": None,
         "khong": None,
         "chua_biet": None,
     },
     "vet_la_vien_nau": {
+        "co": None,
+        "khong": None,
+        "chua_biet": None,
+    },
+    "vet_bac_ung_nuoc_tren_phien_la": {
         "co": ("TrieuChung", "vet_thoi"),
         "khong": None,
         "chua_biet": None,
@@ -151,23 +150,23 @@ ANH_XA_THUOC_TINH: dict[str, dict[str, tuple[str, str] | None]] = {
         "chua_biet": None,
     },
     "dom_nau_vien_sam": {
-        "co": ("TrieuChung", "dom_tron"),
+        "co": None,
         "khong": None,
         "chua_biet": None,
     },
     "dom_nau_tam_nhat_xam": {
-        "co": ("TrieuChung", "dom_tron"),
+        "co": None,
         "khong": None,
         "chua_biet": None,
     },
     "am_u_va_suong_som": {
         "co": ("ThoiTiet", "mua_am"),
-        "khong": ("ThoiTiet", "kho"),
+        "khong": None,
         "chua_biet": None,
     },
     "thua_dam": {
         "co": ("BonDam", "cao"),
-        "khong": ("BonDam", "thap"),
+        "khong": None,
         "chua_biet": None,
     },
 }
@@ -224,10 +223,16 @@ def bang_chung_bayes(
                 continue
             mapped = ANH_XA_THUOC_TINH.get(key, {}).get(value)
             if mapped is None:
-                notes.add(
-                    f"Bỏ qua {key}={value}: thuộc tính có trong vocabulary nhưng "
-                    "chưa có ánh xạ tương đương trong mạng Bayes."
-                )
+                if value == "khong" and key == "am_u_va_suong_som":
+                    reason = "không âm u và có sương sớm không đồng nghĩa với thời tiết khô"
+                elif value == "khong" and key == "thua_dam":
+                    reason = "không thừa đạm không đồng nghĩa với lượng đạm thấp"
+                else:
+                    reason = (
+                        "thuộc tính có trong vocabulary nhưng chưa có trạng thái Bayes "
+                        "tương đương"
+                    )
+                notes.add(f"Bỏ qua {key}={value}: {reason}.")
                 continue
             node, state = mapped
         else:
@@ -504,7 +509,8 @@ def main(argv: list[str] | None = None) -> int:
         "--bang-chung",
         nargs="*",
         default=None,
-        help="Mã sự kiện đã biết (ví dụ tc_vet_thoi tt_am_do_cao tq_dam_cao).",
+        help=("Sự kiện vocabulary dạng thuộc_tính=giá_trị hoặc mã thời tiết, "
+              "ví dụ vet_bac_ung_nuoc_tren_phien_la=co tt_am_do_cao"),
     )
     parser.add_argument(
         "--khong-pgmpy",
@@ -518,8 +524,12 @@ def main(argv: list[str] | None = None) -> int:
     for nhan, bang_chung in (
         ("Truy vấn 1: chưa có bằng chứng (tiên nghiệm)", None),
         (
-            "Truy vấn 2: vết hình thoi + mưa ẩm + bón nhiều đạm",
-            ds or ["tc_vet_thoi", "tt_am_do_cao", "tq_dam_cao"],
+            "Truy vấn 2: vệt úng nước + thời tiết ẩm + thừa đạm",
+            ds or [
+                "vet_bac_ung_nuoc_tren_phien_la=co",
+                "tt_am_do_cao",
+                "thua_dam=co",
+            ],
         ),
     ):
         ket_qua = truy_van(bang_chung, su_dung_pgmpy=not args.khong_pgmpy)

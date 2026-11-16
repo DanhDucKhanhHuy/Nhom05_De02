@@ -77,7 +77,7 @@
       "id": "DO07",
       "loai": "trung_gian",
       "neu": [
-        "bong_lek_trang_som=co"
+        "bong_lek_trang_khi_benh_xuat_hien_som=co"
       ],
       "thi": "can_kiem_tra=dao_on",
       "nguon": {
@@ -137,7 +137,7 @@
       "id": "BL01",
       "loai": "chan_doan",
       "neu": [
-        "vet_bac_dau_la_uot_nuoc=co"
+        "vet_bac_ung_nuoc_tren_phien_la=co"
       ],
       "thi": "suy_luan=nghi_bac_la",
       "nguon": {
@@ -281,7 +281,7 @@
       "id": "DN08",
       "loai": "chan_doan",
       "neu": [
-        "hat_lep_nhe_hoac_phoi_bot=co"
+        "hat_nhe_hoac_bac_phan=co"
       ],
       "thi": "suy_luan=nghi_dom_nau",
       "nguon": {
@@ -329,7 +329,7 @@
       "id": "DN10",
       "loai": "khuyen_nghi",
       "neu": [
-        "suy_luan=nghi_dom_nau"
+        "ruong_xac_nhan_nhiem_dom_nau=co"
       ],
       "thi": "khuyen_nghi=luan_canh_vu_tiep_theo_neu_bi_nhiem",
       "nguon": {

@@ -6,6 +6,7 @@ import pytest
 
 from scripts.check_rules import validate_rules
 from src.rules.backward import backward
+from src.rules.bayes import bang_chung_bayes
 from src.rules.forward import forward
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -17,6 +18,7 @@ def vocabulary():
         "thuoc_tinh": {
             "trieu_chung": {
                 "loai": "du_kien_nguoi_dung",
+                "mo_ta": "Có dấu hiệu triệu chứng",
                 "gia_tri": ["co", "khong", "chua_biet"],
                 "cau_hoi": "Bạn có quan sát dấu hiệu này không?",
                 "lua_chon": [
@@ -25,8 +27,8 @@ def vocabulary():
                     {"ma": "chua_biet", "nhan": "Chưa biết"},
                 ],
             },
-            "suy_luan": {"loai": "su_kien_suy_ra", "gia_tri": ["nghi_benh"]},
-            "khuyen_nghi": {"loai": "su_kien_suy_ra", "gia_tri": ["theo_doi"]},
+            "suy_luan": {"loai": "su_kien_suy_ra", "mo_ta": "Gợi ý bệnh", "gia_tri": ["nghi_benh"]},
+            "khuyen_nghi": {"loai": "su_kien_suy_ra", "mo_ta": "Biện pháp", "gia_tri": ["theo_doi"]},
         }
     }
 
@@ -122,6 +124,95 @@ def test_brown_spot_recommendations_keep_their_season_scope():
                        if rule["loai"] == "khuyen_nghi"}
     assert recommendations["DN09"] == "khuyen_nghi=quan_ly_co_dai_trong_vu"
     assert recommendations["DN10"] == "khuyen_nghi=luan_canh_vu_tiep_theo_neu_bi_nhiem"
+    dn10 = next(rule for rule in document["rules"] if rule["id"] == "DN10")
+    assert dn10["neu"] == ["ruong_xac_nhan_nhiem_dom_nau=co"]
+
+
+def test_next_season_rotation_requires_confirmed_brown_spot():
+    rules = json.loads((ROOT / "src/rules/rules.json").read_text(encoding="utf-8"))["rules"]
+    suspected = forward({"suy_luan=nghi_dom_nau"}, rules)
+    assert "khuyen_nghi=luan_canh_vu_tiep_theo_neu_bi_nhiem" not in suspected
+    confirmed = forward({"ruong_xac_nhan_nhiem_dom_nau=co"}, rules)
+    assert "khuyen_nghi=luan_canh_vu_tiep_theo_neu_bi_nhiem" in confirmed
+
+    asked = []
+    assert backward(
+        "khuyen_nghi=luan_canh_vu_tiep_theo_neu_bi_nhiem",
+        set(),
+        rules,
+        lambda question: asked.append(question) or True,
+    )
+    assert asked == ["Ruộng đã được xác định là nhiễm bệnh đốm nâu chưa?"]
+
+
+def test_brown_spot_grain_attribute_matches_source_concept():
+    vocabulary = json.loads((ROOT / "src/rules/vocabulary.json").read_text(encoding="utf-8"))
+    attributes = vocabulary["thuoc_tinh"]
+    assert "hat_lep_nhe_hoac_phoi_bot" not in attributes
+    grain_sign = attributes["hat_nhe_hoac_bac_phan"]
+    assert grain_sign["mo_ta"] == "Hạt nhẹ hoặc hạt có biểu hiện bạc phấn"
+    assert grain_sign["phep_ghep"] == "OR"
+
+
+def test_compound_symptoms_keep_source_meaning_in_question_and_description():
+    vocabulary = json.loads((ROOT / "src/rules/vocabulary.json").read_text(encoding="utf-8"))
+    attributes = vocabulary["thuoc_tinh"]
+    panicle = attributes["bong_lek_trang_khi_benh_xuat_hien_som"]
+    assert "bong_lek_trang_som" not in attributes
+    assert "bệnh đạo ôn xuất hiện sớm" in panicle["mo_ta"]
+    assert "Nếu bệnh đạo ôn xuất hiện sớm" in panicle["cau_hoi"]
+    center = attributes["dom_nau_tam_nhat_xam"]
+    assert "nâu đỏ nhạt hoặc xám" in center["mo_ta"]
+    assert "nâu đỏ nhạt hoặc xám" in center["cau_hoi"]
+
+
+def test_vocabulary_questions_match_attribute_meaning_and_explain_join_logic():
+    vocabulary = json.loads((ROOT / "src/rules/vocabulary.json").read_text(encoding="utf-8"))
+    attributes = vocabulary["thuoc_tinh"]
+    waterlogged = attributes["vet_bac_ung_nuoc_tren_phien_la"]
+    assert "vet_bac_dau_la_uot_nuoc" not in attributes
+    assert waterlogged["mo_ta"] == "Vệt bạc lá dạng úng nước đến vàng trên phiến lá"
+    assert waterlogged["cau_hoi"] == "Bạn có thấy vệt bạc lá dạng úng nước đến vàng trên phiến lá không?"
+
+    for name, definition in attributes.items():
+        question = definition.get("cau_hoi", "").lower()
+        has_and = " và " in question
+        has_or = " hoặc " in question
+        if has_and or has_or:
+            assert definition.get("phep_ghep") == (
+                "AND_OR" if has_and and has_or else "AND" if has_and else "OR"
+            ), name
+            assert definition.get("dien_giai_ghep"), name
+
+
+def test_compound_negatives_do_not_become_opposite_bayes_states():
+    result, notes = bang_chung_bayes([
+        "am_u_va_suong_som=khong",
+        "thua_dam=khong",
+        "am_u_va_suong_som=chua_biet",
+        "thua_dam=chua_biet",
+    ])
+    assert result == {}
+    assert any("khô" in note for note in notes)
+    assert any("thấp" in note for note in notes)
+
+
+def test_current_vocabulary_maps_only_supported_positive_bayes_evidence():
+    result, notes = bang_chung_bayes([
+        "am_u_va_suong_som=co",
+        "thua_dam=co",
+        "ruong_thieu_nuoc=co",
+    ])
+    assert result == {"ThoiTiet": "mua_am", "BonDam": "cao"}
+    assert any("ruong_thieu_nuoc=co" in note for note in notes)
+
+
+def test_unknown_facts_do_not_trigger_forward_rules():
+    rules = json.loads((ROOT / "src/rules/rules.json").read_text(encoding="utf-8"))["rules"]
+    facts = forward({"am_u_va_suong_som=chua_biet", "thua_dam=khong"}, rules)
+    assert "yeu_to_nguy_co=dao_on" not in facts
+    assert "ThoiTiet=kho" not in facts
+    assert "BonDam=thap" not in facts
 
 
 def test_validator_checks_values_sources_count_and_cycles(vocabulary, sources, symbolic_rules):
@@ -150,6 +241,24 @@ def test_validator_requires_question_choices_and_known_source(vocabulary, source
     errors = validate_rules({"rules": [rule]}, vocabulary, sources, min_rules=1)
     assert any("câu hỏi" in error for error in errors)
     assert any("mã nguồn" in error for error in errors)
+
+
+def test_validator_requires_explicit_logic_for_compound_questions(vocabulary, sources, symbolic_rules):
+    vocabulary["thuoc_tinh"]["trieu_chung"]["cau_hoi"] = "Có dấu hiệu A và dấu hiệu B không?"
+    errors = validate_rules(
+        {"rules": symbolic_rules}, vocabulary, sources, min_rules=2, require_coverage=False
+    )
+    assert any("phép ghép" in error for error in errors)
+
+
+def test_validator_requires_a_description_for_every_vocabulary_attribute(
+    vocabulary, sources, symbolic_rules
+):
+    vocabulary["thuoc_tinh"]["trieu_chung"].pop("mo_ta")
+    errors = validate_rules(
+        {"rules": symbolic_rules}, vocabulary, sources, min_rules=2, require_coverage=False
+    )
+    assert any("thiếu mô tả" in error for error in errors)
 
 
 @pytest.mark.parametrize("change", [

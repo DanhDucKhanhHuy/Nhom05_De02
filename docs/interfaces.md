@@ -141,8 +141,16 @@ Sự kiện có dạng `thuoc_tinh=gia_tri`. Ví dụ kiểm thử ký hiệu:
 `src/rules/vocabulary.json` khai báo toàn bộ thuộc tính và giá trị. Thuộc tính
 `du_kien_nguoi_dung` phải có câu hỏi tiếng Việt và lựa chọn Có/Không/Chưa biết;
 `su_kien_suy_ra` chỉ do luật tạo.
+`co` xác nhận toàn bộ mệnh đề thuộc tính; `khong` phủ định đúng mệnh đề đó;
+`chua_biet` là chưa xác định. Thuộc tính không có dữ kiện không đồng nghĩa với
+`khong`. Nếu câu hỏi ghép nhiều dấu hiệu, từ vựng khai báo phép AND/OR và giải
+thích cách chọn Có. Với mệnh đề AND, `khong` không cho biết thành phần nào sai;
+không được suy ngược thành trạng thái trái ngược của từng thành phần.
 `src/rules/sources.json` ánh xạ mã nguồn tới tên tài liệu, cơ quan, năm (hoặc
 ghi rõ năm chưa xác định) và URL. Mục trích dẫn cụ thể nằm trong `nguon.muc`.
+Ánh xạ sang Bayes chỉ dùng khi trạng thái có cùng nghĩa; bằng chứng không tương
+đương hoặc phủ định mơ hồ được ghi chú và bỏ qua, không tự đổi sang trạng thái
+đối lập.
 
 `python -m scripts.check_rules` kiểm tra schema, id duy nhất, tối thiểu 20 luật,
 mã nguồn tồn tại, từ vựng/giá trị, đủ luật chẩn đoán và khuyến nghị cho ba bệnh,

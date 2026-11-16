@@ -59,7 +59,7 @@ Các CPD hiện tại là **giả định định tính để minh họa mô hì
 Danh mục nguồn hiện hành được lấy từ `src/rules/sources.json` và `docs/nguon_tri_thuc.md`:
 
 - **S1:** “Phòng trừ bệnh đạo ôn hại lúa”, Trung tâm Khuyến nông Quốc gia, 2021. [Trang tài liệu](https://khuyennongvn.gov.vn/khoa-hoc-cong-nghe/khcn-trong-nuoc/phong-tru-benh-dao-on-hai-lua-21414.html).
-- **S2:** “Bệnh bạc lá vi khuẩn trên lúa”, Trung tâm Nghiên cứu Bảo vệ cây trồng, Đại học Nông nghiệp Tamil Nadu. [Trang HTML](https://www.agritech.tnau.ac.in/expert_system/paddy/cpdisblb.html). Trang không ghi năm xuất bản; không suy đoán năm từ ngày tệp máy chủ.
+- **S2:** “Bệnh bạc lá vi khuẩn trên lúa”, Đại học Nông nghiệp Tamil Nadu (TNAU), cổng Agritech – Crop Protection. [Trang HTML](https://www.agritech.tnau.ac.in/expert_system/paddy/cpdisblb.html). Trang không ghi năm xuất bản; không suy đoán năm từ ngày tệp máy chủ.
 - **S3:** “Bệnh đốm nâu”, Viện Nghiên cứu và Phát triển Lúa, Bộ Nông nghiệp Sri Lanka. [Trang tài liệu](https://doa.gov.lk/rrdi_ricediseases_brownspot/). Trang không ghi năm xuất bản; © 2026 không được xem là năm xuất bản.
 - **S4:** “Hướng dẫn quản lý dịch hại lúa: bệnh đạo ôn”, Chương trình Quản lý dịch hại tổng hợp, Đại học California, cập nhật 07/2024. [Trang tài liệu](https://ipm.ucanr.edu/agriculture/rice/rice-blast/).
 
@@ -71,7 +71,7 @@ Nguồn từ điển thuộc tính đầu vào là `src/rules/vocabulary.json`. 
 
 ```python
 {
-    "vet_la_hinh_thoi": "co",
+    "vet_bac_ung_nuoc_tren_phien_la": "co",
     "am_u_va_suong_som": "co",
     "thua_dam": "co",
 }
@@ -81,13 +81,14 @@ Các ánh xạ đã có ngữ nghĩa tương đương:
 
 | Thuộc tính TV2 | Trạng thái | Bằng chứng Bayes |
 |---|---|---|
-| `vet_la_hinh_thoi` | `co` | `TrieuChung=vet_thoi` |
-| `am_u_va_suong_som` | `co` / `khong` | `ThoiTiet=mua_am` / `ThoiTiet=kho` |
-| `thua_dam` | `co` / `khong` | `BonDam=cao` / `BonDam=thap` |
+| `vet_bac_ung_nuoc_tren_phien_la` | `co` | `TrieuChung=vet_thoi` |
+| `dom_tron_hoac_bau_duc_nau` | `co` | `TrieuChung=dom_tron` |
+| `am_u_va_suong_som` | `co` | `ThoiTiet=mua_am` |
+| `thua_dam` | `co` | `BonDam=cao` |
 
-Không suy diễn `vet_la_hinh_thoi=khong` thành `TrieuChung=khong`, vì không có vết hình thoi không đồng nghĩa với không có bất kỳ triệu chứng nào. Những thuộc tính đã có trong vocabulary nhưng chưa có nút tương ứng được ghi chú và bỏ qua; `chua_biet` được bỏ qua, không xem là `khong`.
+Chỉ ánh xạ thuộc tính khi nghĩa của trạng thái khớp nút Bayes. Vết hình thoi, tâm vết xám khô và viền nâu hiện không có trạng thái triệu chứng tương đương nên được ghi chú và bỏ qua. `am_u_va_suong_som=khong` không đủ để kết luận thời tiết khô; `thua_dam=khong` không đủ để kết luận đạm thấp. `chua_biet` và thuộc tính chưa có ánh xạ cũng được bỏ qua.
 
-Nếu nhiều bằng chứng đưa ra trạng thái trái ngược cho cùng một nút Bayes, toàn bộ bằng chứng của nút đó bị loại và ghi chú mâu thuẫn. Việc tổng hợp theo tập trạng thái và sắp xếp ghi chú giúp kết quả không phụ thuộc thứ tự nhập. Mã sự kiện cũ như `tc_vet_thoi`, `tt_am_do_cao`, `tq_dam_cao` vẫn được tiếp nhận nếu còn ánh xạ rõ nghĩa.
+Nếu nhiều bằng chứng đưa ra trạng thái trái ngược cho cùng một nút Bayes, toàn bộ bằng chứng của nút đó bị loại và ghi chú mâu thuẫn. Việc tổng hợp theo tập trạng thái và sắp xếp ghi chú giúp kết quả không phụ thuộc thứ tự nhập. Mã thời tiết do bộ lấy thời tiết tạo (ví dụ `tt_am_do_cao`) vẫn được nhận; triệu chứng dùng chung lấy trực tiếp từ `vocabulary.json`.
 
 ## 4. Truy vấn hậu nghiệm và xác suất lá khỏe
 
@@ -185,7 +186,7 @@ top3 = [
     ("bac_la", 0.03),
 ]
 evidence = {
-    "vet_la_hinh_thoi": "co",
+    "vet_bac_ung_nuoc_tren_phien_la": "co",
     "am_u_va_suong_som": "co",
     "thua_dam": "co",
 }

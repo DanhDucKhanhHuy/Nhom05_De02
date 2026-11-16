@@ -9,7 +9,7 @@ nguyên.
 
 ## Kết quả kiểm tra trong môi trường thực thi hiện tại
 
-- `python -m pytest -q`: **129 passed, 1 skipped, 9 xfailed**.
+- `python -m pytest -q` (16/11/2026): **141 passed, 1 skipped, 9 xfailed**.
 - 1 test bị skip là kiểm thử tích hợp pgmpy vì môi trường này chưa có `pgmpy`;
   việc cài `pgmpy==0.1.25` không thực hiện được do môi trường không truy cập được
   PyPI (DNS/network). Test được viết để yêu cầu đúng phiên bản `0.1.25`, gọi
@@ -17,7 +17,9 @@ nguyên.
   liệt kê độc lập trên ba bộ bằng chứng khi chạy trong môi trường đã cài thư viện.
 - 9 xfail là các kiểm thử thuật toán tìm kiếm chưa triển khai trong `tests/test_search.py`;
   không thuộc phần xác suất TV3.
-- `python -m scripts.check_rules`: đạt, 28 luật, nguồn, từ vựng và chuỗi suy diễn hợp lệ.
+- `python -m scripts.check_rules`: đạt, 28 luật, nguồn, mô tả/câu hỏi, từ vựng và chuỗi suy diễn hợp lệ.
+- `python -m ruff check .`: đạt sau khi sắp xếp import kiểm thử.
+- `python demo.py`: chạy thành công; đầu ra CNN ghi rõ là giả, demo không gọi Bayes.
 - `python -m src.rules.bayes --khong-pgmpy`: chạy thành công.
 - `python -m src.rules.ket_hop --khong-pgmpy`: chạy thành công; ví dụ mặc định dùng
   top-3 giả lập và ba thuộc tính từ vocabulary.
@@ -31,10 +33,11 @@ nhận kiểm thử pgmpy là đã chạy thành công khi chưa thực hiện �
 ## Đối chiếu bảy ưu tiên
 
 1. **Bằng chứng TV2–TV3:** TV3 nhận trực tiếp các thuộc tính trong
-   `vocabulary.json`, gồm `vet_la_hinh_thoi`, `thua_dam`, thời tiết và một số
-   dấu hiệu lá. `chua_biet`, thuộc tính đã biết nhưng chưa ánh xạ và mã lạ có
-   thông báo riêng. Mâu thuẫn cùng nút bị loại theo tập trạng thái, ghi chú
-   được sắp xếp nên không phụ thuộc thứ tự nhập.
+   `vocabulary.json`. Chỉ ánh xạ khi nghĩa của thuộc tính và trạng thái Bayes
+   trùng nhau; “không âm u và có sương sớm” không thành trời khô, “không thừa
+   đạm” không thành đạm thấp. Triệu chứng không khớp trạng thái Bayes được bỏ
+   qua có ghi chú. `chua_biet`, thuộc tính chưa ánh xạ và mã lạ có thông báo
+   riêng. Mâu thuẫn cùng nút bị loại không phụ thuộc thứ tự nhập.
 2. **Biểu diễn bệnh:** ba biến bệnh trong mạng vẫn cho phép đồng mắc. Bốn lớp
    đầu ra là các trạng thái không bệnh hoặc đúng một bệnh; khối lượng đồng mắc
    được trả riêng. Xác suất lá khỏe đồng thời lấy từ trạng thái
