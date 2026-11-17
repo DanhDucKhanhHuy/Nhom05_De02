@@ -36,6 +36,22 @@ def ve_chu(be_mat, noi_dung, vi_tri, co=20, mau=None, dam=False, can="topleft"):
     return khung
 
 
+class ManHinh:
+    """Lớp cha các màn hình"""
+
+    def __init__(self, ung_dung):
+        self.ung_dung = ung_dung
+
+    def xu_ly_su_kien(self, su_kien):
+        pass
+
+    def cap_nhat(self, dt):
+        pass
+
+    def ve(self, be_mat):
+        pass
+
+
 CAO_THANH_TIEU_DE = 84
 
 

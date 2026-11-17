@@ -1,25 +1,12 @@
 """E1 - Khung ứng dụng - TV5. Chạy: python -m src.app.main"""
 import pygame
 
-from .giao_dien import MAU, Nut, ve_chu, ve_thanh_tieu_de
+from .giao_dien import MAU, ManHinh, Nut, ve_chu, ve_thanh_tieu_de
+from .grid_editor import ManHinhBanDo
 
 RONG, CAO = 1100, 720
 FPS = 60
 TIEU_DE = "Bác sĩ Lúa"
-
-
-class ManHinh:
-    def __init__(self, ung_dung):
-        self.ung_dung = ung_dung
-
-    def xu_ly_su_kien(self, su_kien):
-        pass
-
-    def cap_nhat(self, dt):
-        pass
-
-    def ve(self, be_mat):
-        pass
 
 
 class ManHinhChinh(ManHinh):
@@ -32,9 +19,7 @@ class ManHinhChinh(ManHinh):
                     ung_dung, "Chẩn đoán bệnh từ ảnh lá lúa",
                     "Sẽ ghép khi CNN (CN3) và hệ chuyên gia (CN2) hoàn thành."))),
             Nut("Bản đồ ruộng và lộ trình drone", (x, 400, rong, cao), co=24,
-                khi_bam=lambda: ung_dung.chuyen_den(ManHinhTamThoi(
-                    ung_dung, "Bản đồ ruộng và lộ trình drone",
-                    "Bản đồ lưới (E2) và hoạt cảnh lộ trình (E3) đang được làm."))),
+                khi_bam=lambda: ung_dung.chuyen_den(ManHinhBanDo(ung_dung))),
             Nut("Thoát", (x, 480, rong, cao), co=24, khi_bam=ung_dung.thoat),
         ]
 
