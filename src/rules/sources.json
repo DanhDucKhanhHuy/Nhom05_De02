@@ -10,19 +10,19 @@
     },
     {
       "ma": "S2",
-      "ten": "Bệnh bạc lá vi khuẩn trên lúa",
-      "co_quan": "Đại học Nông nghiệp Tamil Nadu (TNAU), Cổng Agritech – Crop Protection",
-      "nam": null,
-      "url": "https://agritech.tnau.ac.in/expert_system/paddy/cpdisblb.html",
-      "ghi_chu": "Trang không ghi năm xuất bản; thiếu năm xuất bản đã xác minh. Ngày tệp máy chủ 17/11/2020 không phải bằng chứng năm xuất bản. Đã mở lại ngày 17/11/2026. Dùng Symptoms và Cultural methods; không lấy số liệu định lượng cho CPD."
+      "ten": "Managing bacterial leaf blight in paddy",
+      "co_quan": "Cổng Agritech, Đại học Nông nghiệp Tamil Nadu (TNAU); bài của Mallikarjun Kengal và V. R. Joshi, University of Agricultural Sciences, Koppal",
+      "nam": 2012,
+      "url": "https://agritech.tnau.ac.in/daily_events/2012/english/july/12_july_12_eng.pdf",
+      "ghi_chu": "Bài ghi ngày xuất bản 11/07/2012. Dùng phần triệu chứng để hỗ trợ vệt úng nước bắt đầu ở chóp lá, mép lượn sóng, màu vàng đến trắng và héo. Biện pháp của BL06 không trỏ tới bài này; bài có nêu vi khuẩn có thể hiện diện trong hạt nhưng không diễn đạt trực tiếp khuyến nghị hạt sạch bệnh. Đã đối chiếu ngày 17/11/2026."
     },
     {
       "ma": "S3",
-      "ten": "Bệnh đốm nâu",
-      "co_quan": "Viện Nghiên cứu và Phát triển Lúa, Bộ Nông nghiệp Sri Lanka",
-      "nam": null,
-      "url": "https://doa.gov.lk/rrdi_ricediseases_brownspot/",
-      "ghi_chu": "Trang không ghi năm xuất bản; chân trang © 2026 là năm bản quyền của trang, không xác nhận năm xuất bản tài liệu. Đã mở lại ngày 17/11/2026."
+      "ten": "Louisiana Rice Production Handbook",
+      "co_quan": "LSU AgCenter, Louisiana State University Agricultural Center",
+      "nam": 2014,
+      "url": "https://www.lsuagcenter.com/~/media/system/9/0/e/9/90e93160aba5daccea90c6d955299f74/pub2331riceproductionhandbook2014completebook.pdf",
+      "ghi_chu": "Ấn phẩm năm 2014; chương Disease Management, mục Brown spot, trang in 92. Hỗ trợ triệu chứng trên diệp tiêu, lá, bẹ, bông/hạt và khuyến nghị quản lý điều kiện sinh trưởng, luân canh, đất và nước. Không hỗ trợ khuyến nghị quản lý cỏ dại riêng cho bệnh đốm nâu; DN09 đã được sửa theo nội dung nguồn. Đã đối chiếu ngày 17/11/2026."
     },
     {
       "ma": "S4",
@@ -38,7 +38,15 @@
       "co_quan": "Indian Agricultural Research Institute (IARI), Regional Station, Karnal",
       "nam": 2013,
       "url": "https://www.iari.res.in/files/Publication/Others/EDSP_Eng-21102013.pdf",
-      "ghi_chu": "Trích dẫn chuẩn và dòng Printed: February, 2013 ở trang PDF 4 xác nhận năm. Bài Safe Seed Storage, trang in 28 / trang PDF 36, nêu chọn hạt sạch bệnh để gieo. Chỉ bổ sung căn cứ giai đoạn áp dụng BL06; S2 vẫn là nguồn khuyến nghị bạc lá. Không trích biện pháp hóa học, không dùng để đặt CPD. Đã đọc ngày 17/11/2026."
+      "ghi_chu": "Trích dẫn chuẩn và dòng Printed: February, 2013 ở trang PDF 4 xác nhận năm. Bài Safe Seed Storage, trang in 28 / trang PDF 36, nêu chọn hạt sạch bệnh để gieo. Bổ sung căn cứ giai đoạn áp dụng BL06 cùng S6; không trích biện pháp hóa học, không dùng để đặt CPD. Đã đọc ngày 17/11/2026."
+    },
+    {
+      "ma": "S6",
+      "ten": "ICAR Kharif Agro-Advisories for Farmers 2025",
+      "co_quan": "Indian Council of Agricultural Research (ICAR)",
+      "nam": 2025,
+      "url": "https://icar.gov.in/sites/default/files/2025-10/ICAR-En-Kharif-Agro-Advisories-for-Farmers-2025.pdf",
+      "ghi_chu": "Ấn phẩm ghi năm 2025. Phần hướng dẫn lúa nêu dùng hạt giống được chứng nhận, sạch bệnh; phần khuyến cáo bạc lá nêu quản lý bệnh. Dùng cho khuyến nghị chuẩn bị giống của BL06, không dùng thuốc hoặc liều trong luật. Đã đối chiếu ngày 17/11/2026."
     }
   ]
 }

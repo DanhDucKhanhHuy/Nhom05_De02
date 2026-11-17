@@ -65,4 +65,4 @@ nhận kiểm thử pgmpy là đã chạy thành công khi chưa thực hiện �
 - Các con số CPD và ngưỡng 0.60 chưa được hiệu chuẩn bằng dữ liệu đồng ruộng.
 - Cần cài đúng dependency trong Python 3.10–3.11 của nhóm, chạy test pgmpy,
   rồi mới xác nhận ưu tiên 6 hoàn tất về mặt thực thi.
-- Nguồn S2/S3 không có năm xuất bản xác minh; giữ `null`, không tự suy đoán.
+- S2 có ngày đăng 11/07/2012; S3 là ấn phẩm năm 2014. Không dùng nguồn cũ thiếu metadata làm nguồn chuẩn cho các luật này.

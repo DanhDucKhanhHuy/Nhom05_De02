@@ -161,7 +161,7 @@
       "id": "BL03",
       "loai": "chan_doan",
       "neu": [
-        "vet_hoai_tu_vang_trang_o_mep_la=co"
+        "vet_la_vang_den_trang=co"
       ],
       "thi": "suy_luan=nghi_bac_la",
       "nguon": {
@@ -185,7 +185,7 @@
       "id": "BL05",
       "loai": "trung_gian",
       "neu": [
-        "la_hoac_cay_con_heo=co"
+        "la_heo_hoac_cuon_lai=co"
       ],
       "thi": "can_kiem_tra=bac_la",
       "nguon": {
@@ -309,8 +309,8 @@
       ],
       "thi": "khuyen_nghi=chon_hat_giong_sach_benh",
       "nguon": {
-        "ma": "S2",
-        "muc": "Mục biện pháp canh tác, dùng hạt giống sạch bệnh"
+        "ma": "S6",
+        "muc": "Hướng dẫn lúa, chọn hạt giống được chứng nhận và sạch bệnh"
       }
     },
     {
@@ -319,10 +319,10 @@
       "neu": [
         "suy_luan=nghi_dom_nau"
       ],
-      "thi": "khuyen_nghi=quan_ly_co_dai_trong_vu",
+      "thi": "khuyen_nghi=quan_ly_dinh_duong_dat_nuoc_phu_hop",
       "nguon": {
         "ma": "S3",
-        "muc": "Mục Quản lý bệnh trong vụ, quản lý cỏ dại"
+        "muc": "Chương Disease Management, mục Brown Spot, quản lý dinh dưỡng, đất và nước"
       }
     },
     {
@@ -334,7 +334,7 @@
       "thi": "khuyen_nghi=luan_canh_vu_tiep_theo_neu_bi_nhiem",
       "nguon": {
         "ma": "S3",
-        "muc": "Mục Quản lý bệnh, biện pháp cho vụ tiếp theo: luân canh"
+        "muc": "Mục Brown Spot, khuyến nghị luân canh"
       }
     }
   ]

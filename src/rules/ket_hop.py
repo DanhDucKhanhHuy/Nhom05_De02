@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 import math
+import sys
 from typing import Iterable, Mapping
 
 from .bayes import truy_van
@@ -221,4 +222,6 @@ def main(argv: list[str] | None = None) -> int:
 
 
 if __name__ == "__main__":
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8")
     raise SystemExit(main())

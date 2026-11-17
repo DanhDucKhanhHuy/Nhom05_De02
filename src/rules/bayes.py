@@ -7,6 +7,7 @@ import argparse
 import itertools
 import json
 import math
+import sys
 from pathlib import Path
 from typing import Iterable, Mapping
 
@@ -545,4 +546,6 @@ def main(argv: list[str] | None = None) -> int:
 
 
 if __name__ == "__main__":
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8")
     raise SystemExit(main())

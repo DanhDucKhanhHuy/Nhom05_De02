@@ -113,16 +113,16 @@ def test_bacterial_rules_only_ask_about_observable_features():
     vocabulary = json.loads((ROOT / "src/rules/vocabulary.json").read_text(encoding="utf-8"))["thuoc_tinh"]
     by_id = {rule["id"]: rule for rule in document["rules"]}
     assert by_id["BL02"]["neu"] == ["vet_bac_bat_dau_o_chop_la=co"]
-    assert by_id["BL03"]["neu"] == ["vet_hoai_tu_vang_trang_o_mep_la=co"]
-    assert "chuyển dần" not in vocabulary["vet_hoai_tu_vang_trang_o_mep_la"]["cau_hoi"]
+    assert by_id["BL03"]["neu"] == ["vet_la_vang_den_trang=co"]
+    assert "chuyển dần" not in vocabulary["vet_la_vang_den_trang"]["cau_hoi"]
     assert "kéo dài ra" not in vocabulary["vet_bac_bat_dau_o_chop_la"]["cau_hoi"]
 
 
-def test_brown_spot_recommendations_keep_their_season_scope():
+def test_brown_spot_recommendations_match_the_replacement_source_scope():
     document = json.loads((ROOT / "src/rules/rules.json").read_text(encoding="utf-8"))
     recommendations = {rule["id"]: rule["thi"] for rule in document["rules"]
                        if rule["loai"] == "khuyen_nghi"}
-    assert recommendations["DN09"] == "khuyen_nghi=quan_ly_co_dai_trong_vu"
+    assert recommendations["DN09"] == "khuyen_nghi=quan_ly_dinh_duong_dat_nuoc_phu_hop"
     assert recommendations["DN10"] == "khuyen_nghi=luan_canh_vu_tiep_theo_neu_bi_nhiem"
     dn10 = next(rule for rule in document["rules"] if rule["id"] == "DN10")
     assert dn10["neu"] == ["ruong_xac_nhan_nhiem_dom_nau=co"]

@@ -59,11 +59,11 @@ Các CPD hiện tại là **giả định định tính để minh họa mô hì
 Danh mục nguồn hiện hành được lấy từ `src/rules/sources.json` và `docs/nguon_tri_thuc.md`:
 
 - **S1:** “Phòng trừ bệnh đạo ôn hại lúa”, Trung tâm Khuyến nông Quốc gia, 2021. [Trang tài liệu](https://khuyennongvn.gov.vn/khoa-hoc-cong-nghe/khcn-trong-nuoc/phong-tru-benh-dao-on-hai-lua-21414.html).
-- **S2:** “Bệnh bạc lá vi khuẩn trên lúa”, Đại học Nông nghiệp Tamil Nadu (TNAU), cổng Agritech – Crop Protection. [Trang HTML](https://www.agritech.tnau.ac.in/expert_system/paddy/cpdisblb.html). Trang không ghi năm xuất bản; không suy đoán năm từ ngày tệp máy chủ.
-- **S3:** “Bệnh đốm nâu”, Viện Nghiên cứu và Phát triển Lúa, Bộ Nông nghiệp Sri Lanka. [Trang tài liệu](https://doa.gov.lk/rrdi_ricediseases_brownspot/). Trang không ghi năm xuất bản; © 2026 không được xem là năm xuất bản.
+- **S2:** “Managing bacterial leaf blight in paddy”, Mallikarjun Kengal và V. R. Joshi, đăng trên cổng Agritech TNAU ngày 11/07/2012. [Ấn phẩm PDF](https://agritech.tnau.ac.in/daily_events/2012/english/july/12_july_12_eng.pdf).
+- **S3:** “Louisiana Rice Production Handbook”, LSU AgCenter, 2014, mục Brown Spot, trang in 92. [Ấn phẩm PDF](https://www.lsuagcenter.com/~/media/system/9/0/e/9/90e93160aba5daccea90c6d955299f74/pub2331riceproductionhandbook2014completebook.pdf).
 - **S4:** “Hướng dẫn quản lý dịch hại lúa: bệnh đạo ôn”, Chương trình Quản lý dịch hại tổng hợp, Đại học California, cập nhật 07/2024. [Trang tài liệu](https://ipm.ucanr.edu/agriculture/rice/rice-blast/).
 
-S2 và S3 vẫn để năm `null` trong danh mục nguồn. Nhóm cần dữ liệu thực nghiệm có nhãn để ước lượng/hiệu chuẩn CPD và kiểm tra độ tin cậy trước khi diễn giải các xác suất như rủi ro thực tế.
+S2 có ngày đăng 2012 và S3 là ấn phẩm năm 2014. Nhóm vẫn cần dữ liệu thực nghiệm có nhãn để ước lượng/hiệu chuẩn CPD và kiểm tra độ tin cậy trước khi diễn giải các xác suất như rủi ro thực tế.
 
 ## 3. Thống nhất bằng chứng TV2–TV3
 

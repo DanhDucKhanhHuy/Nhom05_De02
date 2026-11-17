@@ -325,15 +325,15 @@
         }
       ]
     },
-    "vet_hoai_tu_vang_trang_o_mep_la": {
+    "vet_la_vang_den_trang": {
       "loai": "du_kien_nguoi_dung",
-      "mo_ta": "Vùng hoại tử ở mép lá màu vàng trắng hoặc vàng kim",
+      "mo_ta": "Vệt bệnh trên lá có màu vàng đến trắng",
       "gia_tri": [
         "co",
         "khong",
         "chua_biet"
       ],
-      "cau_hoi": "Mép lá có vùng hoại tử màu vàng trắng hoặc vàng kim không?",
+      "cau_hoi": "Bạn có thấy vệt bệnh trên lá có màu vàng đến trắng không?",
       "lua_chon": [
         {
           "ma": "co",
@@ -348,8 +348,7 @@
           "nhan": "Chưa biết"
         }
       ],
-      "phep_ghep": "OR",
-      "dien_giai_ghep": "Màu vàng trắng hoặc vàng kim đều tính là Có; không hàm ý đây là hai giai đoạn đổi màu."
+      "ghi_chu": "Chỉ ghi nhận màu quan sát được; không hàm ý đây là trình tự đổi màu theo thời gian."
     },
     "vet_bac_mep_luon_song": {
       "loai": "du_kien_nguoi_dung",
@@ -375,15 +374,15 @@
         }
       ]
     },
-    "la_hoac_cay_con_heo": {
+    "la_heo_hoac_cuon_lai": {
       "loai": "du_kien_nguoi_dung",
-      "mo_ta": "Lá hoặc cây mạ bị héo",
+      "mo_ta": "Lá lúa bị héo hoặc cuộn lại",
       "gia_tri": [
         "co",
         "khong",
         "chua_biet"
       ],
-      "cau_hoi": "Bạn có thấy lá hoặc cây mạ bị héo không?",
+      "cau_hoi": "Bạn có thấy lá lúa bị héo hoặc cuộn lại không?",
       "lua_chon": [
         {
           "ma": "co",
@@ -658,7 +657,7 @@
       "gia_tri": [
         "theo_doi_ruong_thuong_xuyen",
         "chon_hat_giong_sach_benh",
-        "quan_ly_co_dai_trong_vu",
+        "quan_ly_dinh_duong_dat_nuoc_phu_hop",
         "luan_canh_vu_tiep_theo_neu_bi_nhiem"
       ]
     }
