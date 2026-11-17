@@ -69,6 +69,7 @@ class Nut:
         self.khi_bam = khi_bam
         self.co = co
         self.bat = bat
+        self.chon = False  # đang được chọn
 
     def xu_ly(self, su_kien):
         if (self.bat and su_kien.type == pygame.MOUSEBUTTONDOWN and su_kien.button == 1
@@ -79,8 +80,12 @@ class Nut:
 
     def ve(self, be_mat):
         re_chuot = self.bat and self.khung.collidepoint(pygame.mouse.get_pos())
-        pygame.draw.rect(be_mat, MAU["nut_re"] if re_chuot else MAU["nut"], self.khung, border_radius=8)
-        pygame.draw.rect(be_mat, MAU["nhan"] if re_chuot else MAU["vien"], self.khung,
+        if self.chon:
+            nen, mau_chu = MAU["nhan"], MAU["nut"]
+        else:
+            nen = MAU["nut_re"] if re_chuot else MAU["nut"]
+            mau_chu = MAU["chu"] if self.bat else MAU["tat"]
+        pygame.draw.rect(be_mat, nen, self.khung, border_radius=8)
+        pygame.draw.rect(be_mat, MAU["nhan"] if re_chuot or self.chon else MAU["vien"], self.khung,
                          width=2, border_radius=8)
-        ve_chu(be_mat, self.chu, self.khung.center, co=self.co,
-               mau=MAU["chu"] if self.bat else MAU["tat"], can="center")
+        ve_chu(be_mat, self.chu, self.khung.center, co=self.co, mau=mau_chu, can="center")

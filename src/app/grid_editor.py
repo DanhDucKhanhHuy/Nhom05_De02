@@ -80,6 +80,8 @@ TEN_O = {
 }
 VUNG_LUOI = pygame.Rect(20, CAO_THANH_TIEU_DE + 16, 600, 600)
 X_BANG = 650
+XUAT_PHAT = "xuat_phat"
+CONG_CU = [KHOE, 1, 2, 3, VAT_CAN, TRAM, XUAT_PHAT]
 
 
 class ManHinhBanDo(ManHinh):
@@ -87,6 +89,39 @@ class ManHinhBanDo(ManHinh):
         super().__init__(ung_dung)
         self.ban_do = ban_do or tao_ban_do()
         self.nut_quay_lai = Nut("← Quay lại", (20, 20, 150, 44), ung_dung.ve_man_hinh_chinh)
+        self.dang_to = None  # loại ô đang tô khi giữ chuột
+        self.nut_cong_cu = {}
+        y = CAO_THANH_TIEU_DE + 56
+        for ma in CONG_CU:
+            ten = "Điểm xuất phát" if ma == XUAT_PHAT else TEN_O[ma]
+            self.nut_cong_cu[ma] = Nut(ten, (X_BANG + 40, y, 200, 32),
+                                       lambda m=ma: self.chon_cong_cu(m), co=18)
+            y += 40
+        self.chon_cong_cu(1)
+
+    def chon_cong_cu(self, ma):
+        self.cong_cu = ma
+        for m, nut in self.nut_cong_cu.items():
+            nut.chon = m == ma
+
+    def o_tai(self, vi_tri):
+        co = self.co_o()
+        r = (vi_tri[1] - VUNG_LUOI.y) // co
+        c = (vi_tri[0] - VUNG_LUOI.x) // co
+        if 0 <= r < self.ban_do["rows"] and 0 <= c < self.ban_do["cols"]:
+            return r, c
+        return None
+
+    def to_o(self, r, c, ma):
+        cells = self.ban_do["cells"]
+        if ma == XUAT_PHAT:
+            if cells[r][c] == VAT_CAN:
+                cells[r][c] = KHOE
+            self.ban_do["start"] = [r, c]
+        elif ma == VAT_CAN and [r, c] == list(self.ban_do["start"]):
+            return  # không đặt vật cản lên điểm xuất phát
+        else:
+            cells[r][c] = ma
 
     def co_o(self):
         return min(VUNG_LUOI.w // self.ban_do["cols"], VUNG_LUOI.h // self.ban_do["rows"])
@@ -98,8 +133,26 @@ class ManHinhBanDo(ManHinh):
     def xu_ly_su_kien(self, su_kien):
         if su_kien.type == pygame.KEYDOWN and su_kien.key == pygame.K_ESCAPE:
             self.ung_dung.ve_man_hinh_chinh()
-        else:
-            self.nut_quay_lai.xu_ly(su_kien)
+            return
+        if self.nut_quay_lai.xu_ly(su_kien):
+            return
+        if any(nut.xu_ly(su_kien) for nut in self.nut_cong_cu.values()):
+            return
+
+        # chuột trái: tô, chuột phải: xóa
+        if su_kien.type == pygame.MOUSEBUTTONDOWN and su_kien.button in (1, 3):
+            o = self.o_tai(su_kien.pos)
+            if o:
+                self.dang_to = KHOE if su_kien.button == 3 else self.cong_cu
+                self.to_o(*o, self.dang_to)
+                if self.dang_to == XUAT_PHAT:
+                    self.dang_to = None
+        elif su_kien.type == pygame.MOUSEMOTION and self.dang_to is not None:
+            o = self.o_tai(su_kien.pos)
+            if o:
+                self.to_o(*o, self.dang_to)
+        elif su_kien.type == pygame.MOUSEBUTTONUP:
+            self.dang_to = None
 
     def ve_luoi(self, be_mat):
         for r, hang in enumerate(self.ban_do["cells"]):
@@ -113,22 +166,22 @@ class ManHinhBanDo(ManHinh):
         pygame.draw.circle(be_mat, MAU["chu"], self.khung_o(r, c).center, self.co_o() // 2 - 2, width=3)
 
     def ve_bang(self, be_mat):
-        y = CAO_THANH_TIEU_DE + 16
-        ve_chu(be_mat, "Chú thích", (X_BANG, y), co=22, dam=True)
-        y += 40
-        for ma in (KHOE, 1, 2, 3, VAT_CAN, TRAM):
-            pygame.draw.rect(be_mat, MAU_O[ma], (X_BANG, y, 26, 26), border_radius=4)
-            ve_chu(be_mat, TEN_O[ma], (X_BANG + 38, y + 13), co=19, can="midleft")
-            y += 36
-        pygame.draw.circle(be_mat, MAU["chu"], (X_BANG + 13, y + 13), 11, width=3)
-        ve_chu(be_mat, "Điểm xuất phát", (X_BANG + 38, y + 13), co=19, can="midleft")
+        ve_chu(be_mat, "Công cụ (bấm để chọn)", (X_BANG, CAO_THANH_TIEU_DE + 16), co=22, dam=True)
+        for ma, nut in self.nut_cong_cu.items():
+            y = nut.khung.y + 3
+            if ma == XUAT_PHAT:
+                pygame.draw.circle(be_mat, MAU["chu"], (X_BANG + 13, y + 13), 11, width=3)
+            else:
+                pygame.draw.rect(be_mat, MAU_O[ma], (X_BANG, y, 26, 26), border_radius=4)
+            nut.ve(be_mat)
 
         cells = self.ban_do["cells"]
         so_benh = sum(o in MUC_BENH for hang in cells for o in hang)
         so_tram = sum(o == TRAM for hang in cells for o in hang)
-        y += 60
+        y = CAO_THANH_TIEU_DE + 356
         ve_chu(be_mat, f"Lưới {self.ban_do['rows']} x {self.ban_do['cols']}", (X_BANG, y), co=19)
         ve_chu(be_mat, f"Ô bệnh: {so_benh}   Trạm: {so_tram}", (X_BANG, y + 30), co=19)
+        ve_chu(be_mat, "Chuột trái: tô · Chuột phải: xóa", (X_BANG, y + 70), co=17, mau=MAU["chu_phu"])
 
     def ve(self, be_mat):
         ve_thanh_tieu_de(be_mat, "Bản đồ ruộng")
