@@ -4,7 +4,7 @@
 
 Đồ án cuối kỳ – Học kỳ 1, năm học 2026 – 2027 · Thời gian thực hiện: 02/11 – 06/12/2026
 
-> **Trạng thái:** CN2 có 28 luật, suy diễn tiến/lùi, Bayes và luồng chẩn đoán kết hợp giữ nguyên API. CNN hiện là **GIẢ**; chưa đánh giá ảnh thật hoặc hiệu chuẩn CPD, runtime pgmpy cần kiểm chứng. CN1 và giao diện ứng dụng còn phát triển. Xem `docs/kiem_chung.md` và `tasks/todo.md`.
+> **Trạng thái:** CN2 có 28 luật, suy diễn tiến/lùi, Bayes và luồng chẩn đoán kết hợp giữ nguyên API. CN3 đã huấn luyện CNN tự thiết kế và MobileNetV2, đánh giá trên test độc lập (MobileNetV2 accuracy 0,9005; F1 macro 0,8893), và chạy `predict_top3` thật trên 20 ảnh. Artifact `.keras` bị loại khỏi Git, cần đóng gói hoặc liên kết khi nộp. Nhãn ảnh thực tế chưa được xác minh độc lập. CN1 và giao diện ứng dụng còn phát triển. Xem `docs/kiem_chung.md` và `docs/cau_hoi/Q3.md`.
 
 ---
 
@@ -72,7 +72,8 @@ Nhom05_De02/
 │   │   ├── data_pipeline.py
 │   │   ├── custom_cnn.py
 │   │   ├── transfer.py
-│   │   ├── predict.py      # GIẢ, IS_STUB=True
+│   │   ├── training.py
+│   │   ├── predict.py      # predictor ảnh thật; cần artifact .keras
 │   │   └── notebooks/
 │   └── app/               # TV5 – CN4; thời tiết TV3
 │       ├── __init__.py
@@ -157,10 +158,8 @@ python -m scripts.check_rules
 ```
 
 Nếu ruff chưa có trong PATH dùng `python -m ruff check .`. Demo đọc bản đồ 4 × 4,
-in dự đoán **GIẢ**, báo “chưa cài đặt” cho CN1 và chạy CN2 với câu trả lời
-“Chưa biết”. CN2 trả thông báo chưa đủ chắc, liên hệ cán bộ khuyến nông.
-Demo gọi điều phối ảnh, hệ luật và CNN–Bayes. Predictor giả không đọc ảnh;
-kết quả luôn được ghi là minh họa, không dùng xác nhận bệnh.
+thông báo CNN chưa sẵn sàng nếu chưa có artifact, báo “chưa cài đặt” cho CN1.
+Không có số dự đoán mặc định hoặc kết luận bệnh giả.
 
 Các module chưa cung cấp CLI xử lý tham số. Một số thuật toán CN1/CN2 và mô hình
 đã có hàm thư viện; các hàm chưa triển khai ném `NotImplementedError`. Không coi
@@ -199,11 +198,11 @@ Chi tiết trong `docs/interfaces.md`.
 
 Mã ô: `0` lúa khỏe · `1`, `2`, `3` lúa bệnh theo mức · `-1` vật cản (kênh mương có cây cao, trụ điện) · `9` trạm nạp thuốc/đổi pin.
 
-**Hàm giao tiếp chính** (số dự đoán CNN trong bảng là GIẢ; type hint và schema ở `docs/interfaces.md`):
+**Hàm giao tiếp chính** (type hint và schema ở `docs/interfaces.md`):
 
 | Hàm | Module | Đầu ra |
 |-----|--------|--------|
-| `predict_top3(duong_dan_anh)` | `src/model/predict.py` | `[("dao_on", 0.55), ("dom_nau", 0.40), ("bac_la", 0.03)]` |
+| `predict_top3(duong_dan_anh)` | `src/model/predict.py` | 3 nhãn/xác suất từ ảnh và mô hình thật; cần artifact `.keras` |
 | `diagnose(top3, hoi_nguoi_dung)` | `src/rules/diagnose.py` | kết luận, độ tin cậy, các luật đã dùng (giải thích), nguồn tài liệu |
 | `plan_route(ban_do, k, p, thuat_toan)` | `src/search/run.py` | các ô đi qua, sự kiện phun/nạp, tổng quãng đường, số lần về trạm, thời gian chạy |
 

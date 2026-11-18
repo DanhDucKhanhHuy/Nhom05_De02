@@ -16,19 +16,14 @@ Module `src/model/predict.py`. Trả đúng 3 tuple `(mã_lớp, xác_suất)`, 
 trùng, xác suất hữu hạn trong [0,1], sắp giảm dần. Tổng top 3 ≤1 vì còn lớp thứ tư.
 Mã lớp: `dao_on`, `bac_la`, `dom_nau`, `la_khoe`.
 
-Ví dụ **GIẢ**, chạy được với khung và không đọc ảnh:
+Predictor nạp `models/rice_leaf_classifier.keras` và đọc ảnh RGB 224 × 224.
+Thiếu ảnh/mô hình thì ném `FileNotFoundError`; ảnh hỏng hoặc đầu ra mô hình
+không đúng hợp đồng thì ném `ValueError`. Mô hình phải có softmax bốn đầu ra
+theo thứ tự lớp chuẩn. `IS_STUB` khởi đầu là `True` và chỉ chuyển `False` sau
+một lần dự đoán hợp lệ đã đọc ảnh, nạp mô hình và suy luận thành công.
 
-```python
-from src.model.predict import IS_STUB, predict_top3
-assert IS_STUB is True
-predict_top3("anh_chua_ton_tai.jpg")
-# [("dao_on", 0.55), ("dom_nau", 0.40), ("bac_la", 0.03)]
-```
-
-Không dùng số giả để xác nhận bệnh hay báo cáo độ chính xác. TV4 thay hàm,
-đặt `IS_STUB=False`, giữ hợp đồng và bổ sung test với ảnh/mô hình thực.
-Bản thật dự kiến ném `FileNotFoundError` nếu thiếu ảnh/mô hình, `ValueError`
-nếu ảnh hỏng. Bản giả hiện không kiểm tra các lỗi này.
+Không dùng xác suất minh họa để xác nhận bệnh hoặc báo cáo độ chính xác. Khi
+chưa có artifact, ứng dụng trả trạng thái chưa có mô hình, không gọi chẩn đoán.
 
 ## 2. Chẩn đoán: TV2 → TV5
 
@@ -75,9 +70,10 @@ gán vào `do_tin_cay`. Quyết định và giới hạn ở
 [ADR-001](decisions/001-dieu-phoi-luat-bayes.md).
 
 `src/app/chan_doan.py` cung cấp `diagnose_image(duong_dan_anh: str,
-hoi_nguoi_dung: HoiNguoiDung) -> ChanDoan`. Hàm gọi predictor một lần, giữ lỗi
-predictor. IS_STUB=True luôn trả ket_luan=None kèm giải thích GIẢ, không xác
-nhận bệnh từ số giả. Không cần TensorFlow để thử luồng với predictor giả.
+hoi_nguoi_dung: HoiNguoiDung) -> ChanDoan`. Nếu thiếu ảnh, lỗi predictor được
+giữ nguyên. Nếu ảnh có nhưng thiếu artifact, hàm trả `ket_luan=None` và giải
+thích chưa có mô hình, không gọi hệ luật. Khi có artifact, predictor nạp mô hình
+và ảnh trước khi bắt đầu chẩn đoán.
 
 ## 3. Lộ trình: TV1 → TV5
 
