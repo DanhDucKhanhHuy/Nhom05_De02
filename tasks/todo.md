@@ -66,3 +66,18 @@ Không commit/push/tag. Không đụng ảnh và các tệp pyc có sẵn thay �
   chia sẻ chưa xác minh bản gốc; không dùng các tài liệu đó để điền năm trang cũ.
 - Pytest: 149 passed, 1 skipped (pgmpy), 9 xfailed (CN1); Ruff/check_rules đạt.
 - Đợt hồ sơ chỉ sửa tài liệu, danh mục nguồn và README, không sửa hành vi chạy.
+
+## Đợt tích hợp 18/11/2026
+
+- [x] 10. RED/GREEN: sửa mã cũ và thống nhất xác thực top-3.
+- [x] 11. RED/GREEN: dùng chung dữ kiện và xử lý đồng thuận/bất đồng trong diagnose.
+- [x] 12. RED/GREEN: điều phối ảnh và ghi rõ bản giả.
+- [x] 13. Đồng bộ tài liệu, quyết định thiết kế, nguồn và ghi chú hồ sơ ảnh thiếu.
+- [x] 14. Chạy kiểm tra và tự review; không commit/push/tag. Chưa nghiệm thu toàn bộ.
+
+Kết quả 18/11: 199 passed, 1 skipped (thiếu pgmpy), 9 xfailed (CN1).
+Ruff/check_rules đạt; 28 luật hợp lệ. Hợp đồng, thuật toán tiến/lùi và số CPD
+không đổi. Các nút triệu chứng nay đã được triển khai; CPD vẫn là giả định.
+S2 đã thay bằng EPPO; S3 có bản chỉ mục nhưng URL gốc 404.
+Còn mở: pgmpy, CNN thật, nguồn/quyền sử dụng ảnh, duyệt CPD/ngưỡng,
+giới hạn DN10 và khả năng truy cập lại S3/S6; cần người khác duyệt.

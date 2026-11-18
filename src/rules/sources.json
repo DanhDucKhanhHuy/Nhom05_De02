@@ -10,11 +10,11 @@
     },
     {
       "ma": "S2",
-      "ten": "Managing bacterial leaf blight in paddy",
-      "co_quan": "Cổng Agritech, Đại học Nông nghiệp Tamil Nadu (TNAU); bài của Mallikarjun Kengal và V. R. Joshi, University of Agricultural Sciences, Koppal",
-      "nam": 2012,
-      "url": "https://agritech.tnau.ac.in/daily_events/2012/english/july/12_july_12_eng.pdf",
-      "ghi_chu": "Bài ghi ngày xuất bản 11/07/2012. Dùng phần triệu chứng để hỗ trợ vệt úng nước bắt đầu ở chóp lá, mép lượn sóng, màu vàng đến trắng và héo. Biện pháp của BL06 không trỏ tới bài này; bài có nêu vi khuẩn có thể hiện diện trong hạt nhưng không diễn đạt trực tiếp khuyến nghị hạt sạch bệnh. Đã đối chiếu ngày 17/11/2026."
+      "ten": "EPPO Datasheet: Xanthomonas oryzae pv. oryzae (XANTOR)",
+      "co_quan": "European and Mediterranean Plant Protection Organization (EPPO)",
+      "nam": 2022,
+      "url": "https://gd.eppo.int/taxon/XANTOR/datasheet",
+      "ghi_chu": "Năm của phần Detection and Identification được xác minh bằng ngày cập nhật 16/06/2022; không dùng năm bản quyền website. Symptoms hỗ trợ BL01–BL04. Thay tệp tổng hợp tin báo năm 2012. Héo/cuộn lá có nguồn khoa học S7 bổ sung; BL06 trỏ S6. Đã mở ngày 18/11/2026."
     },
     {
       "ma": "S3",
@@ -22,7 +22,7 @@
       "co_quan": "LSU AgCenter, Louisiana State University Agricultural Center",
       "nam": 2014,
       "url": "https://www.lsuagcenter.com/~/media/system/9/0/e/9/90e93160aba5daccea90c6d955299f74/pub2331riceproductionhandbook2014completebook.pdf",
-      "ghi_chu": "Ấn phẩm năm 2014; chương Disease Management, mục Brown spot, trang in 92. Hỗ trợ triệu chứng trên diệp tiêu, lá, bẹ, bông/hạt và khuyến nghị quản lý điều kiện sinh trưởng, luân canh, đất và nước. Không hỗ trợ khuyến nghị quản lý cỏ dại riêng cho bệnh đốm nâu; DN09 đã được sửa theo nội dung nguồn. Đã đối chiếu ngày 17/11/2026."
+      "ghi_chu": "Bản mang tên tệp 2014; chương Disease Management, Brown Spot, trang in 91–92. Ngày 18/11/2026 đối chiếu được văn bản bản chỉ mục; URL trực tiếp trả 404, chưa kiểm chứng truy cập tải trực tiếp. Không tự chuyển sang ấn bản mới. Nguồn nêu dinh dưỡng, luân canh, đất và nước; mốc vụ sau của DN10 là giới hạn thiết kế."
     },
     {
       "ma": "S4",
@@ -46,7 +46,15 @@
       "co_quan": "Indian Council of Agricultural Research (ICAR)",
       "nam": 2025,
       "url": "https://icar.gov.in/sites/default/files/2025-10/ICAR-En-Kharif-Agro-Advisories-for-Farmers-2025.pdf",
-      "ghi_chu": "Ấn phẩm ghi năm 2025. Phần hướng dẫn lúa nêu dùng hạt giống được chứng nhận, sạch bệnh; phần khuyến cáo bạc lá nêu quản lý bệnh. Dùng cho khuyến nghị chuẩn bị giống của BL06, không dùng thuốc hoặc liều trong luật. Đã đối chiếu ngày 17/11/2026."
+      "ghi_chu": "Ấn phẩm ghi năm 2025 theo hồ sơ ngày 17/11/2026. Dùng cho chọn giống của BL06. Lượt mở ngày 18/11/2026 bị timeout; trang ICAR thông báo bảo trì, chưa kiểm chứng lại nội dung tải trực tiếp. S5 hỗ trợ giai đoạn chọn giống; không đưa hóa chất vào luật."
+    },
+    {
+      "ma": "S7",
+      "ten": "Xanthomonas oryzae pathovars: model pathogens of a model crop, Molecular Plant Pathology 7(5), 303–324",
+      "co_quan": "Iowa State University và University of California, Davis; bài của D. O. Niño-Liu, P. C. Ronald và A. J. Bogdanove",
+      "nam": 2006,
+      "url": "https://cropgeneticsinnovation.ucdavis.edu/sites/g/files/dgvnsk6996/files/inline-files/r0604.pdf",
+      "ghi_chu": "Năm và DOI 10.1111/j.1364-3703.2006.00344.x ở trang in 303 / PDF 1. Trang in 306 / PDF 4 mô tả lá héo/cuộn ở giai đoạn tiến triển và cảnh báo dễ nhầm bạc lá với sọc lá vi khuẩn. Chỉ hỗ trợ BL05 ở mức cần kiểm tra, không xác nhận bệnh. Đã mở ngày 18/11/2026."
     }
   ]
 }

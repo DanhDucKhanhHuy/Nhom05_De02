@@ -5,8 +5,8 @@ from pathlib import Path
 
 import pytest
 
-from src.rules import bayes, ket_hop
 from src.app import thoi_tiet
+from src.rules import bayes, ket_hop
 
 
 def test_multiple_symptoms_are_separate_and_order_independent():

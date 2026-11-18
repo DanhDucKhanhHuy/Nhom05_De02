@@ -1,19 +1,16 @@
 # Phiếu đối chiếu 28 luật CN2
 
-Ngày đối chiếu: 17/11/2026. Dữ liệu chuẩn là `src/rules/rules.json`,
+Ngày đối chiếu: 18/11/2026. Dữ liệu chuẩn là `src/rules/rules.json`,
 `src/rules/vocabulary.json` và `src/rules/sources.json`.
 
 ## Phương pháp và ý nghĩa trạng thái
 
-Đã mở tài liệu gốc S1–S6 và đối chiếu mục nêu dưới đây. Trang PDF được đếm
-từ 1; khi khác số trang in, ghi cả hai. Mỗi mục ghi căn cứ và giới hạn, không
-coi việc nguồn mô tả một triệu chứng là chứng minh triệu chứng đó chỉ thuộc
-một bệnh. Các luật `chan_doan` chỉ tạo `nghi_*`; không có độ nhạy/đặc hiệu đã đo.
-
-S2 là bài đăng ngày 11/07/2012 trên cổng TNAU; S3 là sổ tay LSU AgCenter năm
-2014. S6 là hướng dẫn ICAR năm 2025. Các năm được lấy từ chính ngày đăng hoặc
-ấn phẩm, không suy ra từ dấu thời gian máy chủ. Không có xác nhận chuyên gia
-địa phương hoặc thử nghiệm thực địa.
+Lượt cập nhật 18/11/2026 giữ nguyên phân biệt mô tả nguồn với lựa chọn mô hình
+của nhóm. Luật chan_doan chỉ tạo nghi bệnh; không có độ nhạy/đặc hiệu đã đo.
+S2 nay là datasheet EPPO (mục triệu chứng cập nhật 2022), BL05 dùng S7 (2006).
+Nội dung S3 đọc được từ bản chỉ mục nhưng URL tải trực tiếp lỗi 404; S6 mở lại
+bị timeout. Chưa có xác nhận chuyên gia địa phương hoặc thử nghiệm thực địa.
+Trang PDF được đếm từ 1; số trang in được ghi riêng khi khác.
 
 ## Đạo ôn: DO01–DO12
 
@@ -48,7 +45,7 @@ S2 là bài đăng ngày 11/07/2012 trên cổng TNAU; S3 là sổ tay LSU AgCen
 ## Bạc lá: BL01–BL06
 
 - **BL01** — `vet_bac_ung_nuoc_tren_phien_la=co` → nghi bạc lá. S2,
-  Symptoms / Leaf blight. Không tự thêm vị trí bắt đầu ở mép lá.
+  Detection and Identification / Symptoms (cập nhật 16/06/2022). Không tự thêm vị trí bắt đầu ở mép lá.
 - **BL02** — `vet_bac_bat_dau_o_chop_la=co` → nghi bạc lá. S2, cùng mục.
   Chỉ dùng vị trí bắt đầu; không thêm quy luật tăng kích thước.
 - **BL03** — `vet_la_vang_den_trang=co` → nghi bạc lá. S2 ghi
@@ -56,8 +53,9 @@ S2 là bài đăng ngày 11/07/2012 trên cổng TNAU; S3 là sổ tay LSU AgCen
   không gán vị trí mép/hoại tử hoặc khẳng định trình tự bệnh.
 - **BL04** — `vet_bac_mep_luon_song=co` → nghi bạc lá. S2, cùng mục.
   Mô tả mép vệt; không coi riêng dấu hiệu này là xác nhận bệnh.
-- **BL05** — `la_heo_hoac_cuon_lai=co` → cần kiểm tra bạc lá. S2 mô tả lá
-  héo/cuộn khi bệnh nặng; dấu hiệu không đặc hiệu nên chỉ yêu cầu kiểm tra.
+- **BL05** — `la_heo_hoac_cuon_lai=co` → cần kiểm tra bạc lá. S7, trang
+  in 306 / PDF 4 mô tả héo/cuộn và cảnh báo nhầm bạc lá với sọc lá vi khuẩn.
+  Chỉ yêu cầu kiểm tra, không xác nhận bệnh.
 - **BL06** — nghi bạc lá → chọn hạt giống sạch bệnh. S6, phần hướng dẫn lúa,
   khuyến nghị dùng hạt được chứng nhận và sạch bệnh; S5, bài Safe Seed Storage,
   trang in 28 / PDF 36, bổ sung giai đoạn chọn giống để gieo. Dùng cho chuẩn bị
@@ -107,21 +105,16 @@ Khi tích hợp giao diện, cần hiển thị rõ giai đoạn chuẩn bị gi
 
 ## Hồ sơ nguồn và việc chưa xác minh
 
-- S1: cơ quan khuyến nông nhà nước, năm cập nhật 2021 ghi trên trang.
-- S2: bài về bạc lá có ngày đăng 11/07/2012 trên cổng TNAU; do Mallikarjun
-  Kengal và V. R. Joshi (University of Agricultural Sciences, Koppal).
-- S3: Louisiana Rice Production Handbook, LSU AgCenter, 2014; mục Brown Spot,
-  trang in 92.
-- S4: đại học, nội dung cập nhật tháng 07/2024 ghi trên trang.
-- S5: viện nghiên cứu, năm 2013 ở trích dẫn chuẩn của ấn phẩm.
+- S1: cơ quan khuyến nông, cập nhật 2021.
+- S2: datasheet EPPO; mục triệu chứng cập nhật 16/06/2022. Thay tệp tổng hợp tin
+  báo năm 2012. Năm thuộc phần nội dung được dùng, không phải bản quyền web.
+- S3: giữ ấn bản ghi trong hồ sơ. Đối chiếu được Brown Spot từ văn bản bản chỉ
+  mục (trang in 91–92), nhưng tải trực tiếp lỗi 404. Chưa khôi phục liên kết tải.
+- S4: UC IPM, nội dung cập nhật 07/2024.
+- S5: IARI, năm 2013 ở trích dẫn chuẩn.
+- S6: ICAR 2025 theo hồ sơ; ngày 18/11 mở lại timeout, website thông báo bảo trì.
+- S7: bài khoa học năm 2006 lưu trên UC Davis, DOI và cơ quan tác giả ở PDF 1.
 
-S2/S3 cũ đã được thay bằng các ấn phẩm có năm/ngày đăng kiểm chứng được. Việc
-thay nguồn đã làm lộ giới hạn của DN10: nguồn mới không xác nhận trực tiếp điều
-kiện “ruộng hiện tại đã nhiễm” và mốc “vụ kế tiếp”; giới hạn này được ghi rõ,
-không trình bày như phát biểu của nguồn.
-
-Đủ phiếu đối chiếu 28 id không có nghĩa đã đo hiệu lực chẩn đoán. Các quan hệ
-dấu hiệu → gợi ý, cảnh báo kiểm tra và cách kích hoạt khuyến nghị là mô hình
-tri thức của nhóm dựa trên mô tả nguồn; không trình bày như phép kéo theo y học
-chắc chắn. Người phụ trách TV2 cần duyệt ý nghĩa từng câu hỏi và giới hạn này;
-chưa có biên bản chuyên gia địa phương ký duyệt.
+Không thay tài liệu bằng một ấn bản khác chỉ để sửa URL. Không đưa thông tin
+ảnh thiếu nguồn hoặc giấy phép vào hồ sơ như đã xác minh. Luật vẫn chỉ là mô
+hình gợi ý và sàng lọc; chưa có biên bản chuyên gia địa phương ký duyệt.

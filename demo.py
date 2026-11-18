@@ -3,8 +3,8 @@ import json
 import sys
 from pathlib import Path
 
-from src.model.predict import IS_STUB, predict_top3
-from src.rules.diagnose import diagnose
+from src.app.chan_doan import diagnose_image
+from src.model.predict import IS_STUB
 from src.search.run import plan_route
 
 
@@ -14,17 +14,15 @@ def main() -> None:
     ban_do = json.loads(duong_dan.read_text(encoding="utf-8"))
     print(f"Bản đồ minh họa: {ban_do['rows']} × {ban_do['cols']}")
     print(f"CN3 — dự đoán GIẢ (IS_STUB={IS_STUB}), không phải kết quả CNN:")
-    top3 = predict_top3("anh_gia_khong_doc.jpg")
-    print(top3)
     try:
         print("CN1:", plan_route(ban_do, ban_do["k"], ban_do["p"], "hill"))
     except NotImplementedError:
         print("CN1: chưa cài đặt")
-    result = diagnose(top3, lambda cau_hoi: None)
+    result = diagnose_image("anh_gia_khong_doc.jpg", lambda cau_hoi: None)
     print("CN2:", result["ket_luan"] or "chưa đủ chắc")
     print("CN2 — giải thích:")
     print(result["giai_thich"])
-    print("Mạng Bayes và ứng dụng không được gọi trong demo này.")
+    print("CN2 đã chạy hệ luật và CNN–Bayes với dự đoán GIẢ; chưa đánh giá ảnh thật.")
 
 
 if __name__ == "__main__":

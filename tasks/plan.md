@@ -69,3 +69,31 @@ Người dùng yêu cầu ưu tiên hồ sơ tri thức sau đợt sửa trên. 
 Tiêu chí: 28 id có phiếu đối chiếu, không thiếu nguồn hoặc mục; BL06 có nguồn
 cho giai đoạn chọn giống; metadata thiếu được liệt kê; schema và hành vi chạy
 giữ nguyên. Tài liệu tĩnh không cần thêm test chỉ để kiểm tra câu chữ.
+
+## Đợt tích hợp được duyệt ngày 18/11/2026
+
+Người dùng duyệt danh sách skill và phạm vi sửa lỗi bằng chứng, điều phối,
+tài liệu/nguồn, đầu vào và lint. Tiếp tục kế hoạch này, không xóa lịch sử.
+
+10. RED/GREEN: mã cũ chỉ có giá trị dương tính mới tạo evidence; False/None/
+    chưa biết không thành dương tính. Từ chối top-3 không giảm dần và số ngoài
+    miền trước chuyển float. Không suy trạng thái đối lập từ phủ định mã cũ.
+11. RED/GREEN: tích hợp trong chữ ký `diagnose(top3, callback)` hiện có.
+    Kết luận chỉ là gợi ý khi đúng một bệnh được luật hỗ trợ, không còn nhánh
+    chưa đủ, và CNN–Bayes cùng chọn bệnh đó qua ngưỡng. Bất đồng, hòa, thiếu
+    chứng cứ hoặc nhiều bệnh trả None. Không dùng posterior để bắn luật.
+    Giữ `do_tin_cay=None` vì điểm kỹ thuật chưa hiệu chuẩn; trình bày số liệu
+    và lý do trong trường `giai_thich` đã có. Không thêm trường hợp đồng mới.
+12. RED/GREEN: điều phối ảnh qua predictor hiện có; bản giả được ghi rõ và
+    không được dùng xác nhận bệnh. Cho phép demo kiểm tra luồng không cần
+    TensorFlow, không tuyên bố đo độ chính xác từ đầu ra giả.
+13. Đồng bộ README, interfaces, hồ sơ tri thức/Q2 và ADR chính sách; kiểm tra
+    nguồn thay thế, ghi rõ URL lỗi hoặc metadata chưa kiểm chứng. Không điền
+    nguồn ảnh còn thiếu bằng suy đoán. Không đổi CPD hoặc bịa tri thức mới.
+14. Nghiệm thu pytest/Ruff/check_rules/demo và review diff. pgmpy nếu thiếu
+    vẫn ghi chưa kiểm chứng, không coi fallback là kiểm chứng pgmpy.
+
+Thu thập dữ kiện: suy diễn lùi dùng cache cả phiên; sau đó hỏi các dữ kiện
+người dùng còn thiếu theo vocabulary để cấp cùng tập quan sát cho tiến và
+Bayes, bao gồm nguy cơ và xác nhận cho khuyến nghị. Việc thu thập không thêm
+điều kiện/kết luận nghiệp vụ. Chỉ hỏi mỗi thuộc tính một lần.

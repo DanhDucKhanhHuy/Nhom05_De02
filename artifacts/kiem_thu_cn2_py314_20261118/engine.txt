@@ -1,0 +1,4 @@
+........................................................................ [ 82%]
+...............                                                          [100%]
+- generated xml file: C:\Users\LENOVO\OneDrive - Hochiminh City University of Education\Desktop\BacSiLua\Nhom05_De02\artifacts\kiem_thu_cn2_py314_20261118\engine.xml -
+87 passed in 0.57s

@@ -142,7 +142,7 @@
       "thi": "suy_luan=nghi_bac_la",
       "nguon": {
         "ma": "S2",
-        "muc": "mục Triệu chứng - Bệnh bạc lá vi khuẩn trên lúa"
+        "muc": "Detection and Identification / Symptoms (cập nhật 16/06/2022)"
       }
     },
     {
@@ -154,7 +154,7 @@
       "thi": "suy_luan=nghi_bac_la",
       "nguon": {
         "ma": "S2",
-        "muc": "mục Triệu chứng - Bệnh bạc lá vi khuẩn trên lúa"
+        "muc": "Detection and Identification / Symptoms (cập nhật 16/06/2022)"
       }
     },
     {
@@ -166,7 +166,7 @@
       "thi": "suy_luan=nghi_bac_la",
       "nguon": {
         "ma": "S2",
-        "muc": "mục Triệu chứng - Bệnh bạc lá vi khuẩn trên lúa"
+        "muc": "Detection and Identification / Symptoms (cập nhật 16/06/2022)"
       }
     },
     {
@@ -178,7 +178,7 @@
       "thi": "suy_luan=nghi_bac_la",
       "nguon": {
         "ma": "S2",
-        "muc": "mục Triệu chứng - Bệnh bạc lá vi khuẩn trên lúa"
+        "muc": "Detection and Identification / Symptoms (cập nhật 16/06/2022)"
       }
     },
     {
@@ -189,8 +189,8 @@
       ],
       "thi": "can_kiem_tra=bac_la",
       "nguon": {
-        "ma": "S2",
-        "muc": "mục Triệu chứng - Bệnh bạc lá vi khuẩn trên lúa"
+        "ma": "S7",
+        "muc": "Trang in 306 / PDF 4, triệu chứng lá héo hoặc cuộn và giới hạn phân biệt bệnh"
       }
     },
     {

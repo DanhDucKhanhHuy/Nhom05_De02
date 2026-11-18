@@ -113,7 +113,8 @@ S1/S4 hỗ trợ mô tả dấu hiệu đạo ôn; S2 hỗ trợ nhóm dấu hi�
 
 Danh mục tài liệu: `src/rules/sources.json` và `docs/nguon_tri_thuc.md`:
 - S1: “Phòng trừ bệnh đạo ôn hại lúa”, Trung tâm Khuyến nông Quốc gia, 2021. [Nguồn](https://khuyennongvn.gov.vn/khoa-hoc-cong-nghe/khcn-trong-nuoc/phong-tru-benh-dao-on-hai-lua-21414.html).
-- S2: “Managing bacterial leaf blight in paddy”, Mallikarjun Kengal và V. R. Joshi, TNAU, 2012. [PDF](https://agritech.tnau.ac.in/daily_events/2012/english/july/12_july_12_eng.pdf).
+- S2: EPPO Datasheet XANTOR, mục Detection and Identification / Symptoms cập nhật 16/06/2022. [Nguồn](https://gd.eppo.int/taxon/XANTOR/datasheet).
+- S7: Niño-Liu, Ronald và Bogdanove (2006), trang in 306 hỗ trợ héo/cuộn lá và giới hạn phân biệt bệnh. [Bài khoa học](https://cropgeneticsinnovation.ucdavis.edu/sites/g/files/dgvnsk6996/files/inline-files/r0604.pdf).
 - S3: “Louisiana Rice Production Handbook”, LSU AgCenter, 2014, mục Brown Spot. [PDF](https://www.lsuagcenter.com/~/media/system/9/0/e/9/90e93160aba5daccea90c6d955299f74/pub2331riceproductionhandbook2014completebook.pdf).
 - S4: “Hướng dẫn quản lý dịch hại lúa: bệnh đạo ôn”, UC IPM, cập nhật 07/2024. [Nguồn](https://ipm.ucanr.edu/agriculture/rice/rice-blast/).
 
@@ -203,6 +204,16 @@ Với CPD giả định hiện tại và `su_dung_pgmpy=False`, kết quả minh
 Các số trên chỉ là đầu ra tái lập từ CPD giả định và CNN top-3 giả lập, không phải rủi ro thực địa hay xác suất đã hiệu chuẩn.
 
 ## 10. Kiểm chứng và cách chạy
+
+Trong luồng chung, `diagnose()` thu thập dữ kiện rồi gọi CNN–Bayes. Chỉ trả gợi
+ý khi luật và xác suất cùng chọn một bệnh; bất đồng/thiếu chứng cứ trả None.
+Điểm kỹ thuật hiển thị trong giải thích, `do_tin_cay` vẫn None. Mã cũ dạng
+Mapping chỉ được nhận khi xác nhận Có; False/None/chua_biet được ghi chú và bỏ
+qua. Top-3 phải giảm dần như hợp đồng predictor.
+
+CPD DomNau hiện đặt mua_am cao hơn kho ở cùng mức dinh dưỡng (ví dụ 0.68 so
+với 0.58 khi thiếu dinh dưỡng). Đây là giả định minh họa cần duyệt, không phải
+kết luận định lượng từ S3. Đợt sửa tích hợp không thay các số CPD.
 
 ```bash
 python -m src.rules.bayes --khong-pgmpy

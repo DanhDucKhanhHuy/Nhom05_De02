@@ -6,6 +6,7 @@ from pathlib import Path
 from src.contracts import ChanDoan, HoiNguoiDung, Top3
 from src.rules import backward as backward_module
 from src.rules.forward import forward_with_trace
+from src.rules.ket_hop import ket_hop_cnn_bayes
 
 RULES_PATH = Path(__file__).with_name("rules.json")
 SOURCES_PATH = Path(__file__).with_name("sources.json")
@@ -49,10 +50,11 @@ def _read_json(path: Path) -> dict:
 
 
 def diagnose(top3: Top3, hoi_nguoi_dung: HoiNguoiDung) -> ChanDoan:
-    """Dùng CNN để xếp thứ tự hỏi, còn gợi ý bệnh phải được luật hỗ trợ.
+    """Thu thập một phiên dữ kiện rồi đối chiếu bộ luật với CNN–Bayes.
 
     Chỉ chọn một gợi ý khi đúng một bệnh được chứng minh và các bệnh còn lại
-    bị bác bỏ trong bộ luật hiện tại. Không tự suy ra lá khỏe hoặc độ tin cậy.
+    bị bác bỏ trong bộ luật hiện tại, đồng thời CNN–Bayes cùng chọn bệnh đó.
+    Điểm quyết định chưa hiệu chuẩn không được gán vào do_tin_cay.
     """
     _check_top3(top3)
     if not callable(hoi_nguoi_dung):
@@ -88,10 +90,25 @@ def diagnose(top3: Top3, hoi_nguoi_dung: HoiNguoiDung) -> ChanDoan:
         result = backward_module.backward_with_status(
             f"suy_luan=nghi_{label}", facts, rules, ask_once)
         states[label] = result["trang_thai"]
+    # Hoàn tất dữ kiện cho nguy cơ, khuyến nghị và Bayes bằng chính cache này.
+    # Không thêm các kết luận suy ra vào bằng chứng xác suất.
+    for attribute, definition in vocabulary.items():
+        if definition["loai"] == "du_kien_nguoi_dung" and attribute not in answers:
+            ask_once(definition["cau_hoi"])
+    probability = ket_hop_cnn_bayes(top3, facts)
     confirmed = [label for label in order if states[label] == "xac_nhan"]
     conclusion = None
+    reason = "Bộ luật chưa chứng minh duy nhất một bệnh hoặc còn thiếu dữ kiện."
     if len(confirmed) == 1 and "chua_du" not in states.values():
-        conclusion = confirmed[0]
+        if probability["ket_luan"] == confirmed[0]:
+            conclusion = confirmed[0]
+            reason = "Bộ luật và CNN–Bayes đồng thuận về gợi ý bệnh."
+        elif probability["ket_luan"] is None:
+            reason = "CNN–Bayes chưa qua ngưỡng quyết định hoặc có kết quả hòa."
+        else:
+            other = DISEASE_NAMES.get(probability["ket_luan"], "lá khỏe")
+            reason = (f"Bộ luật gợi ý {DISEASE_NAMES[confirmed[0]]}, CNN–Bayes chọn "
+                      f"{other}: không đồng thuận; cần kiểm tra thêm.")
 
     # Tái diễn tiến từ chính dữ kiện đã thu thập để ghi đúng thứ tự bắn luật.
     _, trace = forward_with_trace(facts, rules)
@@ -111,7 +128,12 @@ def diagnose(top3: Top3, hoi_nguoi_dung: HoiNguoiDung) -> ChanDoan:
     else:
         explanation = (f"Bộ luật gợi ý bệnh {DISEASE_NAMES[conclusion]}; "
                        "không thay thế chẩn đoán của cán bộ chuyên môn.")
-    lines = [explanation]
+    lines = [explanation, reason,
+             (f"CNN–Bayes: {probability['phuong_phap_bayes']}; điểm quyết định "
+              f"{probability['do_tin_cay_dieu_chinh']:.2%}, ngưỡng "
+              f"{probability['nguong_ket_luan']:.2%}. "
+              "Đây là điểm kỹ thuật từ CPD giả định, chưa phải xác suất đã hiệu chuẩn.")]
+    lines.extend(f"Ghi chú Bayes: {note}" for note in probability["ghi_chu"])
     for step in trace:
         descriptions = []
         for atom in step["dieu_kien"]:
@@ -123,6 +145,13 @@ def diagnose(top3: Top3, hoi_nguoi_dung: HoiNguoiDung) -> ChanDoan:
         lines.append(f"Luật {step['id']}: khi {'; '.join(descriptions)} "
                      f"thì {step['ket_luan']}. Nguồn {step['nguon']['ma']}, "
                      f"{step['nguon']['muc']}.")
+        if step["ket_luan"] == "khuyen_nghi=chon_hat_giong_sach_benh":
+            lines.append("Phạm vi: chuẩn bị hạt giống sạch bệnh trước gieo trồng, "
+                         "không phải xử lý cây đang bệnh.")
+        elif step["id"] == "DN10":
+            lines.append("Phạm vi DN10: cân nhắc luân canh ở vụ tiếp theo khi ruộng "
+                         "được xác nhận nhiễm. Mốc vụ là giới hạn thiết kế của nhóm, "
+                         "chưa được nguồn hiện tại xác nhận trực tiếp.")
     return {
         "ket_luan": conclusion,
         "do_tin_cay": None,

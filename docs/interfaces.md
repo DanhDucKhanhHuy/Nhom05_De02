@@ -46,9 +46,11 @@ Không tự gán độ tin cậy nếu chưa có phương pháp định lượng
 
 Hai trường tùy chọn bổ sung tương thích: `giai_thich` (chuỗi tiếng Việt) và
 `vet` (danh sách `VetLuat` mô tả các lần suy diễn thực tế). Bốn trường cũ giữ nguyên.
-Hiện `diagnose()` luôn cung cấp cả hai trường này; `do_tin_cay=None` vì chưa có
-phương pháp định lượng. CNN chỉ xếp thứ tự hỏi, không xác nhận bệnh bằng số giả.
-Hàm kiểm tra cả ba bệnh, kể cả bệnh không xuất hiện trong top-3.
+`diagnose()` cung cấp cả hai trường; `do_tin_cay=None` vì chưa có xác suất đã
+hiệu chuẩn. CNN xếp thứ tự hỏi và tham gia CNN–Bayes; gợi ý cuối cần cả luật
+và xác suất đồng thuận. Hàm kiểm tra cả ba bệnh, kể cả bệnh vắng trong top-3.
+Sau suy diễn lùi, hàm hỏi các thuộc tính người dùng còn thiếu, dùng chung
+dữ kiện cho tiến và Bayes. Không gửi kết luận suy ra như bằng chứng Bayes.
 
 Ví dụ chạy với câu trả lời chưa biết:
 
@@ -56,16 +58,26 @@ Ví dụ chạy với câu trả lời chưa biết:
 diagnose([("dao_on", 0.55), ("dom_nau", 0.40), ("bac_la", 0.03)],
          lambda cau_hoi: None)
 # {"ket_luan": None, "do_tin_cay": None, "luat_da_dung": [], "nguon": [],
-#  "giai_thich": "Chưa đủ chắc, liên hệ cán bộ khuyến nông. Không kết luận lá khỏe.",
+#  "giai_thich": "Chưa đủ chắc, liên hệ cán bộ khuyến nông. ...",
 #  "vet": []}
 ```
 
 Đầu vào sai ném `ValueError`. Chỉ chọn một gợi ý khi đúng một bệnh được chứng minh
-và các bệnh khác bị bác bỏ trong bộ luật hiện tại; còn mơ hồ hoặc nhiều gợi ý thì
+và các bệnh khác bị bác bỏ trong bộ luật hiện tại, đồng thời CNN–Bayes cùng
+chọn bệnh đó qua ngưỡng; bất đồng, dưới ngưỡng, hòa hoặc nhiều gợi ý thì
 `ket_luan=None`. Không suy ra lá khỏe chỉ vì thiếu dấu hiệu bệnh. Callback được
 nhớ theo thuộc tính trong cả phiên, không hỏi lại giữa các mục tiêu.
 Kết luận, luật và nguồn trong báo cáo
 phải từ tri thức đã kiểm chứng, không từ ví dụ ký hiệu của test.
+
+Điểm kỹ thuật, ngưỡng và phương pháp Bayes được ghi trong `giai_thich`, không
+gán vào `do_tin_cay`. Quyết định và giới hạn ở
+[ADR-001](decisions/001-dieu-phoi-luat-bayes.md).
+
+`src/app/chan_doan.py` cung cấp `diagnose_image(duong_dan_anh: str,
+hoi_nguoi_dung: HoiNguoiDung) -> ChanDoan`. Hàm gọi predictor một lần, giữ lỗi
+predictor. IS_STUB=True luôn trả ket_luan=None kèm giải thích GIẢ, không xác
+nhận bệnh từ số giả. Không cần TensorFlow để thử luồng với predictor giả.
 
 ## 3. Lộ trình: TV1 → TV5
 

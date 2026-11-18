@@ -57,3 +57,15 @@ Kết quả version phải là `0.1.25`. Test phải chạy qua phần `test_pgm
 - CPD và prior chưa được ước lượng từ bộ dữ liệu đồng ruộng có nhãn.
 - Ngưỡng quyết định 0.60 chưa được hiệu chuẩn trên tập validation.
 - Danh sách thuộc tính được Bayes hỗ trợ chỉ là tập con công bố ở Q2; thuộc tính còn lại không bị xóa khỏi vocabulary/hệ luật, chỉ không tham gia truy vấn Bayes.
+
+## 5. Kiểm chứng tích hợp ngày 18/11/2026
+
+- Python 3.14.3; pytest với cache tắt và basetemp riêng: **199 passed, 1 skipped, 9 xfailed**, không có failed/error. Skip vì thiếu pgmpy; xfail thuộc CN1.
+- `python -m ruff check .`: All checks passed.
+- `python -m scripts.check_rules`: 28 luật hợp lệ.
+- Bổ sung test ánh xạ phủ định/không rõ, top-3 sai, đồng thuận/bất đồng luật và CNN–Bayes, phiên hỏi dùng chung và predictor giả.
+- Đã nối diagnose với fusion và diagnose_image; không đưa kết luận suy ra vào bằng chứng quan sát. CNN giả luôn trả kết luận chưa đủ chắc.
+- Review giữ nguyên số CPD, trạng thái/cấu trúc mạng, điều kiện/kết luận 28 luật, hợp đồng công khai và thuật toán tiến/lùi. Trích nguồn và diễn giải giả định được cập nhật.
+- Danh mục ảnh có 20 dòng đối chiếu tên file; nguồn, giấy phép và người/ngày thu thập còn thiếu, không tự điền.
+- Chưa kiểm chứng pgmpy, CNN thật, độ chính xác thực địa hoặc ngưỡng đã hiệu chuẩn. S3 đọc qua bản chỉ mục nhưng URL tải gốc 404; S6 chưa mở lại được. DN10 cần duyệt phạm vi thời điểm áp dụng.
+- Kết quả xác nhận luồng code trong phạm vi test; chưa đủ để nghiệm thu toàn bộ Chức năng 2.

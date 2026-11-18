@@ -4,7 +4,7 @@
 
 Đồ án cuối kỳ – Học kỳ 1, năm học 2026 – 2027 · Thời gian thực hiện: 02/11 – 06/12/2026
 
-> **Trạng thái:** CN2 đã có 28 luật có nguồn, từ vựng thuộc tính, suy diễn tiến/lùi và script kiểm tra. Chẩn đoán tích hợp, mạng Bayes, CN1, CNN và ứng dụng vẫn đang phát triển; dự đoán CNN hiện là **GIẢ**. Môi trường TensorFlow **chưa cài thử**; xem `docs/kiem_chung.md`.
+> **Trạng thái:** CN2 có 28 luật, suy diễn tiến/lùi, Bayes và luồng chẩn đoán kết hợp giữ nguyên API. CNN hiện là **GIẢ**; chưa đánh giá ảnh thật hoặc hiệu chuẩn CPD, runtime pgmpy cần kiểm chứng. CN1 và giao diện ứng dụng còn phát triển. Xem `docs/kiem_chung.md` và `tasks/todo.md`.
 
 ---
 
@@ -143,7 +143,7 @@ Nguồn: [TensorFlow 2.16.1](https://pypi.org/project/tensorflow/2.16.1/),
 
 - **Ảnh lá lúa:** bộ dữ liệu công khai (Kaggle, Mendeley Data), tối thiểu 4 lớp: đạo ôn, bạc lá, đốm nâu, lá khỏe. Đường dẫn tải và giấy phép ghi trong `docs/du_lieu.md`. Tải về và giải nén vào `data/raw/`.
 - **Ảnh thực tế:** ≥ 20 ảnh tự chụp hoặc sưu tầm trong `data/anh_thuc_te/`; nguồn từng ảnh ghi trong `data/anh_thuc_te/nguon.csv`.
-- **Tri thức cho hệ chuyên gia:** 28 luật tham chiếu bốn nguồn chính S1–S4; S2 có ngày đăng năm 2012, S3 là sổ tay năm 2014; danh mục có S5–S6 bổ sung căn cứ giai đoạn chọn giống. Từ vựng và lựa chọn nằm trong `src/rules/vocabulary.json`. Xem [hồ sơ nguồn](docs/nguon_tri_thuc.md) và [đối chiếu 28 luật](docs/doi_chieu_luat.md). Chưa có duyệt chuyên gia địa phương; DN10 còn giới hạn nguồn về thời điểm và điều kiện kích hoạt luân canh. Luật không chứa tên thuốc, hoạt chất hay liều lượng.
+- **Tri thức cho hệ chuyên gia:** 28 luật, danh mục S1–S7. S2 là datasheet EPPO cập nhật 2022; S7 là bài khoa học năm 2006 cho héo/cuộn lá. Xem [hồ sơ nguồn](docs/nguon_tri_thuc.md) và [đối chiếu 28 luật](docs/doi_chieu_luat.md). S3 tải trực tiếp lỗi, S6 mở lại timeout; DN10 còn giới hạn nguồn về mốc vụ và điều kiện kích hoạt. Chưa có duyệt chuyên gia địa phương. Không có thuốc/hoạt chất/liều lượng trong luật.
 
 ## 6. Cách chạy khung hiện tại
 
@@ -159,7 +159,8 @@ python -m scripts.check_rules
 Nếu ruff chưa có trong PATH dùng `python -m ruff check .`. Demo đọc bản đồ 4 × 4,
 in dự đoán **GIẢ**, báo “chưa cài đặt” cho CN1 và chạy CN2 với câu trả lời
 “Chưa biết”. CN2 trả thông báo chưa đủ chắc, liên hệ cán bộ khuyến nông.
-Demo không gọi mạng Bayes hoặc ứng dụng; bản dự đoán giả không đọc ảnh.
+Demo gọi điều phối ảnh, hệ luật và CNN–Bayes. Predictor giả không đọc ảnh;
+kết quả luôn được ghi là minh họa, không dùng xác nhận bệnh.
 
 Các module chưa cung cấp CLI xử lý tham số. Một số thuật toán CN1/CN2 và mô hình
 đã có hàm thư viện; các hàm chưa triển khai ném `NotImplementedError`. Không coi

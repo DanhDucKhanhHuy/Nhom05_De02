@@ -31,7 +31,7 @@ NGUON_CPD = {
     "BacBatDauChop": ("S2",),
     "BacVangTrang": ("S2",),
     "BacMepLuonSong": ("S2",),
-    "LaHeoCuon": ("S2",),
+    "LaHeoCuon": ("S2", "S7"),
     "DomTronBauDuc": ("S3",),
     "DomVienSam": ("S3",),
     "DomTamNhatXam": ("S3",),
@@ -50,7 +50,7 @@ GIA_DINH_CPD = {
     "DinhDuong": "Prior minh họa đất đủ/thiếu dinh dưỡng; chưa học từ xét nghiệm đất.",
     "DaoOn": "Giả định đạo ôn thuận lợi hơn khi thời tiết ẩm, đạm vượt khuyến cáo và giống nhiễm; S1/S4 chỉ hỗ trợ định tính.",
     "BacLa": "Giả định bạc lá thuận lợi hơn khi thời tiết ẩm và đạm vượt khuyến cáo; S2 hỗ trợ định tính.",
-    "DomNau": "Giả định đốm nâu thuận lợi hơn khi dinh dưỡng thiếu và thời tiết khô; S3 hỗ trợ định tính.",
+    "DomNau": "CPD minh họa tăng xác suất khi dinh dưỡng thiếu; nhóm mua_am được đặt cao hơn kho. Chiều tác động thời tiết và các con số là giả định cần duyệt, không phải kết quả định lượng từ S3.",
     "AmU_SuongSom": "Quan sát âm u kèm sương được điều kiện hóa theo nhóm thời tiết; không đại diện tình trạng ruộng/cây.",
     "VetHinhThoi": "Dấu hiệu hình thoi phụ thuộc trạng thái đạo ôn; S1/S4 hỗ trợ nhận dạng định tính.",
     "VetTamXamKho": "Tâm xám khô được mô hình hóa là dấu hiệu con của tổn thương hình thoi; không đồng nhất với hình thoi.",
@@ -295,6 +295,13 @@ def bang_chung_bayes(
                 continue
             node, state = mapped
         elif key in ANH_XA_BANG_CHUNG:
+            value = _chuan_hoa_trang_thai(raw_value, key)
+            if value != "co":
+                notes.add(
+                    f"Bỏ qua {key}={value}: mã cũ chỉ xác định bằng chứng khi được "
+                    "xác nhận Có; không suy trạng thái đối lập từ phủ định."
+                )
+                continue
             node, state = ANH_XA_BANG_CHUNG[key]
         elif key in {"ThoiTiet", "Giong", "DinhDuong"}:
             value = str(raw_value).strip()
@@ -369,9 +376,15 @@ def kiem_tra_cpd() -> None:
                 raise ValueError(f"CPD của {node} tại {parent_state} không cộng bằng 1.")
 
 
-def _tat_ca_dong_nhat(nodes: Iterable[str] | None = None):
+def _tat_ca_dong_nhat(
+    nodes: Iterable[str] | None = None, evidence: Mapping[str, str] | None = None,
+):
+    """Chỉ liệt kê biến chưa biết; giữ cố định các quan sát đã chuẩn hóa."""
     selected = list(nodes) if nodes is not None else list(NUT)
-    for values in itertools.product(*[NUT[node]["gia_tri"] for node in selected]):
+    evidence = evidence or {}
+    domains = [[evidence[node]] if node in evidence else NUT[node]["gia_tri"]
+               for node in selected]
+    for values in itertools.product(*domains):
         yield dict(zip(selected, values))
 
 
@@ -384,9 +397,7 @@ def _truy_van_joint_liet_ke(bang_chung: dict[str, str]) -> dict[tuple[str, str, 
         states: 0.0
         for states in itertools.product(*[NUT[node]["gia_tri"] for node in query_nodes])
     }
-    for row in _tat_ca_dong_nhat(required):
-        if any(row[node] != state for node, state in bang_chung.items()):
-            continue
+    for row in _tat_ca_dong_nhat(required, bang_chung):
         probability = _xac_suat_dong_nhat(row, required)
         total += probability
         joint[(row["DaoOn"], row["BacLa"], row["DomNau"])] += probability

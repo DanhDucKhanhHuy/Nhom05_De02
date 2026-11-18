@@ -46,10 +46,16 @@ def chuan_hoa_cnn_top3(cnn_top3: Iterable[tuple[str, float]]) -> dict[str, float
             raise ValueError(f"Mã lớp CNN bị trùng: {label}.")
         if isinstance(probability, bool) or not isinstance(probability, (int, float)):
             raise ValueError("Xác suất CNN phải là số thực hữu hạn.")
+        if not 0.0 <= probability <= 1.0:
+            raise ValueError("Xác suất CNN phải thuộc [0, 1].")
         probability = float(probability)
         if not math.isfinite(probability) or not 0.0 <= probability <= 1.0:
             raise ValueError(f"Xác suất CNN phải hữu hạn và thuộc [0, 1]: {probability}.")
         result[label] = probability
+
+    probabilities = list(result.values())
+    if probabilities != sorted(probabilities, reverse=True):
+        raise ValueError("Top-3 phải sắp theo xác suất giảm dần.")
 
     missing = set(MA_BENH) - set(result)
     if len(missing) != 1:
