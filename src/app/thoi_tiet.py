@@ -12,6 +12,7 @@ Ví dụ:
 from __future__ import annotations
 
 import argparse
+import math
 from typing import Any
 
 import requests
@@ -89,33 +90,33 @@ def lay_thoi_tiet(latitude: float, longitude: float) -> dict[str, Any]:
 
 def tao_bang_chung_bayes(weather: dict[str, Any]) -> list[str]:
     """
-    Ánh xạ dữ liệu thời tiết sang mã sự kiện mà bayes.py đã định nghĩa.
-    Chỉ tạo tối đa một trạng thái ThoiTiet để tránh bằng chứng mâu thuẫn.
+    Chuyển số đo thời tiết thành đúng một bằng chứng cho nút ThoiTiet.
+
+    Quy tắc kỹ thuật được công bố:
+    - độ ẩm >= 80% hoặc mưa >= 1 mm -> tt_am_do_cao / tt_mua_nhieu (mua_am);
+    - độ ẩm < 60% và lượng mưa = 0 mm -> tt_kho_han (kho);
+    - các trường hợp còn lại -> không tạo bằng chứng.
+    Đây chỉ là phân nhóm thời tiết theo ngưỡng minh họa, không suy ra tình trạng
+    ruộng, cây hay triệu chứng bệnh. Sương mù/gió không tự chuyển thành evidence.
     """
     humidity = weather.get("humidity_percent")
     rain = weather.get("precipitation_mm")
-    wind = weather.get("wind_speed_kmh")
-    code = weather.get("weather_code")
-    if humidity is None or rain is None or wind is None:
-        raise ValueError("Thiếu dữ liệu độ ẩm, mưa hoặc gió.")
+    if humidity is None or rain is None:
+        raise ValueError("Thiếu dữ liệu độ ẩm hoặc lượng mưa.")
+    humidity = float(humidity)
+    rain = float(rain)
+    if not math.isfinite(humidity) or not 0 <= humidity <= 100:
+        raise ValueError("Độ ẩm phải hữu hạn và thuộc [0, 100].")
+    if not math.isfinite(rain) or rain < 0:
+        raise ValueError("Lượng mưa phải hữu hạn và không âm.")
 
-    events: list[str] = []
-    wet = float(humidity) >= 80 or float(rain) >= 1.0
-    dry = float(humidity) < 60 and float(rain) == 0.0
-
-    if wet:
-        events.append("tt_am_do_cao" if float(humidity) >= 80 else "tt_mua_nhieu")
-    elif dry:
-        events.append("tt_kho_han")
-
-    # WMO weather codes 45/48: sương mù; 51–67, 80–82, 95–99: mưa/dông.
-    if code in (45, 48):
-        if not wet:
-            events.append("tt_suong_mu")
-    if float(wind) >= 30 and wet:
-        events.append("tt_gio_manh")
-
-    return events
+    if humidity >= 80:
+        return ["tt_am_do_cao"]
+    if rain >= 1.0:
+        return ["tt_mua_nhieu"]
+    if humidity < 60 and rain == 0.0:
+        return ["tt_kho_han"]
+    return []
 
 
 def danh_gia_nguy_co_so_bo(weather: dict[str, Any]) -> str:

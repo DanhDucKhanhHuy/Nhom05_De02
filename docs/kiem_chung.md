@@ -1,68 +1,59 @@
-# Biên bản kiểm chứng TV3 – CN2
+# Biên bản kiểm chứng TV3 – mô hình Bayes đa bằng chứng
 
-## Phạm vi
+## Phạm vi thay đổi
 
-Đã rà soát và chỉnh sửa phần xác suất trong `src/rules/bayes.py`,
-`src/rules/ket_hop.py`, tài liệu `docs/cau_hoi/Q2_xac_suat.md` và bổ sung
-`tests/test_tv3_probability.py`. Các module ngoài phạm vi bảy ưu tiên được giữ
-nguyên.
+Chỉ thay đổi phần xác suất và các kiểm thử trực tiếp phụ thuộc vào hợp đồng bằng chứng Bayes:
+- `src/rules/bayes.py`: thiết kế lại cấu trúc mạng, nút quan sát riêng, ánh xạ thuộc tính/mã cũ, CPD và truy vấn.
+- `src/app/thoi_tiet.py`: công bố ngưỡng chuyển số đo thành trạng thái thời tiết; không suy từ thời tiết sang tình trạng cây/ruộng.
+- `src/rules/ket_hop.py`: giữ nguyên bộ kết hợp CNN–Bayes hiện có; kiểm thử tích hợp được cập nhật theo evidence node mới.
+- `tests/test_tv3_probability.py`: kiểm thử mô hình và hợp đồng mới.
+- `tests/test_knowledge_regressions.py`, `tests/test_rules.py`: chỉ cập nhật các kiểm thử đang khẳng định ánh xạ Bayes cũ, không sửa logic hệ luật hoặc nội dung luật của thành viên khác.
+- `docs/cau_hoi/Q2_xac_suat.md`: cập nhật cấu trúc, thuộc tính hỗ trợ, CPD, công thức và ví dụ.
 
-## Kết quả kiểm tra trong môi trường thực thi hiện tại
+Không chỉnh sửa `rules.json`, `vocabulary.json`, thuật toán tìm kiếm, CNN, giao diện hoặc các module hệ luật khác.
 
-- `python -m pytest -q` (16/11/2026): **141 passed, 1 skipped, 9 xfailed**.
-- 1 test bị skip là kiểm thử tích hợp pgmpy vì môi trường này chưa có `pgmpy`;
-  việc cài `pgmpy==0.1.25` không thực hiện được do môi trường không truy cập được
-  PyPI (DNS/network). Test được viết để yêu cầu đúng phiên bản `0.1.25`, gọi
-  `check_model()`, kiểm tra tổng từng cột CPD và so sánh truy vấn pgmpy với phép
-  liệt kê độc lập trên ba bộ bằng chứng khi chạy trong môi trường đã cài thư viện.
-- 9 xfail là các kiểm thử thuật toán tìm kiếm chưa triển khai trong `tests/test_search.py`;
-  không thuộc phần xác suất TV3.
-- `python -m scripts.check_rules`: đạt, 28 luật, nguồn, mô tả/câu hỏi, từ vựng và chuỗi suy diễn hợp lệ.
-- `python -m ruff check .`: đạt sau khi sắp xếp import kiểm thử.
-- `python demo.py`: chạy thành công; đầu ra CNN ghi rõ là giả, demo không gọi Bayes.
-- `python -m src.rules.bayes --khong-pgmpy`: chạy thành công.
-- `python -m src.rules.ket_hop --khong-pgmpy`: chạy thành công; ví dụ mặc định dùng
-  top-3 giả lập và ba thuộc tính từ vocabulary.
-- `python -m compileall -q src tests`: đạt.
+## 1. Kết quả kiểm thử trong môi trường hiện tại
 
-Lưu ý: môi trường thực thi hiện tại dùng Python 3.13 và không có Ruff/pgmpy.
-Dự án khai báo pgmpy==0.1.25 và khuyến nghị Python 3.10–3.11; cần chạy lại
-kiểm thử pgmpy trong môi trường nhóm có đúng Python và dependency. Không ghi
-nhận kiểm thử pgmpy là đã chạy thành công khi chưa thực hiện được.
+Lệnh `python -m pytest -q`:
+- **154 passed**
+- **1 skipped**: kiểm thử tích hợp pgmpy do môi trường chạy hiện tại không có package `pgmpy`.
+- **9 xfailed**: các ca tìm kiếm được đánh dấu chưa triển khai từ trước, không thuộc phạm vi TV3.
+- **0 failed**
 
-## Đối chiếu bảy ưu tiên
+Kiểm thử riêng `tests/test_tv3_probability.py`:
+- **34 passed**
+- **1 skipped**: kiểm thử pgmpy chưa chạy do thiếu package trong môi trường hiện tại.
+- **0 failed**
 
-1. **Bằng chứng TV2–TV3:** TV3 nhận trực tiếp các thuộc tính trong
-   `vocabulary.json`. Chỉ ánh xạ khi nghĩa của thuộc tính và trạng thái Bayes
-   trùng nhau; “không âm u và có sương sớm” không thành trời khô, “không thừa
-   đạm” không thành đạm thấp. Triệu chứng không khớp trạng thái Bayes được bỏ
-   qua có ghi chú. `chua_biet`, thuộc tính chưa ánh xạ và mã lạ có thông báo
-   riêng. Mâu thuẫn cùng nút bị loại không phụ thuộc thứ tự nhập.
-2. **Biểu diễn bệnh:** ba biến bệnh trong mạng vẫn cho phép đồng mắc. Bốn lớp
-   đầu ra là các trạng thái không bệnh hoặc đúng một bệnh; khối lượng đồng mắc
-   được trả riêng. Xác suất lá khỏe đồng thời lấy từ trạng thái
-   `(khong, khong, khong)` của phân phối đồng thời, không nhân xác suất biên.
-3. **CNN–Bayes:** dùng tích `P_CNN × P(Bệnh|điều kiện)` rồi chuẩn hóa. Có tham số
-   `prior_cnn` để hiệu chỉnh prior huấn luyện; mặc định giả định tập CNN cân bằng.
-   Giả định độc lập có điều kiện và nguy cơ đếm trùng được ghi trong code/Q2.
-4. **Chưa đủ chắc:** ngưỡng mặc định 0.60; dùng điểm quyết định giảm theo
-   xác suất đồng mắc, dùng `>=` để kết luận. Hòa hoặc điểm dưới ngưỡng trả
-   `ket_luan=None`. Có test dưới, bằng, trên ngưỡng và hòa.
-5. **Ca biên:** kiểm tra Top-3, mã lớp, trùng lớp, xác suất không hữu hạn/ngoài
-   miền, tổng không hợp lệ, bằng chứng rỗng/chưa biết/mâu thuẫn/không hỗ trợ và
-   tích CNN–Bayes bằng 0.
-6. **pgmpy:** mã dựng mô hình, `check_model()`, kiểm tra CPD và test đối chiếu
-   ba truy vấn đã có. Chưa thể xác nhận runtime pgmpy trong môi trường hiện tại
-   do thiếu package và không có mạng; test sẽ chạy khi cài đúng phiên bản.
-   `predict_top3` giả được kiểm tra mà không import TensorFlow.
-7. **CPD/Q2:** code khai báo nguồn định tính theo từng nút; Q2 thống nhất với
-   công thức, cách phân lớp, ngưỡng, bằng chứng, nguồn S1–S4 và ví dụ đầu-cuối.
-   CPD vẫn là giả định, chưa hiệu chuẩn thực nghiệm.
+Do thiếu pgmpy trong môi trường thực thi của biên bản này, không ghi nhận `check_model()` và đối chiếu pgmpy là đã chạy thành công ở đây. Test tích hợp được giữ bắt buộc đúng `pgmpy==0.1.25`; cần chạy lại trên máy thành viên đã cài dependency này để xác nhận runtime.
 
-## Giới hạn còn lại
+## 2. Đối chiếu yêu cầu
 
-- CNN trong `src/model/predict.py` vẫn là stub, không phải mô hình ảnh đã huấn luyện.
-- Các con số CPD và ngưỡng 0.60 chưa được hiệu chuẩn bằng dữ liệu đồng ruộng.
-- Cần cài đúng dependency trong Python 3.10–3.11 của nhóm, chạy test pgmpy,
-  rồi mới xác nhận ưu tiên 6 hoàn tất về mặt thực thi.
-- S2 có ngày đăng 11/07/2012; S3 là ấn phẩm năm 2014. Không dùng nguồn cũ thiếu metadata làm nguồn chuẩn cho các luật này.
+1. **Nút triệu chứng riêng:** đã bỏ `TrieuChung` đa trạng thái. Các dấu hiệu hỗ trợ có node nhị phân riêng, cho phép đồng thời nhiều bằng chứng.
+2. **Bạc lá:** đã hỗ trợ vệt úng nước, vị trí bắt đầu ở chóp, màu vàng-trắng, mép lượn sóng và héo/cuộn; từng thuộc tính được công bố ở Q2 và `ANH_XA_THUOC_TINH`.
+3. **Ánh xạ đúng nghĩa:** `co/khong` vào hai trạng thái cùng node; `chua_biet`, `None` và dữ kiện thiếu không tạo evidence. `False` và chuỗi `"False"` là phủ định, không phải dương tính.
+4. **Bỏ ánh xạ gần nghĩa:** tâm xám-khô không thành hình thoi; `thua_dam=khong` không thành đạm thấp; `am_u_va_suong_som=khong` không thành thời tiết khô; vệt bạc lá không thành dấu hiệu đạo ôn.
+5. **Mã cũ:** chỉ `TrieuChung=dom_tron` được chuyển thành `DomTronBauDuc=co` theo định nghĩa tương đương; các trạng thái `vet_thoi`, `chop_la_kho`, `khong` không tự chuyển đổi. `BonDam=cao/thap` bị bỏ qua vì không tương đương chính xác với vượt/không vượt khuyến cáo.
+6. **CPD và phụ thuộc:** mọi node có giả định và provenance. Dấu hiệu chi tiết là node con của dấu hiệu hình thái chính ở nhóm bạc lá, đốm nâu và đạo ôn. Các con số CPD vẫn là giả định định tính, không phải xác suất đã hiệu chuẩn.
+7. **Thời tiết:** số đo độ ẩm/mưa chỉ được chuyển thành `ThoiTiet` theo ngưỡng được ghi rõ trong `src/app/thoi_tiet.py`. Không suy ra thiếu nước ruộng, héo cây hoặc triệu chứng từ số đo thời tiết.
+8. **pgmpy:** test yêu cầu đúng version `0.1.25`, gọi `check_model()`, kiểm tra tổng từng cột CPD và đối chiếu ba cặp truy vấn đối lập với phép liệt kê độc lập. Chưa xác nhận runtime trong môi trường biên bản vì thiếu package.
+9. **Q2 và quyết định:** công thức CNN–Bayes, ví dụ đa triệu chứng và sự khác biệt giữa posterior với `do_tin_cay_dieu_chinh` đã được cập nhật.
+
+## 3. Cách xác nhận pgmpy trên máy nhóm
+
+Trong môi trường Python dự án:
+
+```bash
+python -m pip install pgmpy==0.1.25
+python -c "import pgmpy; print(pgmpy.__version__)"
+python -m pytest tests/test_tv3_probability.py -q
+```
+
+Kết quả version phải là `0.1.25`. Test phải chạy qua phần `test_pgmpy_025_and_three_opposing_query_pairs_match_independent_enumeration`, không được hiển thị `skipped`. Nếu lỗi, lưu nguyên traceback để sửa đúng tương thích runtime.
+
+## 4. Giới hạn
+
+- CNN trong `src/model/predict.py` hiện vẫn là stub.
+- CPD và prior chưa được ước lượng từ bộ dữ liệu đồng ruộng có nhãn.
+- Ngưỡng quyết định 0.60 chưa được hiệu chuẩn trên tập validation.
+- Danh sách thuộc tính được Bayes hỗ trợ chỉ là tập con công bố ở Q2; thuộc tính còn lại không bị xóa khỏi vocabulary/hệ luật, chỉ không tham gia truy vấn Bayes.

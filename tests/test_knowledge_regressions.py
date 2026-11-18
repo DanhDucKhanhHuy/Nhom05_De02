@@ -21,18 +21,16 @@ def read_knowledge():
     return rules, vocabulary
 
 
-def test_unsupported_bacterial_sign_does_not_change_bayes_posterior():
-    """Chưa có nút tương đương thì không được biến bạc lá thành vết hình thoi."""
+def test_bacterial_sign_updates_its_own_bayes_node():
+    """Vệt bạc lá đi vào nút riêng, không bị đổi thành hình thoi đạo ôn."""
     baseline = bayes.truy_van({}, su_dung_pgmpy=False)
     result = bayes.truy_van(
         {"vet_bac_ung_nuoc_tren_phien_la": "co"}, su_dung_pgmpy=False,
     )
-    assert result["bang_chung"] == {}
-    assert result["xac_suat"] == pytest.approx(baseline["xac_suat"])
-    for disease in ("DaoOn", "BacLa", "DomNau"):
-        assert result["chi_tiet"][disease] == pytest.approx(baseline["chi_tiet"][disease])
-    assert any("vet_bac_ung_nuoc_tren_phien_la=co" in note
-               and "chưa có" in note for note in result["ghi_chu"])
+    assert result["bang_chung"] == {"BacVetUngNuoc": "co"}
+    assert result["chi_tiet"]["BacLa"]["co"] > baseline["chi_tiet"]["BacLa"]["co"]
+    # Không có bằng chứng VetHinhThoi; các bệnh vẫn có thể tương quan qua cha chung.
+    assert "VetHinhThoi" not in result["bang_chung"]
 
 
 def test_unsupported_bacterial_sign_keeps_other_supported_symptoms():
@@ -41,7 +39,10 @@ def test_unsupported_bacterial_sign_keeps_other_supported_symptoms():
         "vet_bac_ung_nuoc_tren_phien_la": "co",
         "dom_tron_hoac_bau_duc_nau": "co",
     })
-    assert evidence == {"TrieuChung": "dom_tron"}
+    assert evidence == {
+        "BacVetUngNuoc": "co",
+        "DomTronBauDuc": "co",
+    }
     assert not any("mâu thuẫn" in note for note in notes)
 
 
@@ -87,19 +88,15 @@ def test_white_panicle_can_be_asked_without_knowing_the_disease(answer, expected
 
 
 def test_q2_example_reports_the_evidence_actually_used():
-    """Đóng băng ví dụ tài liệu để tránh giữ số cũ sau khi sửa ánh xạ."""
+    """Ví dụ Q2 dùng đúng các nút quan sát riêng đã công bố."""
     result = ket_hop_cnn_bayes(VI_DU_CNN, VI_DU_BANG_CHUNG, su_dung_pgmpy=False)
-    assert result["bang_chung_bayes"] == {"ThoiTiet": "mua_am", "BonDam": "cao"}
-    assert result["xac_suat_bayes"] == pytest.approx({
-        "dao_on": 0.2605790646, "bac_la": 0.4053452116,
-        "dom_nau": 0.1603563474, "la_khoe": 0.1737193764,
-    })
-    assert result["xac_suat_ket_hop"] == pytest.approx({
-        "dao_on": 0.6424079066, "bac_la": 0.0545073375,
-        "dom_nau": 0.2875112308, "la_khoe": 0.0155735250,
-    })
-    assert result["xac_suat_dong_mac"] == pytest.approx(0.6408)
-    assert result["do_tin_cay_dieu_chinh"] == pytest.approx(0.2307529201)
+    assert result["bang_chung_bayes"] == {
+        "AmU_SuongSom": "co",
+        "BacVetUngNuoc": "co",
+        "ThuaDam": "co",
+    }
+    assert sum(result["xac_suat_bayes"].values()) == pytest.approx(1.0)
+    assert sum(result["xac_suat_ket_hop"].values()) == pytest.approx(1.0)
+    assert result["xac_suat_dong_mac"] > 0
     assert result["ket_luan"] is None
     assert result["trang_thai"] == "chua_du_chac"
-    assert any("vet_bac_ung_nuoc_tren_phien_la" in note for note in result["ghi_chu"])

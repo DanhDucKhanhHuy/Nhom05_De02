@@ -195,9 +195,8 @@ def test_compound_negatives_do_not_become_opposite_bayes_states():
         "am_u_va_suong_som=chua_biet",
         "thua_dam=chua_biet",
     ])
-    assert result == {}
-    assert any("khô" in note for note in notes)
-    assert any("thấp" in note for note in notes)
+    assert result == {"AmU_SuongSom": "khong", "ThuaDam": "khong"}
+    assert not any("mâu thuẫn" in note for note in notes)
 
 
 def test_current_vocabulary_maps_only_supported_positive_bayes_evidence():
@@ -206,7 +205,7 @@ def test_current_vocabulary_maps_only_supported_positive_bayes_evidence():
         "thua_dam=co",
         "ruong_thieu_nuoc=co",
     ])
-    assert result == {"ThoiTiet": "mua_am", "BonDam": "cao"}
+    assert result == {"AmU_SuongSom": "co", "ThuaDam": "co"}
     assert any("ruong_thieu_nuoc=co" in note for note in notes)
 
 
