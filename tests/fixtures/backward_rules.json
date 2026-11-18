@@ -1,0 +1,11 @@
+{
+  "_ghi_chu": "Luật ký hiệu chỉ dùng test; B5 và B6 cố ý tạo chu trình để thử khả năng dừng. TEST không phải nguồn nông học.",
+  "rules": [
+    {"id": "B1", "loai": "trung_gian", "neu": ["a=co"], "thi": "b=co", "nguon": {"ma": "TEST", "muc": "Kiểm thử ký hiệu"}},
+    {"id": "B2", "loai": "trung_gian", "neu": ["b=co", "d=co"], "thi": "c=co", "nguon": {"ma": "TEST", "muc": "Kiểm thử ký hiệu"}},
+    {"id": "B3", "loai": "trung_gian", "neu": ["c=co"], "thi": "e=co", "nguon": {"ma": "TEST", "muc": "Kiểm thử ký hiệu"}},
+    {"id": "B4", "loai": "trung_gian", "neu": ["h=co"], "thi": "e=co", "nguon": {"ma": "TEST", "muc": "Kiểm thử ký hiệu"}},
+    {"id": "B5", "loai": "trung_gian", "neu": ["f=co"], "thi": "g=co", "nguon": {"ma": "TEST", "muc": "Kiểm thử ký hiệu"}},
+    {"id": "B6", "loai": "trung_gian", "neu": ["g=co"], "thi": "f=co", "nguon": {"ma": "TEST", "muc": "Kiểm thử ký hiệu"}}
+  ]
+}

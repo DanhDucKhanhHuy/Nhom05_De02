@@ -1,0 +1,665 @@
+{
+  "thuoc_tinh": {
+    "vet_la_hinh_thoi": {
+      "loai": "du_kien_nguoi_dung",
+      "mo_ta": "Vết trên lá có hình thoi",
+      "gia_tri": [
+        "co",
+        "khong",
+        "chua_biet"
+      ],
+      "cau_hoi": "Bạn có thấy vết trên lá lúa hình thoi không?",
+      "lua_chon": [
+        {
+          "ma": "co",
+          "nhan": "Có"
+        },
+        {
+          "ma": "khong",
+          "nhan": "Không"
+        },
+        {
+          "ma": "chua_biet",
+          "nhan": "Chưa biết"
+        }
+      ]
+    },
+    "vet_la_tam_xam_kho": {
+      "loai": "du_kien_nguoi_dung",
+      "mo_ta": "Tâm vết lá xám và khô",
+      "gia_tri": [
+        "co",
+        "khong",
+        "chua_biet"
+      ],
+      "cau_hoi": "Tâm vết trên lá có màu xám và khô không?",
+      "lua_chon": [
+        {
+          "ma": "co",
+          "nhan": "Có"
+        },
+        {
+          "ma": "khong",
+          "nhan": "Không"
+        },
+        {
+          "ma": "chua_biet",
+          "nhan": "Chưa biết"
+        }
+      ],
+      "phep_ghep": "AND",
+      "dien_giai_ghep": "Chỉ chọn Có khi tâm vết vừa xám vừa khô."
+    },
+    "vet_la_vien_nau": {
+      "loai": "du_kien_nguoi_dung",
+      "mo_ta": "Vết lá có viền nâu",
+      "gia_tri": [
+        "co",
+        "khong",
+        "chua_biet"
+      ],
+      "cau_hoi": "Vết trên lá có viền màu nâu không?",
+      "lua_chon": [
+        {
+          "ma": "co",
+          "nhan": "Có"
+        },
+        {
+          "ma": "khong",
+          "nhan": "Không"
+        },
+        {
+          "ma": "chua_biet",
+          "nhan": "Chưa biết"
+        }
+      ]
+    },
+    "vet_co_la_nau_do": {
+      "loai": "du_kien_nguoi_dung",
+      "mo_ta": "Vết màu nâu đỏ ở cổ lá",
+      "gia_tri": [
+        "co",
+        "khong",
+        "chua_biet"
+      ],
+      "cau_hoi": "Bạn có thấy vết nâu đỏ ở chỗ nối phiến lá với bẹ lá không?",
+      "lua_chon": [
+        {
+          "ma": "co",
+          "nhan": "Có"
+        },
+        {
+          "ma": "khong",
+          "nhan": "Không"
+        },
+        {
+          "ma": "chua_biet",
+          "nhan": "Chưa biết"
+        }
+      ]
+    },
+    "dot_than_teo_nau": {
+      "loai": "du_kien_nguoi_dung",
+      "mo_ta": "Đốt thân có vết nâu và teo",
+      "gia_tri": [
+        "co",
+        "khong",
+        "chua_biet"
+      ],
+      "cau_hoi": "Đốt thân lúa có vết nâu và bị teo lại không?",
+      "phep_ghep": "AND",
+      "dien_giai_ghep": "Chỉ chọn Có khi đốt thân vừa có vết nâu vừa teo lại.",
+      "lua_chon": [
+        {
+          "ma": "co",
+          "nhan": "Có"
+        },
+        {
+          "ma": "khong",
+          "nhan": "Không"
+        },
+        {
+          "ma": "chua_biet",
+          "nhan": "Chưa biết"
+        }
+      ]
+    },
+    "co_bong_thoi_nau": {
+      "loai": "du_kien_nguoi_dung",
+      "mo_ta": "Cổ bông hoặc cổ gié có vết nâu thối tóp",
+      "gia_tri": [
+        "co",
+        "khong",
+        "chua_biet"
+      ],
+      "cau_hoi": "Ở cổ bông hoặc cổ gié có đồng thời vết nâu và dấu hiệu thối tóp không?",
+      "lua_chon": [
+        {
+          "ma": "co",
+          "nhan": "Có"
+        },
+        {
+          "ma": "khong",
+          "nhan": "Không"
+        },
+        {
+          "ma": "chua_biet",
+          "nhan": "Chưa biết"
+        }
+      ],
+      "phep_ghep": "AND_OR",
+      "dien_giai_ghep": "Cổ bông hoặc cổ gié là các vị trí thay thế nhau; vị trí được thấy phải có vết nâu và thối tóp."
+    },
+    "bong_hoac_gie_lep_trang": {
+      "loai": "du_kien_nguoi_dung",
+      "mo_ta": "Toàn bộ bông hoặc từng gié bị lép trắng",
+      "gia_tri": [
+        "co",
+        "khong",
+        "chua_biet"
+      ],
+      "cau_hoi": "Bạn có thấy toàn bộ bông hoặc từng gié bị lép trắng không?",
+      "lua_chon": [
+        {
+          "ma": "co",
+          "nhan": "Có"
+        },
+        {
+          "ma": "khong",
+          "nhan": "Không"
+        },
+        {
+          "ma": "chua_biet",
+          "nhan": "Chưa biết"
+        }
+      ],
+      "phep_ghep": "OR",
+      "dien_giai_ghep": "Toàn bộ bông hoặc từng gié bị lép trắng đều tính là Có. Đây là dấu hiệu không đặc hiệu, chỉ yêu cầu kiểm tra thêm; không xác nhận bệnh hay thời điểm bệnh xuất hiện."
+    },
+    "am_u_va_suong_som": {
+      "loai": "du_kien_nguoi_dung",
+      "mo_ta": "Thời tiết âm u VÀ có sương vào sáng sớm",
+      "gia_tri": [
+        "co",
+        "khong",
+        "chua_biet"
+      ],
+      "cau_hoi": "Gần đây thời tiết âm u và có sương vào sáng sớm không?",
+      "lua_chon": [
+        {
+          "ma": "co",
+          "nhan": "Có"
+        },
+        {
+          "ma": "khong",
+          "nhan": "Không"
+        },
+        {
+          "ma": "chua_biet",
+          "nhan": "Chưa biết"
+        }
+      ],
+      "phep_ghep": "AND",
+      "dien_giai_ghep": "Chỉ chọn Có khi đồng thời có thời tiết âm u và sương vào sáng sớm; Không chỉ phủ định cả tổ hợp, không chứng minh trời khô."
+    },
+    "ruong_thieu_nuoc": {
+      "loai": "du_kien_nguoi_dung",
+      "mo_ta": "Ruộng có thời điểm thiếu nước",
+      "gia_tri": [
+        "co",
+        "khong",
+        "chua_biet"
+      ],
+      "cau_hoi": "Ruộng lúa có thời điểm bị thiếu nước không?",
+      "lua_chon": [
+        {
+          "ma": "co",
+          "nhan": "Có"
+        },
+        {
+          "ma": "khong",
+          "nhan": "Không"
+        },
+        {
+          "ma": "chua_biet",
+          "nhan": "Chưa biết"
+        }
+      ]
+    },
+    "sa_day": {
+      "loai": "du_kien_nguoi_dung",
+      "mo_ta": "Lúa được gieo sạ dày",
+      "gia_tri": [
+        "co",
+        "khong",
+        "chua_biet"
+      ],
+      "cau_hoi": "Lúa trong ruộng có được gieo sạ dày không?",
+      "lua_chon": [
+        {
+          "ma": "co",
+          "nhan": "Có"
+        },
+        {
+          "ma": "khong",
+          "nhan": "Không"
+        },
+        {
+          "ma": "chua_biet",
+          "nhan": "Chưa biết"
+        }
+      ]
+    },
+    "thua_dam": {
+      "loai": "du_kien_nguoi_dung",
+      "mo_ta": "Lượng đạm bón vượt khuyến cáo",
+      "gia_tri": [
+        "co",
+        "khong",
+        "chua_biet"
+      ],
+      "cau_hoi": "Theo ghi chép hoặc ước lượng canh tác, lượng đạm bón có vượt khuyến cáo không?",
+      "phep_ghep": "OR",
+      "dien_giai_ghep": "Có thể xác định bằng ghi chép hoặc ước lượng canh tác; đây là hai cách cung cấp bằng chứng cho cùng thuộc tính.",
+      "lua_chon": [
+        {
+          "ma": "co",
+          "nhan": "Có"
+        },
+        {
+          "ma": "khong",
+          "nhan": "Không"
+        },
+        {
+          "ma": "chua_biet",
+          "nhan": "Chưa biết"
+        }
+      ],
+      "dien_giai_phu_dinh": "Chọn Không khi xác nhận lượng đạm bón không vượt khuyến cáo. Nếu thiếu ghi chép, không biết mức khuyến cáo hoặc không đủ căn cứ đối chiếu, chọn Chưa biết. Không vượt khuyến cáo không đồng nghĩa với bón ít hoặc thiếu đạm."
+    },
+    "vet_bac_ung_nuoc_tren_phien_la": {
+      "loai": "du_kien_nguoi_dung",
+      "mo_ta": "Vệt bạc lá dạng úng nước đến vàng trên phiến lá",
+      "gia_tri": [
+        "co",
+        "khong",
+        "chua_biet"
+      ],
+      "cau_hoi": "Bạn có thấy vệt bạc lá dạng úng nước đến vàng trên phiến lá không?",
+      "lua_chon": [
+        {
+          "ma": "co",
+          "nhan": "Có"
+        },
+        {
+          "ma": "khong",
+          "nhan": "Không"
+        },
+        {
+          "ma": "chua_biet",
+          "nhan": "Chưa biết"
+        }
+      ]
+    },
+    "vet_bac_bat_dau_o_chop_la": {
+      "loai": "du_kien_nguoi_dung",
+      "mo_ta": "Vệt bạc lá bắt đầu gần chóp lá",
+      "gia_tri": [
+        "co",
+        "khong",
+        "chua_biet"
+      ],
+      "cau_hoi": "Vệt úng nước đến vàng có bắt đầu gần chóp lá không?",
+      "lua_chon": [
+        {
+          "ma": "co",
+          "nhan": "Có"
+        },
+        {
+          "ma": "khong",
+          "nhan": "Không"
+        },
+        {
+          "ma": "chua_biet",
+          "nhan": "Chưa biết"
+        }
+      ]
+    },
+    "vet_la_vang_den_trang": {
+      "loai": "du_kien_nguoi_dung",
+      "mo_ta": "Vệt bệnh trên lá có màu vàng đến trắng",
+      "gia_tri": [
+        "co",
+        "khong",
+        "chua_biet"
+      ],
+      "cau_hoi": "Bạn có thấy vệt bệnh trên lá có màu vàng đến trắng không?",
+      "lua_chon": [
+        {
+          "ma": "co",
+          "nhan": "Có"
+        },
+        {
+          "ma": "khong",
+          "nhan": "Không"
+        },
+        {
+          "ma": "chua_biet",
+          "nhan": "Chưa biết"
+        }
+      ],
+      "ghi_chu": "Chỉ ghi nhận màu quan sát được; không hàm ý đây là trình tự đổi màu theo thời gian."
+    },
+    "vet_bac_mep_luon_song": {
+      "loai": "du_kien_nguoi_dung",
+      "mo_ta": "Mép vệt bệnh lượn sóng",
+      "gia_tri": [
+        "co",
+        "khong",
+        "chua_biet"
+      ],
+      "cau_hoi": "Mép vệt bệnh trên lá có dạng lượn sóng không?",
+      "lua_chon": [
+        {
+          "ma": "co",
+          "nhan": "Có"
+        },
+        {
+          "ma": "khong",
+          "nhan": "Không"
+        },
+        {
+          "ma": "chua_biet",
+          "nhan": "Chưa biết"
+        }
+      ]
+    },
+    "la_heo_hoac_cuon_lai": {
+      "loai": "du_kien_nguoi_dung",
+      "mo_ta": "Lá lúa bị héo hoặc cuộn lại",
+      "gia_tri": [
+        "co",
+        "khong",
+        "chua_biet"
+      ],
+      "cau_hoi": "Bạn có thấy lá lúa bị héo hoặc cuộn lại không?",
+      "lua_chon": [
+        {
+          "ma": "co",
+          "nhan": "Có"
+        },
+        {
+          "ma": "khong",
+          "nhan": "Không"
+        },
+        {
+          "ma": "chua_biet",
+          "nhan": "Chưa biết"
+        }
+      ],
+      "phep_ghep": "OR",
+      "dien_giai_ghep": "Thấy lá héo hoặc cây mạ héo đều tính là Có."
+    },
+    "dom_tron_hoac_bau_duc_nau": {
+      "loai": "du_kien_nguoi_dung",
+      "mo_ta": "Đốm nâu tròn hoặc bầu dục",
+      "gia_tri": [
+        "co",
+        "khong",
+        "chua_biet"
+      ],
+      "cau_hoi": "Bạn có thấy đốm màu nâu dạng tròn hoặc bầu dục không?",
+      "lua_chon": [
+        {
+          "ma": "co",
+          "nhan": "Có"
+        },
+        {
+          "ma": "khong",
+          "nhan": "Không"
+        },
+        {
+          "ma": "chua_biet",
+          "nhan": "Chưa biết"
+        }
+      ],
+      "phep_ghep": "OR",
+      "dien_giai_ghep": "Đốm tròn hoặc bầu dục màu nâu đều tính là Có."
+    },
+    "dom_nau_vien_sam": {
+      "loai": "du_kien_nguoi_dung",
+      "mo_ta": "Đốm nâu có viền sẫm",
+      "gia_tri": [
+        "co",
+        "khong",
+        "chua_biet"
+      ],
+      "cau_hoi": "Đốm nâu có viền màu sẫm không?",
+      "lua_chon": [
+        {
+          "ma": "co",
+          "nhan": "Có"
+        },
+        {
+          "ma": "khong",
+          "nhan": "Không"
+        },
+        {
+          "ma": "chua_biet",
+          "nhan": "Chưa biết"
+        }
+      ]
+    },
+    "dom_nau_tam_nhat_xam": {
+      "loai": "du_kien_nguoi_dung",
+      "mo_ta": "Tâm đốm nâu đỏ nhạt hoặc xám",
+      "gia_tri": [
+        "co",
+        "khong",
+        "chua_biet"
+      ],
+      "cau_hoi": "Tâm đốm có màu nâu đỏ nhạt hoặc xám không?",
+      "phep_ghep": "OR",
+      "dien_giai_ghep": "Tâm màu nâu đỏ nhạt hoặc màu xám đều tính là Có.",
+      "lua_chon": [
+        {
+          "ma": "co",
+          "nhan": "Có"
+        },
+        {
+          "ma": "khong",
+          "nhan": "Không"
+        },
+        {
+          "ma": "chua_biet",
+          "nhan": "Chưa biết"
+        }
+      ]
+    },
+    "dom_nau_tren_be_la": {
+      "loai": "du_kien_nguoi_dung",
+      "mo_ta": "Đốm nâu trên bẹ lá",
+      "gia_tri": [
+        "co",
+        "khong",
+        "chua_biet"
+      ],
+      "cau_hoi": "Bạn có thấy đốm nâu trên bẹ lá không?",
+      "lua_chon": [
+        {
+          "ma": "co",
+          "nhan": "Có"
+        },
+        {
+          "ma": "khong",
+          "nhan": "Không"
+        },
+        {
+          "ma": "chua_biet",
+          "nhan": "Chưa biết"
+        }
+      ]
+    },
+    "cay_gan_truong_thanh_la_gia_hoa": {
+      "loai": "du_kien_nguoi_dung",
+      "mo_ta": "Cây gần trưởng thành, lá bắt đầu già hóa",
+      "gia_tri": [
+        "co",
+        "khong",
+        "chua_biet"
+      ],
+      "cau_hoi": "Lúa đang gần trưởng thành và lá bắt đầu già hóa phải không?",
+      "lua_chon": [
+        {
+          "ma": "co",
+          "nhan": "Có"
+        },
+        {
+          "ma": "khong",
+          "nhan": "Không"
+        },
+        {
+          "ma": "chua_biet",
+          "nhan": "Chưa biết"
+        }
+      ],
+      "phep_ghep": "AND",
+      "dien_giai_ghep": "Chỉ chọn Có khi cây gần trưởng thành và lá bắt đầu già hóa."
+    },
+    "dom_nau_tren_diep_tieu": {
+      "loai": "du_kien_nguoi_dung",
+      "mo_ta": "Đốm nâu trên diệp tiêu (bao mầm)",
+      "gia_tri": [
+        "co",
+        "khong",
+        "chua_biet"
+      ],
+      "cau_hoi": "Bạn có thấy đốm nâu trên diệp tiêu (bao mầm) của mạ không?",
+      "lua_chon": [
+        {
+          "ma": "co",
+          "nhan": "Có"
+        },
+        {
+          "ma": "khong",
+          "nhan": "Không"
+        },
+        {
+          "ma": "chua_biet",
+          "nhan": "Chưa biết"
+        }
+      ]
+    },
+    "dom_nau_tren_vo_trau": {
+      "loai": "du_kien_nguoi_dung",
+      "mo_ta": "Đốm nâu trên vỏ trấu",
+      "gia_tri": [
+        "co",
+        "khong",
+        "chua_biet"
+      ],
+      "cau_hoi": "Bạn có thấy đốm nâu trên vỏ trấu không?",
+      "lua_chon": [
+        {
+          "ma": "co",
+          "nhan": "Có"
+        },
+        {
+          "ma": "khong",
+          "nhan": "Không"
+        },
+        {
+          "ma": "chua_biet",
+          "nhan": "Chưa biết"
+        }
+      ]
+    },
+    "hat_nhe_hoac_bac_phan": {
+      "loai": "du_kien_nguoi_dung",
+      "mo_ta": "Hạt nhẹ hoặc hạt có biểu hiện bạc phấn",
+      "gia_tri": [
+        "co",
+        "khong",
+        "chua_biet"
+      ],
+      "cau_hoi": "Hạt lúa có nhẹ hơn bình thường hoặc có biểu hiện bạc phấn không?",
+      "lua_chon": [
+        {
+          "ma": "co",
+          "nhan": "Có"
+        },
+        {
+          "ma": "khong",
+          "nhan": "Không"
+        },
+        {
+          "ma": "chua_biet",
+          "nhan": "Chưa biết"
+        }
+      ],
+      "phep_ghep": "OR",
+      "dien_giai_ghep": "Hạt nhẹ hoặc có dạng phấn đều tính là Có."
+    },
+    "ruong_xac_nhan_nhiem_dom_nau": {
+      "loai": "du_kien_nguoi_dung",
+      "mo_ta": "Ruộng đã được xác nhận nhiễm bệnh đốm nâu",
+      "gia_tri": [
+        "co",
+        "khong",
+        "chua_biet"
+      ],
+      "cau_hoi": "Ruộng đã được xác định là nhiễm bệnh đốm nâu chưa?",
+      "dien_giai_phu_dinh": "Không nghĩa là chưa được xác nhận; không khẳng định ruộng không nhiễm bệnh.",
+      "lua_chon": [
+        {
+          "ma": "co",
+          "nhan": "Có"
+        },
+        {
+          "ma": "khong",
+          "nhan": "Không"
+        },
+        {
+          "ma": "chua_biet",
+          "nhan": "Chưa biết"
+        }
+      ]
+    },
+    "suy_luan": {
+      "loai": "su_kien_suy_ra",
+      "mo_ta": "Gợi ý bệnh từ triệu chứng, chưa phải chẩn đoán xác định",
+      "gia_tri": [
+        "nghi_dao_on",
+        "nghi_bac_la",
+        "nghi_dom_nau"
+      ]
+    },
+    "yeu_to_nguy_co": {
+      "loai": "su_kien_suy_ra",
+      "mo_ta": "Yếu tố có thể thuận lợi cho bệnh phát sinh",
+      "gia_tri": [
+        "dao_on",
+        "dom_nau"
+      ]
+    },
+    "can_kiem_tra": {
+      "loai": "su_kien_suy_ra",
+      "mo_ta": "Dấu hiệu cần được người có chuyên môn kiểm tra",
+      "gia_tri": [
+        "dao_on",
+        "bac_la",
+        "dom_nau"
+      ]
+    },
+    "khuyen_nghi": {
+      "loai": "su_kien_suy_ra",
+      "mo_ta": "Biện pháp canh tác có nguồn và thời điểm áp dụng rõ ràng",
+      "gia_tri": [
+        "theo_doi_ruong_thuong_xuyen",
+        "chon_hat_giong_sach_benh",
+        "quan_ly_dinh_duong_dat_nuoc_phu_hop",
+        "luan_canh_vu_tiep_theo_neu_bi_nhiem"
+      ]
+    }
+  }
+}

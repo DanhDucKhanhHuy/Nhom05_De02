@@ -1,0 +1,15 @@
+........................................................................ [ 34%]
+........................................................................ [ 68%]
+.....................xxxxxxxxx...................................        [100%]
+- generated xml file: C:\Users\LENOVO\OneDrive - Hochiminh City University of Education\Desktop\BacSiLua\Nhom05_De02\artifacts\kiem_thu_cn2_py314_20261118\full.xml -
+=========================== short test summary info ===========================
+XFAIL tests/test_search.py::test_astar_matches_bfs[cells0-start0-goal0] - chưa cài đặt
+XFAIL tests/test_search.py::test_astar_matches_bfs[cells1-start1-goal1] - chưa cài đặt
+XFAIL tests/test_search.py::test_astar_matches_bfs[cells2-start2-goal2] - chưa cài đặt
+XFAIL tests/test_search.py::test_astar_matches_bfs[cells3-start3-goal3] - chưa cài đặt
+XFAIL tests/test_search.py::test_route_resources_and_completion[hill] - chưa cài đặt
+XFAIL tests/test_search.py::test_route_resources_and_completion[beam] - chưa cài đặt
+XFAIL tests/test_search.py::test_route_resources_and_completion[greedy] - chưa cài đặt
+XFAIL tests/test_search.py::test_route_rejects_invalid_or_infeasible[0-4] - chưa cài đặt
+XFAIL tests/test_search.py::test_route_rejects_invalid_or_infeasible[1-1] - chưa cài đặt
+200 passed, 9 xfailed in 30.62s
