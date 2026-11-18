@@ -17,28 +17,46 @@ def tao_ban_do(so_hang=20, so_cot=20, k=8, p=60):
     return {"rows": so_hang, "cols": so_cot, "start": [0, 0], "k": k, "p": p, "cells": cells}
 
 
+def la_so_nguyen(x):
+    return isinstance(x, int) and not isinstance(x, bool)
+
+
 def kiem_tra(ban_do):
     """Trả về danh sách lỗi"""
+    if not isinstance(ban_do, dict):
+        return ["File không phải bản đồ."]
+    cells = ban_do.get("cells")
+    if (not isinstance(cells, list) or not cells
+            or not all(isinstance(dong, list) and dong for dong in cells)):
+        return ["Lưới rỗng hoặc sai định dạng."]
+    so_hang, so_cot = len(cells), len(cells[0])
+    if any(len(dong) != so_cot for dong in cells):
+        return ["Các dòng không cùng số cột."]
+
     loi = []
-    cells = ban_do.get("cells") or []
-    so_hang, so_cot = len(cells), len(cells[0]) if cells else 0
-    if so_hang == 0 or any(len(dong) != so_cot for dong in cells):
-        return ["Lưới rỗng hoặc các dòng không cùng số cột."]
     if ban_do.get("rows") != so_hang or ban_do.get("cols") != so_cot:
         loi.append("rows/cols không khớp với cells.")
-    if any(o not in MA_HOP_LE for dong in cells for o in dong):
+    if any(not la_so_nguyen(o) or o not in MA_HOP_LE for dong in cells for o in dong):
         loi.append("Có mã ô không hợp lệ.")
-    r, c = ban_do.get("start", [-1, -1])
-    if not (0 <= r < so_hang and 0 <= c < so_cot) or cells[r][c] == VAT_CAN:
+    start = ban_do.get("start")
+    if (not isinstance(start, list) or len(start) != 2 or not all(map(la_so_nguyen, start))
+            or not (0 <= start[0] < so_hang and 0 <= start[1] < so_cot)
+            or cells[start[0]][start[1]] == VAT_CAN):
         loi.append("Điểm xuất phát nằm ngoài lưới hoặc trên vật cản.")
     if not any(o == TRAM for dong in cells for o in dong):
         loi.append("Chưa có trạm nạp thuốc.")
+    for khoa in ("k", "p"):
+        if not la_so_nguyen(ban_do.get(khoa)) or ban_do[khoa] < 1:
+            loi.append(f"{khoa} phải là số nguyên ≥ 1.")
     return loi
 
 
 def doc_ban_do(duong_dan):
-    with open(duong_dan, encoding="utf-8") as f:
-        ban_do = json.load(f)
+    try:
+        with open(duong_dan, encoding="utf-8") as f:
+            ban_do = json.load(f)
+    except (json.JSONDecodeError, UnicodeDecodeError):
+        raise ValueError("File không đúng định dạng JSON.")
     loi = kiem_tra(ban_do)
     if loi:
         raise ValueError(loi[0])
@@ -46,6 +64,9 @@ def doc_ban_do(duong_dan):
 
 
 def ghi_ban_do(ban_do, duong_dan):
+    loi = kiem_tra(ban_do)
+    if loi:
+        raise ValueError(loi[0])
     # mỗi hàng của lưới ghi trên một dòng cho dễ đọc
     dong = ",\n".join("    [" + ", ".join(f"{o:2d}" for o in hang) + "]" for hang in ban_do["cells"])
     noi_dung = (
