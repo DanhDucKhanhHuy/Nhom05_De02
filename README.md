@@ -151,14 +151,20 @@ Chạy từ gốc repo trên Windows/macOS/Linux:
 
 ```text
 python demo.py
+python -m src.search.experiment
 python -m pytest
 ruff check .
 python -m scripts.check_rules
 ```
 
-Nếu ruff chưa có trong PATH dùng `python -m ruff check .`. Demo đọc bản đồ 4 × 4,
-in dự đoán **GIẢ**, báo “chưa cài đặt” cho CN1 và chạy CN2 với câu trả lời
-“Chưa biết”. CN2 trả thông báo chưa đủ chắc, liên hệ cán bộ khuyến nông.
+`python -m src.search.experiment` chạy thử trên bản đồ mẫu
+`data/sample/maps/map_4x4.json`, in ma trận và chi tiết lộ trình A* toàn cục,
+đồng thời so sánh với tham lam gần nhất.
+
+Nếu ruff chưa có trong PATH dùng `python -m ruff check .`. `python demo.py` là
+demo tích hợp: đọc bản đồ 4 × 4, in dự đoán **GIẢ**, báo `plan_route` chưa cài
+đặt và chạy CN2 với câu trả lời “Chưa biết”. Lệnh này chưa gọi phần A* trong
+`src/drone/`. CN2 trả thông báo chưa đủ chắc, liên hệ cán bộ khuyến nông.
 Demo gọi điều phối ảnh, hệ luật và CNN–Bayes. Predictor giả không đọc ảnh;
 kết quả luôn được ghi là minh họa, không dùng xác nhận bệnh.
 
