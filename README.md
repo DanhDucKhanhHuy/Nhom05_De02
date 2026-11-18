@@ -4,7 +4,7 @@
 
 Đồ án cuối kỳ – Học kỳ 1, năm học 2026 – 2027 · Thời gian thực hiện: 02/11 – 06/12/2026
 
-> **Trạng thái:** bản đầu (Kiểm soát tiến độ lần 1). Mã nguồn đang được phát triển theo kế hoạch 5 tuần; các lệnh chạy bên dưới sẽ được cập nhật khi từng module hoàn thành.
+> **Trạng thái:** CN2 có 28 luật, suy diễn tiến/lùi, Bayes và luồng chẩn đoán kết hợp giữ nguyên API. CNN hiện là **GIẢ**; chưa đánh giá ảnh thật hoặc hiệu chuẩn CPD, runtime pgmpy cần kiểm chứng. CN1 và giao diện ứng dụng còn phát triển. Xem `docs/kiem_chung.md` và `tasks/todo.md`.
 
 ---
 
@@ -23,10 +23,10 @@ Luồng sử dụng của Bác sĩ Lúa:
 
 | # | Chức năng | Kỹ thuật chính | Thư mục |
 |---|-----------|----------------|---------|
-| 1 | Lập lộ trình drone phun thuốc | Mô hình hóa không gian trạng thái; **tự cài đặt** A* cho từng chặng; leo đồi hoặc beam search chọn thứ tự ghé ô bệnh (TSP có ràng buộc nạp thuốc/pin); so sánh với chiến lược tham lam | `search/` |
-| 2 | Hệ chuyên gia tư vấn và mạng Bayes | ≥ 20 luật lấy từ tài liệu khuyến nông chính thống; **tự cài đặt** suy diễn tiến và suy diễn lùi; mạng Bayes ≥ 5 nút bằng pgmpy | `expert/` |
-| 3 | Nhận diện bệnh lá lúa | CNN tự thiết kế và transfer learning (MobileNetV2 hoặc EfficientNetB0) bằng TensorFlow/Keras; tăng cường dữ liệu; đánh giá accuracy, precision, recall, F1, ma trận nhầm lẫn | `cnn/` |
-| 4 | Ứng dụng tích hợp | Giao diện tiếng Việt, bản đồ lưới, hoạt cảnh lộ trình (Pygame hoặc matplotlib) | `app/` |
+| 1 | Lập lộ trình drone phun thuốc | Mô hình hóa không gian trạng thái; **tự cài đặt** A* cho từng chặng; leo đồi hoặc beam search chọn thứ tự ghé ô bệnh (TSP có ràng buộc nạp thuốc/pin); so sánh với chiến lược tham lam | `src/search/` |
+| 2 | Hệ chuyên gia tư vấn và mạng Bayes | ≥ 20 luật lấy từ tài liệu khuyến nông chính thống; **tự cài đặt** suy diễn tiến và suy diễn lùi; mạng Bayes ≥ 5 nút bằng pgmpy | `src/rules/` |
+| 3 | Nhận diện bệnh lá lúa | CNN tự thiết kế và transfer learning (MobileNetV2 hoặc EfficientNetB0) bằng TensorFlow/Keras; tăng cường dữ liệu; đánh giá accuracy, precision, recall, F1, ma trận nhầm lẫn | `src/model/` |
+| 4 | Ứng dụng tích hợp | Giao diện tiếng Việt, bản đồ lưới, hoạt cảnh lộ trình (Pygame hoặc matplotlib) | `src/app/` |
 
 **Phần mở rộng (không bắt buộc):** kết hợp xác suất CNN với mạng Bayes và thời tiết thực tế của tỉnh; lấy thời tiết từ API công khai để cảnh báo sớm nguy cơ đạo ôn; giao diện chữ to cho nông dân lớn tuổi.
 
@@ -35,115 +35,141 @@ Luồng sử dụng của Bác sĩ Lúa:
 ## 3. Cấu trúc thư mục
 
 ```text
-bac-si-lua/
-├── app/                  # CN4 – ứng dụng tích hợp
-│   ├── main.py           #   màn hình chính
-│   ├── grid_editor.py    #   đánh dấu ô bệnh trên bản đồ lưới
-│   ├── route_view.py     #   hoạt cảnh lộ trình drone
-│   └── chan_doan.py      #   luồng chẩn đoán từ ảnh
-├── search/               # CN1 – lưới, A*, tham lam, leo đồi/beam, thực nghiệm
-│   ├── grid.py
-│   ├── astar.py
-│   ├── greedy.py
-│   ├── order_opt.py
-│   ├── run.py
-│   └── experiment.py
-├── expert/               # CN2 – luật, suy diễn tiến/lùi, mạng Bayes
-│   ├── rules.json
-│   ├── forward.py
-│   ├── backward.py
-│   ├── bayes.py
-│   └── diagnose.py
-├── cnn/                  # CN3 – dữ liệu, huấn luyện, đánh giá, dự đoán
-│   ├── prepare_data.py
-│   ├── custom_cnn.py
-│   ├── transfer.py
-│   ├── predict.py
-│   └── notebooks/
+Nhom05_De02/
+├── .git/                  # lịch sử hiện có
+├── .gitignore
+├── README.md
+├── AGENTS.md
+├── requirements.txt
+├── requirements-dev.txt
+├── pyproject.toml
+├── .claude/settings.json
+├── demo.py
+├── src/
+│   ├── __init__.py
+│   ├── contracts.py       # kiểu giao tiếp dùng chung
+│   ├── search/            # TV1 – CN1
+│   │   ├── __init__.py
+│   │   ├── grid.py
+│   │   ├── astar.py
+│   │   ├── greedy.py
+│   │   ├── order_opt.py
+│   │   ├── run.py
+│   │   └── experiment.py
+│   ├── rules/             # TV2/TV3 – CN2
+│   │   ├── __init__.py
+│   │   ├── rules.json
+│   │   ├── sources.json
+│   │   ├── vocabulary.json
+│   │   ├── forward.py
+│   │   ├── backward.py
+│   │   ├── bayes.py
+│   │   ├── ket_hop.py
+│   │   └── diagnose.py
+│   ├── model/             # TV4 – CN3
+│   │   ├── __init__.py
+│   │   ├── prepare_data.py
+│   │   ├── data_pipeline.py
+│   │   ├── custom_cnn.py
+│   │   ├── transfer.py
+│   │   ├── predict.py      # GIẢ, IS_STUB=True
+│   │   └── notebooks/
+│   └── app/               # TV5 – CN4; thời tiết TV3
+│       ├── __init__.py
+│       ├── main.py
+│       ├── grid_editor.py
+│       ├── route_view.py
+│       ├── chan_doan.py
+│       └── thoi_tiet.py
 ├── data/
-│   ├── maps/             # bản đồ lưới mẫu (.json)
-│   ├── raw/              # bộ dữ liệu ảnh – KHÔNG đưa lên Git
-│   └── anh_thuc_te/      # ≥ 20 ảnh chụp ngoài thực tế + nguon.csv
-├── models/               # trọng số đã huấn luyện – KHÔNG đưa lên Git
+│   ├── sample/
+│   │   ├── README.md
+│   │   └── maps/map_4x4.json
+│   ├── raw/               # không lên Git
+│   └── anh_thuc_te/        # giữ nguon.csv; ảnh không lên Git
+├── models/                # .gitkeep, README.md; *.keras không lên Git
 ├── docs/
 │   ├── mo_hinh_bai_toan.md
 │   ├── interfaces.md
 │   ├── nguon_tri_thuc.md
 │   ├── du_lieu.md
-│   ├── cau_hoi/          # trả lời Q1 – Q4
-│   └── ho_so_nhom/       # Mẫu 01 – 04
-├── tests/
-├── requirements.txt
-├── .gitignore
-└── README.md
+│   ├── kiem_chung.md
+│   ├── cau_hoi/
+│   └── ho_so_nhom/ai_log.md
+├── scripts/
+│   ├── __init__.py
+│   └── check_rules.py
+└── tests/
+    ├── test_demo.py
+    ├── test_predict.py
+    ├── test_rules.py
+    └── test_search.py
 ```
 
 ## 4. Cài đặt
 
-Khuyến nghị **Python 3.10 hoặc 3.11** để tương thích với TensorFlow.
-
-```bash
-git clone <link-repo>
-cd bac-si-lua
-
-python -m venv .venv
-# Windows
-.venv\Scripts\activate
-# macOS / Linux
-source .venv/bin/activate
-
-pip install -r requirements.txt
-```
-
-`requirements.txt` (bản đầu; phiên bản cụ thể sẽ được cố định sau khi chạy thử trên máy các thành viên):
+Dùng **Python 3.10 hoặc 3.11** cho môi trường chức năng. Sau khi clone, chuyển
+vào gốc repo chứa README (`Nhom05_De02`). Nếu clone đặt tên khác thì dùng tên đó.
 
 ```text
-tensorflow
-pgmpy
-numpy
-pandas
-matplotlib
-scikit-learn
-pillow
-pygame
-requests
-pytest
+python --version
+python -m venv .venv
 ```
 
-- `scikit-learn` chỉ dùng để tính precision, recall, F1 và ma trận nhầm lẫn. A*, leo đồi/beam, suy diễn tiến và suy diễn lùi đều tự cài đặt, không dùng thư viện có sẵn.
-- `requests` chỉ dùng cho phần mở rộng lấy thời tiết.
-- Huấn luyện CNN nên chạy trên Google Colab hoặc Kaggle Notebook có GPU (xem `cnn/notebooks/`).
+Kích hoạt theo shell; các lệnh sau đó dùng chung:
+
+- Windows PowerShell: `.venv\Scripts\Activate.ps1`
+- Windows cmd: `.venv\Scripts\activate.bat`
+- macOS/Linux bash hoặc zsh: `source .venv/bin/activate`
+
+```text
+python -m pip install -r requirements-dev.txt
+python -m pip install -r requirements.txt
+```
+
+Có thể chỉ cài requirements-dev để chạy test/demo khung. Bộ chức năng bắt đầu
+bằng `tensorflow==2.16.1`, `numpy==1.26.4` (<2), `pgmpy==0.1.25`; xem toàn bộ
+trong `requirements.txt`. Đây là ghim phụ thuộc trực tiếp, chưa phải lockfile
+bắc cầu. **Chưa cài thử** toàn bộ trên Python 3.10/3.11.
+Nguồn: [TensorFlow 2.16.1](https://pypi.org/project/tensorflow/2.16.1/),
+[pgmpy 0.1.25](https://pypi.org/project/pgmpy/0.1.25/).
+
+- `scikit-learn` chỉ tính chỉ số đánh giá; A*, leo đồi/beam, suy diễn tiến/lùi tự cài.
+- `requests` dành cho thời tiết; bản khung không gọi API.
+- Notebook huấn luyện có thể chạy Colab/Kaggle GPU, đặt ở `src/model/notebooks/`.
+- Demo không cần TensorFlow, mô hình hoặc ảnh tải ngoài.
 
 ## 5. Dữ liệu và nguồn tri thức
 
 - **Ảnh lá lúa:** bộ dữ liệu công khai (Kaggle, Mendeley Data), tối thiểu 4 lớp: đạo ôn, bạc lá, đốm nâu, lá khỏe. Đường dẫn tải và giấy phép ghi trong `docs/du_lieu.md`. Tải về và giải nén vào `data/raw/`.
 - **Ảnh thực tế:** ≥ 20 ảnh tự chụp hoặc sưu tầm trong `data/anh_thuc_te/`; nguồn từng ảnh ghi trong `data/anh_thuc_te/nguon.csv`.
-- **Tri thức cho hệ chuyên gia:** lấy từ tài liệu khuyến nông, bảo vệ thực vật chính thống; danh mục nguồn trong `docs/nguon_tri_thuc.md`. Mỗi luật ghi nguồn; hệ thống **không tự đặt tên thuốc hay liều lượng**.
+- **Tri thức cho hệ chuyên gia:** 28 luật, danh mục S1–S7. S2 là datasheet EPPO cập nhật 2022; S7 là bài khoa học năm 2006 cho héo/cuộn lá. Xem [hồ sơ nguồn](docs/nguon_tri_thuc.md) và [đối chiếu 28 luật](docs/doi_chieu_luat.md). S3 tải trực tiếp lỗi, S6 mở lại timeout; DN10 còn giới hạn nguồn về mốc vụ và điều kiện kích hoạt. Chưa có duyệt chuyên gia địa phương. Không có thuốc/hoạt chất/liều lượng trong luật.
 
-## 6. Cách chạy (dự kiến)
+## 6. Cách chạy khung hiện tại
 
-```bash
-# Ứng dụng tích hợp
-python -m app.main
+Chạy từ gốc repo trên Windows/macOS/Linux:
 
-# CN1 – lập lộ trình trên bản đồ mẫu (k: số ô phun mỗi lần nạp, p: số bước pin tối đa)
-python -m search.run --map data/maps/map_20x20_mau.json --k 5 --p 60 --algo hill
-python -m search.experiment        # so sánh với tham lam trên nhiều bản đồ ngẫu nhiên
-
-# CN2 – hệ chuyên gia và mạng Bayes (dòng lệnh)
-python -m expert.forward
-python -m expert.backward --goal dao_on
-python -m expert.bayes
-
-# CN3 – chuẩn bị dữ liệu, huấn luyện, dự đoán
-python -m cnn.prepare_data
-python -m cnn.custom_cnn
-python -m cnn.transfer --base mobilenetv2
-python -m cnn.predict --image duong/dan/anh_la_lua.jpg
-
-# Kiểm thử
-python -m pytest tests/
+```text
+python demo.py
+python -m pytest
+ruff check .
+python -m scripts.check_rules
 ```
+
+Nếu ruff chưa có trong PATH dùng `python -m ruff check .`. Demo đọc bản đồ 4 × 4,
+in dự đoán **GIẢ**, báo “chưa cài đặt” cho CN1 và chạy CN2 với câu trả lời
+“Chưa biết”. CN2 trả thông báo chưa đủ chắc, liên hệ cán bộ khuyến nông.
+Demo gọi điều phối ảnh, hệ luật và CNN–Bayes. Predictor giả không đọc ảnh;
+kết quả luôn được ghi là minh họa, không dùng xác nhận bệnh.
+
+Các module chưa cung cấp CLI xử lý tham số. Một số thuật toán CN1/CN2 và mô hình
+đã có hàm thư viện; các hàm chưa triển khai ném `NotImplementedError`. Không coi
+các phần chưa triển khai là chức năng hoàn thành.
+
+Các test của thuật toán chưa triển khai còn đánh dấu xfail; test CN2 không còn
+xfail. `python -m scripts.check_rules` kiểm tra schema, tối thiểu 20 luật,
+mã nguồn, từ vựng, chu trình, chuỗi suy diễn chẩn đoán–khuyến nghị và nội dung
+cấm. Tiêu chí bắt buộc không đạt sẽ trả mã lỗi.
 
 ## 7. Quy ước dữ liệu giữa các module
 
@@ -169,15 +195,17 @@ Chi tiết trong `docs/interfaces.md`.
 }
 ```
 
+**k** là số ô phun tối đa mỗi lần nạp; **p** là số bước bay mỗi lần nạp pin. Mức bệnh 1–3 không nhân số lần phun; mỗi ô cần phun một lần. Điểm cần xác nhận với thầy ghi ở `docs/mo_hinh_bai_toan.md`.
+
 Mã ô: `0` lúa khỏe · `1`, `2`, `3` lúa bệnh theo mức · `-1` vật cản (kênh mương có cây cao, trụ điện) · `9` trạm nạp thuốc/đổi pin.
 
-**Hàm giao tiếp chính:**
+**Hàm giao tiếp chính** (số dự đoán CNN trong bảng là GIẢ; type hint và schema ở `docs/interfaces.md`):
 
 | Hàm | Module | Đầu ra |
 |-----|--------|--------|
-| `predict_top3(duong_dan_anh)` | `cnn/predict.py` | `[("dao_on", 0.55), ("dom_nau", 0.40), ("bac_la", 0.03)]` |
-| `diagnose(top3, hoi_nguoi_dung)` | `expert/diagnose.py` | kết luận, độ tin cậy, các luật đã dùng (giải thích), nguồn tài liệu |
-| `plan_route(ban_do, k, p, thuat_toan)` | `search/run.py` | các ô đi qua, sự kiện phun/nạp, tổng quãng đường, số lần về trạm, thời gian chạy |
+| `predict_top3(duong_dan_anh)` | `src/model/predict.py` | `[("dao_on", 0.55), ("dom_nau", 0.40), ("bac_la", 0.03)]` |
+| `diagnose(top3, hoi_nguoi_dung)` | `src/rules/diagnose.py` | kết luận, độ tin cậy, các luật đã dùng (giải thích), nguồn tài liệu |
+| `plan_route(ban_do, k, p, thuat_toan)` | `src/search/run.py` | các ô đi qua, sự kiện phun/nạp, tổng quãng đường, số lần về trạm, thời gian chạy |
 
 ## 8. Thành viên và phân công
 
@@ -214,6 +242,8 @@ Phân công chi tiết: `docs/ho_so_nhom/` (Mẫu 01 – Kế hoạch và phân 
 - Ghép vào `main` qua pull request, có ít nhất 1 thành viên khác duyệt.
 - Commit nhỏ và thường xuyên, thông điệp có tiền tố chức năng, ví dụ: `[CN1] Thêm A* với heuristic Manhattan`.
 - Không commit dữ liệu ảnh, trọng số mô hình, khóa API (đã khai báo trong `.gitignore`).
+- Mặc định trọng số không lên Git; **gói nộp cuối kỳ phải kèm `.keras` hoặc link tải** (xem `models/README.md`).
+- Gốc repo hiện là `Nhom05_De02`, cây src đã đúng từ trước; không có thư mục cũ cần di chuyển trong phiên dựng khung.
 
 ## 11. Lưu ý khi sử dụng
 

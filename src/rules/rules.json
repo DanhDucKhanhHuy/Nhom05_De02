@@ -1,4 +1,341 @@
 {
-  "_ghi_chu": "Mỗi luật phải có trường 'nguon' (tài liệu khuyến nông chính thống). Không tự đặt tên thuốc, liều lượng. Cần >= 20 luật.",
-  "rules": []
+  "_ghi_chu": "Quy ước dữ kiện, sự kiện suy ra và nguồn nằm trong vocabulary.json, sources.json, docs/nguon_tri_thuc.md. Kết quả là gợi ý, không thay thế người có chuyên môn.",
+  "rules": [
+    {
+      "id": "DO01",
+      "loai": "chan_doan",
+      "neu": [
+        "vet_la_hinh_thoi=co"
+      ],
+      "thi": "suy_luan=nghi_dao_on",
+      "nguon": {
+        "ma": "S1",
+        "muc": "Mục 1, triệu chứng trên lá"
+      }
+    },
+    {
+      "id": "DO02",
+      "loai": "chan_doan",
+      "neu": [
+        "vet_la_tam_xam_kho=co"
+      ],
+      "thi": "suy_luan=nghi_dao_on",
+      "nguon": {
+        "ma": "S1",
+        "muc": "mục 1 Triệu chứng và tác hại (lá)"
+      }
+    },
+    {
+      "id": "DO03",
+      "loai": "chan_doan",
+      "neu": [
+        "vet_la_vien_nau=co"
+      ],
+      "thi": "suy_luan=nghi_dao_on",
+      "nguon": {
+        "ma": "S4",
+        "muc": "Mục triệu chứng trên lá"
+      }
+    },
+    {
+      "id": "DO04",
+      "loai": "chan_doan",
+      "neu": [
+        "vet_co_la_nau_do=co"
+      ],
+      "thi": "suy_luan=nghi_dao_on",
+      "nguon": {
+        "ma": "S1",
+        "muc": "mục 1 Triệu chứng và tác hại (cổ lá)"
+      }
+    },
+    {
+      "id": "DO05",
+      "loai": "chan_doan",
+      "neu": [
+        "dot_than_teo_nau=co"
+      ],
+      "thi": "suy_luan=nghi_dao_on",
+      "nguon": {
+        "ma": "S1",
+        "muc": "mục 1 Triệu chứng và tác hại (đốt thân)"
+      }
+    },
+    {
+      "id": "DO06",
+      "loai": "chan_doan",
+      "neu": [
+        "co_bong_thoi_nau=co"
+      ],
+      "thi": "suy_luan=nghi_dao_on",
+      "nguon": {
+        "ma": "S1",
+        "muc": "mục 1 Triệu chứng và tác hại (cổ bông, cổ gié)"
+      }
+    },
+    {
+      "id": "DO07",
+      "loai": "trung_gian",
+      "neu": [
+        "bong_hoac_gie_lep_trang=co"
+      ],
+      "thi": "can_kiem_tra=dao_on",
+      "nguon": {
+        "ma": "S1",
+        "muc": "mục 1 Triệu chứng và tác hại (cổ bông)"
+      }
+    },
+    {
+      "id": "DO08",
+      "loai": "nguy_co",
+      "neu": [
+        "am_u_va_suong_som=co"
+      ],
+      "thi": "yeu_to_nguy_co=dao_on",
+      "nguon": {
+        "ma": "S1",
+        "muc": "mục 2 Điều kiện phát sinh phát triển"
+      }
+    },
+    {
+      "id": "DO09",
+      "loai": "nguy_co",
+      "neu": [
+        "ruong_thieu_nuoc=co"
+      ],
+      "thi": "yeu_to_nguy_co=dao_on",
+      "nguon": {
+        "ma": "S1",
+        "muc": "mục 2 Điều kiện phát sinh phát triển"
+      }
+    },
+    {
+      "id": "DO10",
+      "loai": "nguy_co",
+      "neu": [
+        "sa_day=co"
+      ],
+      "thi": "yeu_to_nguy_co=dao_on",
+      "nguon": {
+        "ma": "S1",
+        "muc": "mục 2 Điều kiện phát sinh phát triển"
+      }
+    },
+    {
+      "id": "DO11",
+      "loai": "nguy_co",
+      "neu": [
+        "thua_dam=co"
+      ],
+      "thi": "yeu_to_nguy_co=dao_on",
+      "nguon": {
+        "ma": "S1",
+        "muc": "mục 2 Điều kiện phát sinh phát triển"
+      }
+    },
+    {
+      "id": "BL01",
+      "loai": "chan_doan",
+      "neu": [
+        "vet_bac_ung_nuoc_tren_phien_la=co"
+      ],
+      "thi": "suy_luan=nghi_bac_la",
+      "nguon": {
+        "ma": "S2",
+        "muc": "Detection and Identification / Symptoms (cập nhật 16/06/2022)"
+      }
+    },
+    {
+      "id": "BL02",
+      "loai": "chan_doan",
+      "neu": [
+        "vet_bac_bat_dau_o_chop_la=co"
+      ],
+      "thi": "suy_luan=nghi_bac_la",
+      "nguon": {
+        "ma": "S2",
+        "muc": "Detection and Identification / Symptoms (cập nhật 16/06/2022)"
+      }
+    },
+    {
+      "id": "BL03",
+      "loai": "chan_doan",
+      "neu": [
+        "vet_la_vang_den_trang=co"
+      ],
+      "thi": "suy_luan=nghi_bac_la",
+      "nguon": {
+        "ma": "S2",
+        "muc": "Detection and Identification / Symptoms (cập nhật 16/06/2022)"
+      }
+    },
+    {
+      "id": "BL04",
+      "loai": "chan_doan",
+      "neu": [
+        "vet_bac_mep_luon_song=co"
+      ],
+      "thi": "suy_luan=nghi_bac_la",
+      "nguon": {
+        "ma": "S2",
+        "muc": "Detection and Identification / Symptoms (cập nhật 16/06/2022)"
+      }
+    },
+    {
+      "id": "BL05",
+      "loai": "trung_gian",
+      "neu": [
+        "la_heo_hoac_cuon_lai=co"
+      ],
+      "thi": "can_kiem_tra=bac_la",
+      "nguon": {
+        "ma": "S7",
+        "muc": "Trang in 306 / PDF 4, triệu chứng lá héo hoặc cuộn và giới hạn phân biệt bệnh"
+      }
+    },
+    {
+      "id": "DN01",
+      "loai": "chan_doan",
+      "neu": [
+        "dom_tron_hoac_bau_duc_nau=co"
+      ],
+      "thi": "suy_luan=nghi_dom_nau",
+      "nguon": {
+        "ma": "S3",
+        "muc": "Mục triệu chứng"
+      }
+    },
+    {
+      "id": "DN02",
+      "loai": "chan_doan",
+      "neu": [
+        "dom_nau_vien_sam=co"
+      ],
+      "thi": "suy_luan=nghi_dom_nau",
+      "nguon": {
+        "ma": "S3",
+        "muc": "Mục triệu chứng"
+      }
+    },
+    {
+      "id": "DN03",
+      "loai": "chan_doan",
+      "neu": [
+        "dom_nau_tam_nhat_xam=co"
+      ],
+      "thi": "suy_luan=nghi_dom_nau",
+      "nguon": {
+        "ma": "S3",
+        "muc": "Mục triệu chứng"
+      }
+    },
+    {
+      "id": "DN04",
+      "loai": "chan_doan",
+      "neu": [
+        "dom_nau_tren_be_la=co"
+      ],
+      "thi": "suy_luan=nghi_dom_nau",
+      "nguon": {
+        "ma": "S3",
+        "muc": "Mục triệu chứng"
+      }
+    },
+    {
+      "id": "DN05",
+      "loai": "nguy_co",
+      "neu": [
+        "cay_gan_truong_thanh_la_gia_hoa=co"
+      ],
+      "thi": "yeu_to_nguy_co=dom_nau",
+      "nguon": {
+        "ma": "S3",
+        "muc": "Mục bộ phận cây và giai đoạn sinh trưởng bị ảnh hưởng; Mục triệu chứng"
+      }
+    },
+    {
+      "id": "DN06",
+      "loai": "trung_gian",
+      "neu": [
+        "dom_nau_tren_diep_tieu=co"
+      ],
+      "thi": "can_kiem_tra=dom_nau",
+      "nguon": {
+        "ma": "S3",
+        "muc": "Mục triệu chứng"
+      }
+    },
+    {
+      "id": "DN07",
+      "loai": "chan_doan",
+      "neu": [
+        "dom_nau_tren_vo_trau=co"
+      ],
+      "thi": "suy_luan=nghi_dom_nau",
+      "nguon": {
+        "ma": "S3",
+        "muc": "Mục bộ phận cây và giai đoạn sinh trưởng bị ảnh hưởng; Mục triệu chứng"
+      }
+    },
+    {
+      "id": "DN08",
+      "loai": "chan_doan",
+      "neu": [
+        "hat_nhe_hoac_bac_phan=co"
+      ],
+      "thi": "suy_luan=nghi_dom_nau",
+      "nguon": {
+        "ma": "S3",
+        "muc": "Mục bộ phận cây và giai đoạn sinh trưởng bị ảnh hưởng; Mục triệu chứng"
+      }
+    },
+    {
+      "id": "DO12",
+      "loai": "khuyen_nghi",
+      "neu": [
+        "suy_luan=nghi_dao_on"
+      ],
+      "thi": "khuyen_nghi=theo_doi_ruong_thuong_xuyen",
+      "nguon": {
+        "ma": "S1",
+        "muc": "Mục 3, theo dõi ruộng thường xuyên và phát hiện bệnh sớm"
+      }
+    },
+    {
+      "id": "BL06",
+      "loai": "khuyen_nghi",
+      "neu": [
+        "suy_luan=nghi_bac_la"
+      ],
+      "thi": "khuyen_nghi=chon_hat_giong_sach_benh",
+      "nguon": {
+        "ma": "S6",
+        "muc": "Hướng dẫn lúa, chọn hạt giống được chứng nhận và sạch bệnh"
+      }
+    },
+    {
+      "id": "DN09",
+      "loai": "khuyen_nghi",
+      "neu": [
+        "suy_luan=nghi_dom_nau"
+      ],
+      "thi": "khuyen_nghi=quan_ly_dinh_duong_dat_nuoc_phu_hop",
+      "nguon": {
+        "ma": "S3",
+        "muc": "Chương Disease Management, mục Brown Spot, quản lý dinh dưỡng, đất và nước"
+      }
+    },
+    {
+      "id": "DN10",
+      "loai": "khuyen_nghi",
+      "neu": [
+        "ruong_xac_nhan_nhiem_dom_nau=co"
+      ],
+      "thi": "khuyen_nghi=luan_canh_vu_tiep_theo_neu_bi_nhiem",
+      "nguon": {
+        "ma": "S3",
+        "muc": "Mục Brown Spot, khuyến nghị luân canh"
+      }
+    }
+  ]
 }

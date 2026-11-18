@@ -1,0 +1,7 @@
+rules: 28 unique IDs: 28 source catalog: 7
+rule types: {'chan_doan': 16, 'trung_gian': 3, 'nguy_co': 5, 'khuyen_nghi': 4}
+vocab first: ('vet_la_hinh_thoi', {'loai': 'du_kien_nguoi_dung', 'mo_ta': 'Vết trên lá có hình thoi', 'gia_tri': ['co', 'khong', 'chua_biet'], 'cau_hoi': 'Bạn có thấy vết trên lá lúa hình thoi không?', 'lua_chon': [{'ma': 'co', 'nhan': 'Có'}, {'ma': 'khong', 'nhan': 'Không'}, {'ma': 'chua_biet', 'nhan': 'Chưa biết'}]})
+image records: 20 labels: {'bac_la': 5, 'dao_on': 5, 'dom_nau': 5, 'la_khoe': 5}
+missing image paths: []
+blank image provenance: {'nguon': 20, 'giay_phep': 20, 'ngay_thu_thap': 20, 'nguoi_thu_thap': 20}
+rule-engine library imports: []
