@@ -78,3 +78,35 @@ def test_file_ghi_ra_la_json_chuan(tmp_path):
     ghi_ban_do(tao_ban_do(3, 3), duong_dan)
     du_lieu = json.loads(duong_dan.read_text(encoding="utf-8"))
     assert du_lieu["rows"] == 3 and len(du_lieu["cells"]) == 3
+
+
+class UngDungGia:
+    def ve_man_hinh_chinh(self):
+        pass
+
+
+def test_man_hinh_mo_va_luu_file(tmp_path):
+    from src.app.grid_editor import ManHinhBanDo
+
+    man_hinh = ManHinhBanDo(UngDungGia())
+    man_hinh.ban_do["cells"][3][4] = 3
+    duong_dan = tmp_path / "ruong.json"
+    man_hinh.luu_file(duong_dan)
+    assert not man_hinh.la_loi and duong_dan.exists()
+
+    man_hinh2 = ManHinhBanDo(UngDungGia())
+    man_hinh2.mo_file(duong_dan)
+    assert man_hinh2.ban_do["cells"][3][4] == 3
+
+
+def test_man_hinh_bao_loi_khi_mo_file_sai(tmp_path):
+    from src.app.grid_editor import ManHinhBanDo
+
+    duong_dan = tmp_path / "sai.json"
+    duong_dan.write_text('{"cells": []}', encoding="utf-8")
+    man_hinh = ManHinhBanDo(UngDungGia())
+    cu = man_hinh.ban_do
+    man_hinh.mo_file(duong_dan)
+    assert man_hinh.la_loi and man_hinh.ban_do is cu
+    man_hinh.mo_file(None)  # bấm Hủy
+    assert man_hinh.ban_do is cu

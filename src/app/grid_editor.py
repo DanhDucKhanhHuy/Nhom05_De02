@@ -1,5 +1,6 @@
 """E2 - Bản đồ lưới đánh dấu ô bệnh - TV5"""
 import json
+from pathlib import Path
 
 import pygame
 
@@ -101,8 +102,29 @@ TEN_O = {
 }
 VUNG_LUOI = pygame.Rect(20, CAO_THANH_TIEU_DE + 16, 600, 600)
 X_BANG = 650
+X_COT2 = 900
 XUAT_PHAT = "xuat_phat"
 CONG_CU = [KHOE, 1, 2, 3, VAT_CAN, TRAM, XUAT_PHAT]
+MAU_LOI = (176, 48, 40)
+THU_MUC_MAU = Path(__file__).resolve().parents[2] / "data" / "sample" / "maps"
+
+
+def hoi_duong_dan(luu):
+    """Hộp thoại chọn file, hủy thì trả None"""
+    import tkinter
+    from tkinter import filedialog
+
+    goc = tkinter.Tk()
+    goc.withdraw()
+    goc.attributes("-topmost", True)
+    kieu = [("Bản đồ JSON", "*.json")]
+    if luu:
+        duong_dan = filedialog.asksaveasfilename(defaultextension=".json", filetypes=kieu,
+                                                 initialdir=THU_MUC_MAU, initialfile="ban_do.json")
+    else:
+        duong_dan = filedialog.askopenfilename(filetypes=kieu, initialdir=THU_MUC_MAU)
+    goc.destroy()
+    return duong_dan or None
 
 
 class ManHinhBanDo(ManHinh):
@@ -119,6 +141,34 @@ class ManHinhBanDo(ManHinh):
                                        lambda m=ma: self.chon_cong_cu(m), co=18)
             y += 40
         self.chon_cong_cu(1)
+
+        y = CAO_THANH_TIEU_DE + 56
+        self.nut_tep = [
+            Nut("Mở file…", (X_COT2, y, 180, 32), lambda: self.mo_file(hoi_duong_dan(False)), co=18),
+            Nut("Lưu file…", (X_COT2, y + 40, 180, 32), lambda: self.luu_file(hoi_duong_dan(True)), co=18),
+        ]
+        self.thong_bao, self.la_loi = "", False
+
+    def bao(self, noi_dung, loi=False):
+        self.thong_bao, self.la_loi = noi_dung, loi
+
+    def mo_file(self, duong_dan):
+        if not duong_dan:
+            return
+        try:
+            self.ban_do = doc_ban_do(duong_dan)
+            self.bao(f"Đã mở {Path(duong_dan).name}")
+        except (OSError, ValueError) as e:
+            self.bao(f"Không mở được:\n{e}", loi=True)
+
+    def luu_file(self, duong_dan):
+        if not duong_dan:
+            return
+        try:
+            ghi_ban_do(self.ban_do, duong_dan)
+            self.bao(f"Đã lưu {Path(duong_dan).name}")
+        except (OSError, ValueError) as e:
+            self.bao(f"Không lưu được:\n{e}", loi=True)
 
     def chon_cong_cu(self, ma):
         self.cong_cu = ma
@@ -159,6 +209,9 @@ class ManHinhBanDo(ManHinh):
             return
         if any(nut.xu_ly(su_kien) for nut in self.nut_cong_cu.values()):
             return
+        if any(nut.xu_ly(su_kien) for nut in self.nut_tep):
+            self.dang_to = None
+            return
 
         # chuột trái: tô, chuột phải: xóa
         if su_kien.type == pygame.MOUSEBUTTONDOWN and su_kien.button in (1, 3):
@@ -187,7 +240,7 @@ class ManHinhBanDo(ManHinh):
         pygame.draw.circle(be_mat, MAU["chu"], self.khung_o(r, c).center, self.co_o() // 2 - 2, width=3)
 
     def ve_bang(self, be_mat):
-        ve_chu(be_mat, "Công cụ (bấm để chọn)", (X_BANG, CAO_THANH_TIEU_DE + 16), co=22, dam=True)
+        ve_chu(be_mat, "Công cụ", (X_BANG, CAO_THANH_TIEU_DE + 16), co=22, dam=True)
         for ma, nut in self.nut_cong_cu.items():
             y = nut.khung.y + 3
             if ma == XUAT_PHAT:
@@ -203,6 +256,13 @@ class ManHinhBanDo(ManHinh):
         ve_chu(be_mat, f"Lưới {self.ban_do['rows']} x {self.ban_do['cols']}", (X_BANG, y), co=19)
         ve_chu(be_mat, f"Ô bệnh: {so_benh}   Trạm: {so_tram}", (X_BANG, y + 30), co=19)
         ve_chu(be_mat, "Chuột trái: tô · Chuột phải: xóa", (X_BANG, y + 70), co=17, mau=MAU["chu_phu"])
+
+        ve_chu(be_mat, "Tệp", (X_COT2, CAO_THANH_TIEU_DE + 16), co=22, dam=True)
+        for nut in self.nut_tep:
+            nut.ve(be_mat)
+        for i, dong in enumerate(self.thong_bao.split("\n")):
+            ve_chu(be_mat, dong, (X_BANG, y + 120 + i * 26), co=18,
+                   mau=MAU_LOI if self.la_loi else MAU["nhan"])
 
     def ve(self, be_mat):
         ve_thanh_tieu_de(be_mat, "Bản đồ ruộng")
