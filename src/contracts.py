@@ -73,17 +73,25 @@ class ChanDoan(ChiTietChanDoan):
 
 
 class SuKien(TypedDict):
-    """Sự kiện theo thứ tự thực thi, gồm cả bước bay."""
+    """Sự kiện theo thứ tự thực thi."""
 
     loai: Literal["bay", "phun", "nap"]
     vi_tri: ToaDo
+
+
+class SuKienBay(SuKien, total=False):
+    """Thông tin pin và vật cản bổ sung cho một chặng bay."""
+
+    quang_duong: int
+    pin_tieu_hao: int
+    qua_vat_can: tuple[ToaDo, ...]
 
 
 class LoTrinh(TypedDict):
     """Đường đi gồm ô đầu và đích của từng bước bay, có thể lặp ô."""
 
     duong_di: list[ToaDo]
-    su_kien: list[SuKien]
+    su_kien: list[SuKien | SuKienBay]
     tong_quang_duong: int
     so_lan_ve_tram: int
     thoi_gian_chay: float
