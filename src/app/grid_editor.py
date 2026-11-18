@@ -1,5 +1,6 @@
 """E2 - Bản đồ lưới đánh dấu ô bệnh - TV5"""
 import json
+import random
 from pathlib import Path
 
 import pygame
@@ -16,6 +17,41 @@ def tao_ban_do(so_hang=20, so_cot=20, k=8, p=60):
     cells = [[KHOE] * so_cot for _ in range(so_hang)]
     cells[0][0] = TRAM
     return {"rows": so_hang, "cols": so_cot, "start": [0, 0], "k": k, "p": p, "cells": cells}
+
+
+def o_toi_duoc(cells, start):
+    """Các ô đi tới được từ start (loang BFS)"""
+    so_hang, so_cot = len(cells), len(cells[0])
+    da_tham, hang_doi = {tuple(start)}, [tuple(start)]
+    for r, c in hang_doi:
+        for r2, c2 in ((r + 1, c), (r - 1, c), (r, c + 1), (r, c - 1)):
+            if (0 <= r2 < so_hang and 0 <= c2 < so_cot and (r2, c2) not in da_tham
+                    and cells[r2][c2] != VAT_CAN):
+                da_tham.add((r2, c2))
+                hang_doi.append((r2, c2))
+    return da_tham
+
+
+def tao_ngau_nhien(so_hang=20, so_cot=20, k=8, p=60, ty_le_benh=0.15, ty_le_vat_can=0.1,
+                   so_tram=2, rng=None):
+    rng = rng or random.Random()
+    while True:
+        ban_do = tao_ban_do(so_hang, so_cot, k, p)
+        cells = ban_do["cells"]
+        o_trong = [(r, c) for r in range(so_hang) for c in range(so_cot) if (r, c) != (0, 0)]
+        rng.shuffle(o_trong)
+        so_vat_can, so_benh = int(len(o_trong) * ty_le_vat_can), int(len(o_trong) * ty_le_benh)
+        for r, c in o_trong[:so_tram - 1]:
+            cells[r][c] = TRAM
+        o_trong = o_trong[so_tram - 1:]
+        for r, c in o_trong[:so_vat_can]:
+            cells[r][c] = VAT_CAN
+        for r, c in o_trong[so_vat_can:so_vat_can + so_benh]:
+            cells[r][c] = rng.choice(MUC_BENH)
+        # mọi ô không phải vật cản phải tới được
+        so_o_di_duoc = sum(o != VAT_CAN for hang in cells for o in hang)
+        if len(o_toi_duoc(cells, [0, 0])) == so_o_di_duoc:
+            return ban_do
 
 
 def la_so_nguyen(x):
@@ -106,6 +142,7 @@ X_COT2 = 900
 XUAT_PHAT = "xuat_phat"
 CONG_CU = [KHOE, 1, 2, 3, VAT_CAN, TRAM, XUAT_PHAT]
 MAU_LOI = (176, 48, 40)
+GIOI_HAN = {"k": 50, "p": 500}
 THU_MUC_MAU = Path(__file__).resolve().parents[2] / "data" / "sample" / "maps"
 
 
@@ -146,8 +183,30 @@ class ManHinhBanDo(ManHinh):
         self.nut_tep = [
             Nut("Mở file…", (X_COT2, y, 180, 32), lambda: self.mo_file(hoi_duong_dan(False)), co=18),
             Nut("Lưu file…", (X_COT2, y + 40, 180, 32), lambda: self.luu_file(hoi_duong_dan(True)), co=18),
+            Nut("Bản đồ ngẫu nhiên", (X_COT2, y + 80, 180, 32), self.ngau_nhien, co=18),
+            Nut("Xóa hết", (X_COT2, y + 120, 180, 32), self.xoa_het, co=18),
         ]
+        y_ts = CAO_THANH_TIEU_DE + 256
+        for i, (khoa, buoc) in enumerate((("k", 1), ("p", 5))):
+            yy = y_ts + i * 40
+            self.nut_tep += [
+                Nut("−", (X_COT2 + 108, yy, 32, 32), lambda k=khoa, b=buoc: self.chinh(k, -b), co=20),
+                Nut("+", (X_COT2 + 148, yy, 32, 32), lambda k=khoa, b=buoc: self.chinh(k, b), co=20),
+            ]
         self.thong_bao, self.la_loi = "", False
+
+    def ngau_nhien(self):
+        bd = self.ban_do
+        self.ban_do = tao_ngau_nhien(bd["rows"], bd["cols"], bd["k"], bd["p"])
+        self.bao("Đã tạo bản đồ ngẫu nhiên")
+
+    def xoa_het(self):
+        bd = self.ban_do
+        self.ban_do = tao_ban_do(bd["rows"], bd["cols"], bd["k"], bd["p"])
+        self.bao("Đã xóa hết")
+
+    def chinh(self, khoa, buoc):
+        self.ban_do[khoa] = min(GIOI_HAN[khoa], max(1, self.ban_do[khoa] + buoc))
 
     def bao(self, noi_dung, loi=False):
         self.thong_bao, self.la_loi = noi_dung, loi
@@ -258,6 +317,10 @@ class ManHinhBanDo(ManHinh):
         ve_chu(be_mat, "Chuột trái: tô · Chuột phải: xóa", (X_BANG, y + 70), co=17, mau=MAU["chu_phu"])
 
         ve_chu(be_mat, "Tệp", (X_COT2, CAO_THANH_TIEU_DE + 16), co=22, dam=True)
+        ve_chu(be_mat, "Drone", (X_COT2, CAO_THANH_TIEU_DE + 216), co=22, dam=True)
+        y_ts = CAO_THANH_TIEU_DE + 256
+        ve_chu(be_mat, f"Thuốc k: {self.ban_do['k']}", (X_COT2, y_ts + 16), co=18, can="midleft")
+        ve_chu(be_mat, f"Pin p: {self.ban_do['p']}", (X_COT2, y_ts + 56), co=18, can="midleft")
         for nut in self.nut_tep:
             nut.ve(be_mat)
         for i, dong in enumerate(self.thong_bao.split("\n")):

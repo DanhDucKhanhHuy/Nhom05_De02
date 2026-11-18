@@ -110,3 +110,30 @@ def test_man_hinh_bao_loi_khi_mo_file_sai(tmp_path):
     assert man_hinh.la_loi and man_hinh.ban_do is cu
     man_hinh.mo_file(None)  # bấm Hủy
     assert man_hinh.ban_do is cu
+
+
+def test_ban_do_ngau_nhien_hop_le_va_di_duoc_het():
+    import random
+
+    from src.app.grid_editor import VAT_CAN, o_toi_duoc, tao_ngau_nhien
+
+    for hat_giong in range(20):
+        ban_do = tao_ngau_nhien(rng=random.Random(hat_giong))
+        assert kiem_tra(ban_do) == []
+        cells = ban_do["cells"]
+        di_duoc = sum(o != VAT_CAN for hang in cells for o in hang)
+        assert len(o_toi_duoc(cells, ban_do["start"])) == di_duoc
+        assert any(o in (1, 2, 3) for hang in cells for o in hang)
+
+
+def test_chinh_k_p_khong_vuot_gioi_han():
+    from src.app.grid_editor import ManHinhBanDo
+
+    man_hinh = ManHinhBanDo(UngDungGia())
+    for _ in range(100):
+        man_hinh.chinh("k", -1)
+    assert man_hinh.ban_do["k"] == 1
+    man_hinh.chinh("p", 5)
+    assert man_hinh.ban_do["p"] == 65
+    man_hinh.xoa_het()
+    assert man_hinh.ban_do["k"] == 1 and kiem_tra(man_hinh.ban_do) == []
