@@ -106,3 +106,14 @@ def test_man_hinh_doi_thuat_toan_va_bao_loi():
     cho_tinh_xong(man_hinh)
     assert "A*" in man_hinh.loi and not man_hinh.nut_thuat_toan["astar"].bat
 
+
+def test_quay_lai_man_hinh_ban_do():
+    from src.app.grid_editor import ManHinhBanDo
+
+    ung_dung = UngDungGia()
+    ban_do_man_hinh = ManHinhBanDo(ung_dung, tao_ngau_nhien(8, 8, rng=random.Random(2)))
+    ban_do_man_hinh.lap_lo_trinh()
+    lo_trinh = ung_dung.man_hinh
+    assert lo_trinh.ban_do == ban_do_man_hinh.ban_do and lo_trinh.ban_do is not ban_do_man_hinh.ban_do
+    lo_trinh.quay_lai()
+    assert ung_dung.man_hinh is ban_do_man_hinh

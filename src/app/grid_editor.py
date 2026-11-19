@@ -13,7 +13,7 @@ MUC_BENH = (1, 2, 3)
 MA_HOP_LE = (KHOE, VAT_CAN, TRAM) + MUC_BENH
 
 
-def tao_ban_do(so_hang=20, so_cot=20, k=8, p=60):
+def tao_ban_do(so_hang=20, so_cot=20, k=8, p=100):
     cells = [[KHOE] * so_cot for _ in range(so_hang)]
     cells[0][0] = TRAM
     return {"rows": so_hang, "cols": so_cot, "start": [0, 0], "k": k, "p": p, "cells": cells}
@@ -32,7 +32,7 @@ def o_toi_duoc(cells, start):
     return da_tham
 
 
-def tao_ngau_nhien(so_hang=20, so_cot=20, k=8, p=60, ty_le_benh=0.15, ty_le_vat_can=0.1,
+def tao_ngau_nhien(so_hang=20, so_cot=20, k=8, p=100, ty_le_benh=0.15, ty_le_vat_can=0.1,
                    so_tram=2, rng=None):
     rng = rng or random.Random()
     while True:
@@ -193,7 +193,27 @@ class ManHinhBanDo(ManHinh):
                 Nut("−", (X_COT2 + 108, yy, 32, 32), lambda k=khoa, b=buoc: self.chinh(k, -b), co=20),
                 Nut("+", (X_COT2 + 148, yy, 32, 32), lambda k=khoa, b=buoc: self.chinh(k, b), co=20),
             ]
+        self.nut_tep.append(Nut("Lập lộ trình ▶", (X_COT2, y_ts + 90, 180, 40), self.lap_lo_trinh, co=20))
         self.thong_bao, self.la_loi = "", False
+
+    def lap_lo_trinh(self):
+        """Bấm nút Lập lộ trình: kiểm tra rồi mở màn hình E3"""
+        from .route_view import ManHinhLoTrinh, dem_o_benh
+
+        danh_sach_loi = kiem_tra(self.ban_do)
+        if len(danh_sach_loi) > 0:
+            self.bao(f"Bản đồ chưa hợp lệ:\n{danh_sach_loi[0]}", loi=True)
+            return
+
+        if dem_o_benh(self.ban_do) == 0:
+            self.bao("Chưa có ô bệnh nào để phun.", loi=True)
+            return
+
+        self.bao("")
+        # chép bản đồ để màn hình lộ trình không sửa bản gốc
+        ban_sao = json.loads(json.dumps(self.ban_do))
+        man_hinh_moi = ManHinhLoTrinh(self.ung_dung, ban_sao, self)
+        self.ung_dung.chuyen_den(man_hinh_moi)
 
     def ngau_nhien(self):
         bd = self.ban_do
