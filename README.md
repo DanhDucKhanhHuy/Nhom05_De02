@@ -4,7 +4,7 @@
 
 Đồ án cuối kỳ – Học kỳ 1, năm học 2026 – 2027 · Thời gian thực hiện: 02/11 – 06/12/2026
 
-> **Trạng thái:** CN2 có 28 luật, suy diễn tiến/lùi, Bayes và luồng chẩn đoán kết hợp giữ nguyên API. CNN hiện là **GIẢ**; chưa đánh giá ảnh thật hoặc hiệu chuẩn CPD, runtime pgmpy cần kiểm chứng. CN1 có tham lam và A* toàn cục, `plan_route` chưa ghép. Ứng dụng Pygame có bản đồ lưới và hoạt cảnh lộ trình; màn hình chẩn đoán ảnh chưa ghép. Xem `docs/kiem_chung.md` và `tasks/todo.md`.
+> **Trạng thái:** CN2 có 28 luật, suy diễn tiến/lùi, Bayes và luồng chẩn đoán kết hợp giữ nguyên API. CNN hiện là **GIẢ**; chưa đánh giá ảnh thật hoặc hiệu chuẩn CPD, runtime pgmpy cần kiểm chứng. CN1 có tham lam và A* toàn cục, `plan_route` chưa ghép. Ứng dụng Pygame có bản đồ lưới, hoạt cảnh lộ trình và màn hình chẩn đoán ảnh (đang dùng CNN giả). Xem `docs/kiem_chung.md` và `tasks/todo.md`.
 
 ---
 
@@ -87,6 +87,7 @@ Nhom05_De02/
 │       ├── giao_dien.py   # màu, phông, nút dùng chung
 │       ├── grid_editor.py # E2 – bản đồ lưới
 │       ├── route_view.py  # E3 – hoạt cảnh lộ trình
+│       ├── chan_doan_view.py # E4 – màn hình chẩn đoán ảnh
 │       ├── chan_doan.py   # điều phối chẩn đoán ảnh
 │       └── thoi_tiet.py   # thời tiết Open-Meteo
 ├── data/
@@ -118,7 +119,7 @@ Nhom05_De02/
     │   test_knowledge_regressions.py, test_diagnose*.py
     ├── test_tv3_probability.py, test_probability_boundaries.py
     ├── test_predict.py
-    └── test_grid_editor.py, test_route_view.py
+    └── test_grid_editor.py, test_route_view.py, test_chan_doan_view.py
 ```
 
 ## 4. Cài đặt
@@ -177,6 +178,10 @@ python -m scripts.check_rules
 vật cản, trạm bằng chuột (trái tô, phải xóa), mở/lưu file JSON, tạo bản đồ ngẫu nhiên, chỉnh k/p,
 rồi bấm **Lập lộ trình** để xem drone bay từng bước (Space chạy/dừng, ← → từng bước, R về đầu).
 Thuật toán: tham lam của CN1; A* toàn cục chỉ bật khi bản đồ ≤ 8 ô bệnh vì chạy chậm.
+
+Vào **Chẩn đoán bệnh từ ảnh lá lúa**: chọn ảnh, bấm **Chẩn đoán**, trả lời từng câu hỏi triệu chứng
+(Có / Không / Chưa biết, hoặc phím C / K / B). Màn hình hiện top-3 của CNN, kết luận, giải thích,
+luật đã dùng và nguồn. CNN hiện là bản **GIẢ** nên kết luận luôn là "chưa đủ chắc chắn".
 
 `python -m src.search.experiment` chạy thử trên bản đồ mẫu
 `data/sample/maps/map_4x4.json`, in ma trận và chi tiết lộ trình A* toàn cục,

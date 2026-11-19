@@ -193,7 +193,7 @@ class ManHinhBanDo(ManHinh):
                 Nut("−", (X_COT2 + 108, yy, 32, 32), lambda k=khoa, b=buoc: self.chinh(k, -b), co=20),
                 Nut("+", (X_COT2 + 148, yy, 32, 32), lambda k=khoa, b=buoc: self.chinh(k, b), co=20),
             ]
-        self.nut_tep.append(Nut("Lập lộ trình ▶", (X_COT2, y_ts + 90, 180, 40), self.lap_lo_trinh, co=20))
+        self.nut_tep.append(Nut("Lập lộ trình", (X_COT2, y_ts + 90, 180, 40), self.lap_lo_trinh, co=20))
         self.thong_bao, self.la_loi = "", False
 
     def lap_lo_trinh(self):
