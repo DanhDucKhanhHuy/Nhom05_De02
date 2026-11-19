@@ -19,3 +19,8 @@ __pycache__/
 # OS
 Thumbs.db
 .DS_Store
+
+# Dữ liệu và mô hình lớn
+data/raw/
+models/*.keras
+models/*.h5
