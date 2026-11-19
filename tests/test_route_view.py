@@ -48,3 +48,61 @@ def test_astar_tu_choi_ban_do_nhieu_o_benh():
     with pytest.raises(ValueError, match="A\\*"):
         lap_lo_trinh(ban_do, "astar")
 
+
+class UngDungGia:
+    def ve_man_hinh_chinh(self):
+        pass
+
+    def chuyen_den(self, man_hinh):
+        self.man_hinh = man_hinh
+
+
+def cho_tinh_xong(man_hinh):
+    import time
+
+    for _ in range(300):
+        man_hinh.cap_nhat(0)
+        if man_hinh.khung or man_hinh.loi:
+            return
+        time.sleep(0.02)
+    raise AssertionError("tính lộ trình quá lâu")
+
+
+def test_man_hinh_chay_dung_va_tung_buoc():
+    from src.app.route_view import TOC_DO, ManHinhLoTrinh
+
+    ban_do = tao_ngau_nhien(8, 8, p=100, rng=random.Random(3))
+    man_hinh = ManHinhLoTrinh(UngDungGia(), ban_do)
+    cho_tinh_xong(man_hinh)
+    assert man_hinh.buoc == 0 and not man_hinh.loi
+
+    man_hinh.di(1)
+    man_hinh.di(1)
+    man_hinh.di(-1)
+    assert man_hinh.buoc == 1
+
+    man_hinh.chay_dung()
+    man_hinh.cap_nhat(1 / TOC_DO[man_hinh.muc_toc_do] * 3)
+    assert man_hinh.buoc == 4
+
+    man_hinh.cap_nhat(10_000)  # chạy tới cuối thì tự dừng
+    assert man_hinh.buoc == len(man_hinh.khung) - 1 and not man_hinh.dang_chay
+    man_hinh.ve_dau()
+    assert man_hinh.buoc == 0
+
+
+def test_man_hinh_doi_thuat_toan_va_bao_loi():
+    from src.app.route_view import ManHinhLoTrinh
+
+    nho = tao_ngau_nhien(6, 6, p=100, ty_le_benh=0.15, rng=random.Random(7))
+    man_hinh = ManHinhLoTrinh(UngDungGia(), nho)
+    cho_tinh_xong(man_hinh)
+    man_hinh.doi_thuat_toan("astar")
+    cho_tinh_xong(man_hinh)
+    assert man_hinh.thuat_toan == "astar" and man_hinh.khung
+
+    lon = tao_ngau_nhien(20, 20, p=100, rng=random.Random(1))
+    man_hinh = ManHinhLoTrinh(UngDungGia(), lon, thuat_toan="astar")
+    cho_tinh_xong(man_hinh)
+    assert "A*" in man_hinh.loi and not man_hinh.nut_thuat_toan["astar"].bat
+
