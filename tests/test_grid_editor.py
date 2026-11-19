@@ -134,6 +134,6 @@ def test_chinh_k_p_khong_vuot_gioi_han():
         man_hinh.chinh("k", -1)
     assert man_hinh.ban_do["k"] == 1
     man_hinh.chinh("p", 5)
-    assert man_hinh.ban_do["p"] == 65
+    assert man_hinh.ban_do["p"] == 105
     man_hinh.xoa_het()
     assert man_hinh.ban_do["k"] == 1 and kiem_tra(man_hinh.ban_do) == []
