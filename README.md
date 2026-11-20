@@ -36,35 +36,43 @@ Luồng sử dụng của Bác sĩ Lúa:
 
 ```text
 Nhom05_De02/
-├── .git/                  # lịch sử hiện có
 ├── .gitignore
 ├── README.md
-├── AGENTS.md
-├── requirements.txt
-├── requirements-dev.txt
+├── AGENTS.md              # quy tắc cho thành viên và AI
+├── requirements.txt       # thư viện chức năng
+├── requirements-dev.txt   # pytest, ruff
 ├── pyproject.toml
-├── .claude/settings.json
-├── demo.py
+├── demo.py                # chạy thử tích hợp (CNN giả)
 ├── src/
 │   ├── __init__.py
-│   ├── contracts.py       # kiểu giao tiếp dùng chung
-│   ├── search/            # TV1 – CN1
+│   ├── contracts.py       # kiểu dữ liệu dùng chung giữa các module
+│   ├── drone/             # TV1 – CN1: không gian trạng thái drone
 │   │   ├── __init__.py
-│   │   ├── grid.py
-│   │   ├── astar.py
-│   │   ├── greedy.py
-│   │   ├── order_opt.py
-│   │   ├── run.py
-│   │   └── experiment.py
+│   │   ├── state.py       # trạng thái: vị trí, thuốc, pin, ô chưa phun
+│   │   ├── operators.py   # hành động bay / phun / nạp
+│   │   ├── navigation.py
+│   │   ├── problem.py
+│   │   └── A_star.py      # A* cho từng chặng
+│   ├── search/            # TV1 – CN1: lập lộ trình
+│   │   ├── __init__.py
+│   │   ├── greedy.py      # tham lam (đã chạy)
+│   │   ├── full_astar.py  # A* toàn cục (đã chạy)
+│   │   ├── route_utils.py
+│   │   ├── experiment.py  # so sánh thuật toán
+│   │   ├── run.py         # plan_route (chưa cài)
+│   │   ├── order_opt.py   # leo đồi / beam (chưa cài)
+│   │   ├── astar.py       # (chưa cài)
+│   │   └── grid.py        # (chưa cài)
 │   ├── rules/             # TV2/TV3 – CN2
 │   │   ├── __init__.py
-│   │   ├── rules.json
+│   │   ├── rules.json     # luật IF–THEN có nguồn
 │   │   ├── sources.json
 │   │   ├── vocabulary.json
-│   │   ├── forward.py
-│   │   ├── backward.py
-│   │   ├── bayes.py
-│   │   ├── ket_hop.py
+│   │   ├── forward.py     # suy diễn tiến
+│   │   ├── backward.py    # suy diễn lùi
+│   │   ├── trace.py       # vết luật đã dùng
+│   │   ├── bayes.py       # mạng Bayes
+│   │   ├── ket_hop.py     # kết hợp CNN + Bayes
 │   │   └── diagnose.py
 │   ├── model/             # TV4 – CN3
 │   │   ├── __init__.py
@@ -77,34 +85,43 @@ Nhom05_De02/
 │   │   └── notebooks/
 │   └── app/               # TV5 – CN4; thời tiết TV3
 │       ├── __init__.py
-│       ├── main.py
-│       ├── grid_editor.py
-│       ├── route_view.py
-│       ├── chan_doan.py
-│       └── thoi_tiet.py
+│       ├── main.py        # E1 – cửa sổ, menu
+│       ├── giao_dien.py   # màu, phông, nút dùng chung
+│       ├── grid_editor.py # E2 – bản đồ lưới
+│       ├── route_view.py  # E3 – hoạt cảnh lộ trình
+│       ├── chan_doan_view.py # E4 – màn hình chẩn đoán ảnh
+│       ├── chan_doan.py   # điều phối chẩn đoán ảnh
+│       └── thoi_tiet.py   # thời tiết Open-Meteo
 ├── data/
 │   ├── sample/
 │   │   ├── README.md
 │   │   └── maps/map_4x4.json
-│   ├── raw/               # không lên Git
-│   └── anh_thuc_te/        # giữ nguon.csv; ảnh không lên Git
-├── models/                # .gitkeep, README.md; *.keras không lên Git
+│   ├── raw/               # bộ ảnh tải về, không lên Git
+│   └── anh_thuc_te/       # giữ nguon.csv; ảnh không lên Git
+├── models/                # README.md; *.keras không lên Git
 ├── docs/
 │   ├── mo_hinh_bai_toan.md
-│   ├── interfaces.md
+│   ├── interfaces.md      # hợp đồng hàm giữa các phần
 │   ├── nguon_tri_thuc.md
+│   ├── doi_chieu_luat.md
 │   ├── du_lieu.md
 │   ├── kiem_chung.md
-│   ├── cau_hoi/
+│   ├── decisions/         # ghi chép quyết định thiết kế
+│   ├── cau_hoi/           # trả lời Q1 – Q4
 │   └── ho_so_nhom/ai_log.md
+├── artifacts/             # kết quả kiểm thử CN2 đã lưu
+├── tasks/                 # plan.md, todo.md
 ├── scripts/
 │   ├── __init__.py
-│   └── check_rules.py
-└── tests/
+│   └── check_rules.py     # kiểm tra bộ luật
+└── tests/                 # pytest; fixtures/ là dữ liệu mẫu cho test
     ├── test_demo.py
+    ├── test_search.py
+    ├── test_forward.py, test_backward.py, test_rules.py, test_reasoning_details.py,
+    │   test_knowledge_regressions.py, test_diagnose*.py
+    ├── test_tv3_probability.py, test_probability_boundaries.py
     ├── test_predict.py
-    ├── test_rules.py
-    └── test_search.py
+    └── test_grid_editor.py, test_route_view.py, test_chan_doan_view.py
 ```
 
 ## 4. Cài đặt
@@ -151,7 +168,9 @@ Nguồn: [TensorFlow 2.16.1](https://pypi.org/project/tensorflow/2.16.1/),
 Chạy từ gốc repo trên Windows/macOS/Linux:
 
 ```text
+python -m src.app.main
 python demo.py
+python -m src.search.experiment
 python -m pytest
 ruff check .
 python -m scripts.check_rules

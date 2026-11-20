@@ -88,6 +88,14 @@ k,p truyền vào ưu tiên hơn giá trị mặc định trong JSON. Không s�
 Đầu vào sai hoặc không có hành trình hoàn tất dự kiến ném `ValueError`.
 Hiện hàm luôn ném `NotImplementedError`.
 
+Để so sánh A* toàn cục với tham lam gần nhất, chạy
+`python -m src.search.experiment`. Mặc định dùng bản đồ mẫu; có thể truyền bản đồ
+và ngân sách vào `run_experiment(ban_do, k, p)`. Hàm in và trả hai lộ trình cùng
+các chỉ số `tong_quang_duong`, `so_lan_ve_tram`, `thoi_gian_chay`. A* toàn cục
+tìm tối ưu theo quãng đường bay nhưng có thể tốn nhiều thời gian/bộ nhớ khi số ô
+bệnh lớn; kết quả mặc định trên bản đồ 4 × 4 chỉ là minh họa, không đại diện cho
+hiệu năng trên ruộng 20 × 20.
+
 Ví dụ hợp đồng **chưa chạy được**, trường hợp hình thức không có ô bệnh:
 
 ```python
@@ -110,7 +118,10 @@ plan_route(ban_do, 1, 2, "hill")
 ```
 
 Bay tới ô kề 4 hướng; phun/nạp tại vị trí hiện tại. Ban đầu đã đủ thuốc/pin nên
-không cần nạp đầu. `tong_quang_duong` bằng số sự kiện bay. `so_lan_ve_tram` đếm
+không cần nạp đầu. `tong_quang_duong` bằng tổng số ô lưới bay qua. Mỗi sự kiện `bay` có thêm
+`quang_duong`, `pin_tieu_hao` và `qua_vat_can`; khi vượt vật cản, pin tiêu hao
+bao gồm 1 pin phụ cho mỗi ô vật cản và `duong_di` vẫn liệt kê ô đã bay qua.
+`so_lan_ve_tram` đếm
 mỗi bước bay đáp xuống ô 9, kể cả lần về cuối; không tính vị trí đầu hoặc nạp
 đứng yên. `thoi_gian_chay` là giây đo thật ≥0. Xem `mo_hinh_bai_toan.md` về an toàn.
 
@@ -122,7 +133,8 @@ thay cho số nguyên. start trong lưới và phải là trạm. Cho phép nhi�
 
 - 0: lúa khỏe.
 - 1, 2, 3: mức bệnh; mỗi ô chỉ cần phun một lần.
-- −1: vật cản, không được bay qua.
+- −1: vật cản, không được hạ cánh; có thể bay vượt qua và tốn thêm 1 pin cho
+  mỗi ô vật cản bị vượt.
 - 9: trạm nạp thuốc và pin.
 
 Ví dụ đầy đủ: `data/sample/maps/map_4x4.json`, chép bản minh họa README,
