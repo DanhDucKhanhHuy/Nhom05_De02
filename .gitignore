@@ -8,6 +8,16 @@ __pycache__/
 *.py[cod]
 .pytest_cache/
 
+# Ảnh dữ liệu, mô hình đã huấn luyện và kết quả chạy
+data/raw/
+data/anh_thuc_te/*
+!data/anh_thuc_te/nguon.csv
+*.keras
+*.h5
+*.pt
+*.pth
+artifacts/
+
 # Environment variables
 .env
 .env.*
@@ -19,8 +29,3 @@ __pycache__/
 # OS
 Thumbs.db
 .DS_Store
-
-# Dữ liệu và mô hình lớn
-data/raw/
-models/*.keras
-models/*.h5
