@@ -7,15 +7,15 @@ from collections import Counter
 import pytest
 
 import src.rules.diagnose as diagnose_module
+from src.model.predict import predict_top3
 from src.rules.diagnose import diagnose
 
 QUESTION_BLAST = "Bạn có thấy vết trên lá lúa hình thoi không?"
 QUESTION_BROWN = "Bạn có thấy đốm màu nâu dạng tròn hoặc bầu dục không?"
-TOP3_MINH_HOA = [("dao_on", 0.55), ("dom_nau", 0.40), ("bac_la", 0.03)]
 
 
 def test_diagnose_stub_with_unknown_answers_returns_safe_explanation():
-    result = diagnose(TOP3_MINH_HOA, lambda _: None)
+    result = diagnose(predict_top3("khong_doc_anh.jpg"), lambda _: None)
     assert result["ket_luan"] is None
     assert result["do_tin_cay"] is None
     assert result["luat_da_dung"] == []
@@ -25,7 +25,7 @@ def test_diagnose_stub_with_unknown_answers_returns_safe_explanation():
 
 
 def test_diagnose_unique_supported_suggestion_has_real_rule_trace_and_source():
-    result = diagnose(TOP3_MINH_HOA, lambda q: q == QUESTION_BLAST)
+    result = diagnose(predict_top3("gia.jpg"), lambda q: q == QUESTION_BLAST)
     assert result["ket_luan"] == "dao_on"
     assert result["do_tin_cay"] is None
     assert result["luat_da_dung"] == ["DO01", "DO12"]
@@ -37,7 +37,7 @@ def test_diagnose_unique_supported_suggestion_has_real_rule_trace_and_source():
 
 
 def test_diagnose_multiple_suggestions_do_not_force_one_label():
-    result = diagnose(TOP3_MINH_HOA,
+    result = diagnose(predict_top3("gia.jpg"),
                       lambda q: q in {QUESTION_BLAST, QUESTION_BROWN})
     assert result["ket_luan"] is None
     assert "Chưa đủ chắc" in result["giai_thich"]
@@ -46,7 +46,7 @@ def test_diagnose_multiple_suggestions_do_not_force_one_label():
 
 
 def test_diagnose_one_suggestion_with_other_unknowns_remains_uncertain():
-    result = diagnose(TOP3_MINH_HOA,
+    result = diagnose(predict_top3("gia.jpg"),
                       lambda q: True if q == QUESTION_BLAST else None)
     assert result["ket_luan"] is None
     assert "Chưa đủ chắc" in result["giai_thich"]
@@ -75,13 +75,13 @@ def test_diagnose_asks_shared_attribute_only_once_in_whole_session(tmp_path, mon
         questions.append(question)
         return answer
 
-    diagnose(TOP3_MINH_HOA, ask)
+    diagnose(predict_top3("gia.jpg"), ask)
     assert Counter(questions)[QUESTION_BLAST] == 1
     assert max(Counter(questions).values()) == 1
 
 
 def test_diagnose_does_not_mutate_cnn_input():
-    top3 = list(TOP3_MINH_HOA)
+    top3 = predict_top3("gia.jpg")
     original = copy.deepcopy(top3)
     diagnose(top3, lambda _: False)
     assert top3 == original
@@ -114,10 +114,10 @@ def test_diagnose_accepts_zero_probability_without_inventing_confidence():
 
 def test_diagnose_rejects_invalid_callback_result():
     with pytest.raises(ValueError, match="True, False hoặc None"):
-        diagnose(TOP3_MINH_HOA, lambda _: "không rõ")
+        diagnose(predict_top3("gia.jpg"), lambda _: "không rõ")
 
 
 def test_diagnose_reports_missing_knowledge_file(tmp_path, monkeypatch):
     monkeypatch.setattr(diagnose_module, "RULES_PATH", tmp_path / "khong_ton_tai.json")
     with pytest.raises(ValueError, match="Không đọc được"):
-        diagnose(TOP3_MINH_HOA, lambda _: None)
+        diagnose(predict_top3("gia.jpg"), lambda _: None)
