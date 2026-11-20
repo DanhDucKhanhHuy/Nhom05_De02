@@ -5,14 +5,9 @@ from src.app import chan_doan
 from src.model import predict
 
 
-def test_image_flow_calls_predictor_then_diagnosis(tmp_path, monkeypatch):
+def test_image_flow_calls_predictor_then_diagnosis(monkeypatch):
     top3 = [("dao_on", .55), ("dom_nau", .4), ("bac_la", .03)]
     calls = []
-    image_path = tmp_path / "test.jpg"
-    image_path.touch()
-    model_path = tmp_path / "model.keras"
-    model_path.touch()
-    monkeypatch.setattr(predict, "MODEL_PATH", model_path)
     monkeypatch.setattr(predict, "IS_STUB", False)
     monkeypatch.setattr(predict, "predict_top3", lambda path: calls.append(path) or top3)
     expected = {"ket_luan": "dao_on", "do_tin_cay": None,
@@ -24,19 +19,16 @@ def test_image_flow_calls_predictor_then_diagnosis(tmp_path, monkeypatch):
         return expected
 
     monkeypatch.setattr(chan_doan, "diagnose", diagnose, raising=False)
-    assert chan_doan.diagnose_image(image_path, lambda _: None) == expected
-    assert calls == [image_path]
+    assert chan_doan.diagnose_image("test.jpg", lambda _: None) == expected
+    assert calls == ["test.jpg"]
 
 
-def test_image_flow_reports_missing_model_without_claiming_a_diagnosis(tmp_path, monkeypatch):
-    image_path = tmp_path / "la.jpg"
-    image_path.touch()
-    monkeypatch.setattr(predict, "MODEL_PATH", tmp_path / "missing.keras")
-    result = chan_doan.diagnose_image(image_path, lambda q: "hình thoi" in q)
+def test_stub_image_flow_never_confirms_a_disease():
+    result = chan_doan.diagnose_image("khong_doc_anh.jpg", lambda q: "hình thoi" in q)
     assert result["ket_luan"] is None
     assert result["do_tin_cay"] is None
-    assert "Chưa có mô hình CNN" in result["giai_thich"]
-    assert result["luat_da_dung"] == []
+    assert "GIẢ" in result["giai_thich"]
+    assert "DO01" in result["luat_da_dung"]
 
 
 def test_predictor_errors_are_not_hidden_as_uncertain_diagnoses(monkeypatch):
