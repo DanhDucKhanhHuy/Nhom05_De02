@@ -4,7 +4,7 @@
 
 Đồ án cuối kỳ – Học kỳ 1, năm học 2026 – 2027 · Thời gian thực hiện: 02/11 – 06/12/2026
 
-> **Trạng thái:** CN2 có 28 luật, suy diễn tiến/lùi, Bayes và luồng chẩn đoán kết hợp giữ nguyên API. CNN hiện là **GIẢ**; chưa đánh giá ảnh thật hoặc hiệu chuẩn CPD, runtime pgmpy cần kiểm chứng. CN1 và giao diện ứng dụng còn phát triển. Xem `docs/kiem_chung.md` và `tasks/todo.md`.
+> **Trạng thái:** CN2 có 28 luật, suy diễn tiến/lùi, Bayes và luồng chẩn đoán kết hợp giữ nguyên API. CN3 đã huấn luyện CNN tự thiết kế và MobileNetV2, đánh giá trên test độc lập (MobileNetV2 accuracy 0,9005; F1 macro 0,8893), và chạy `predict_top3` thật trên 20 ảnh. Artifact `.keras` bị loại khỏi Git, cần đóng gói hoặc liên kết khi nộp. Nhãn ảnh thực tế chưa được xác minh độc lập. CN1 có tham lam và A* toàn cục, `plan_route` chưa ghép. Ứng dụng Pygame có bản đồ lưới, hoạt cảnh lộ trình và màn hình chẩn đoán ảnh. Xem `docs/kiem_chung.md` và `tasks/todo.md`.
 
 ---
 
@@ -36,35 +36,44 @@ Luồng sử dụng của Bác sĩ Lúa:
 
 ```text
 Nhom05_De02/
-├── .git/                  # lịch sử hiện có
 ├── .gitignore
 ├── README.md
-├── AGENTS.md
-├── requirements.txt
-├── requirements-dev.txt
+├── AGENTS.md              # quy tắc cho thành viên và AI
+├── requirements.txt       # thư viện chức năng
+├── requirements-dev.txt   # pytest, ruff
+├── requirements-web.txt   # flask cho demo web CN2
 ├── pyproject.toml
-├── .claude/settings.json
-├── demo.py
+├── demo.py                # chạy thử tích hợp
 ├── src/
 │   ├── __init__.py
-│   ├── contracts.py       # kiểu giao tiếp dùng chung
-│   ├── search/            # TV1 – CN1
+│   ├── contracts.py       # kiểu dữ liệu dùng chung giữa các module
+│   ├── drone/             # TV1 – CN1: không gian trạng thái drone
 │   │   ├── __init__.py
-│   │   ├── grid.py
-│   │   ├── astar.py
-│   │   ├── greedy.py
-│   │   ├── order_opt.py
-│   │   ├── run.py
-│   │   └── experiment.py
+│   │   ├── state.py       # trạng thái: vị trí, thuốc, pin, ô chưa phun
+│   │   ├── operators.py   # hành động bay / phun / nạp
+│   │   ├── navigation.py
+│   │   ├── problem.py
+│   │   └── A_star.py      # A* cho từng chặng
+│   ├── search/            # TV1 – CN1: lập lộ trình
+│   │   ├── __init__.py
+│   │   ├── greedy.py      # tham lam (đã chạy)
+│   │   ├── full_astar.py  # A* toàn cục (đã chạy)
+│   │   ├── route_utils.py
+│   │   ├── experiment.py  # so sánh thuật toán
+│   │   ├── run.py         # plan_route (chưa cài)
+│   │   ├── order_opt.py   # leo đồi / beam (chưa cài)
+│   │   ├── astar.py       # (chưa cài)
+│   │   └── grid.py        # (chưa cài)
 │   ├── rules/             # TV2/TV3 – CN2
 │   │   ├── __init__.py
-│   │   ├── rules.json
+│   │   ├── rules.json     # luật IF–THEN có nguồn
 │   │   ├── sources.json
 │   │   ├── vocabulary.json
-│   │   ├── forward.py
-│   │   ├── backward.py
-│   │   ├── bayes.py
-│   │   ├── ket_hop.py
+│   │   ├── forward.py     # suy diễn tiến
+│   │   ├── backward.py    # suy diễn lùi
+│   │   ├── trace.py       # vết luật đã dùng
+│   │   ├── bayes.py       # mạng Bayes
+│   │   ├── ket_hop.py     # kết hợp CNN + Bayes
 │   │   └── diagnose.py
 │   ├── model/             # TV4 – CN3
 │   │   ├── __init__.py
@@ -72,38 +81,53 @@ Nhom05_De02/
 │   │   ├── data_pipeline.py
 │   │   ├── custom_cnn.py
 │   │   ├── transfer.py
-│   │   ├── predict.py      # GIẢ, IS_STUB=True
-│   │   └── notebooks/
+│   │   ├── training.py
+│   │   └── predict.py     # predictor ảnh thật; cần artifact .keras
+│   ├── web/               # CN2 – demo web hệ luật (Flask)
+│   │   ├── __init__.py
+│   │   ├── templates/index.html
+│   │   └── static/        # app.js, style.css
 │   └── app/               # TV5 – CN4; thời tiết TV3
 │       ├── __init__.py
-│       ├── main.py
-│       ├── grid_editor.py
-│       ├── route_view.py
-│       ├── chan_doan.py
-│       └── thoi_tiet.py
+│       ├── main.py        # E1 – cửa sổ, menu
+│       ├── giao_dien.py   # màu, phông, nút dùng chung
+│       ├── grid_editor.py # E2 – bản đồ lưới
+│       ├── route_view.py  # E3 – hoạt cảnh lộ trình
+│       ├── chan_doan_view.py # E4 – màn hình chẩn đoán ảnh
+│       ├── chan_doan.py   # điều phối chẩn đoán ảnh
+│       └── thoi_tiet.py   # thời tiết Open-Meteo
 ├── data/
 │   ├── sample/
 │   │   ├── README.md
 │   │   └── maps/map_4x4.json
-│   ├── raw/               # không lên Git
-│   └── anh_thuc_te/        # giữ nguon.csv; ảnh không lên Git
-├── models/                # .gitkeep, README.md; *.keras không lên Git
+│   ├── raw/               # bộ ảnh tải về, không lên Git
+│   └── anh_thuc_te/       # giữ nguon.csv; ảnh không lên Git
+├── models/                # README.md; *.keras không lên Git
 ├── docs/
 │   ├── mo_hinh_bai_toan.md
-│   ├── interfaces.md
+│   ├── interfaces.md      # hợp đồng hàm giữa các phần
 │   ├── nguon_tri_thuc.md
+│   ├── doi_chieu_luat.md
 │   ├── du_lieu.md
 │   ├── kiem_chung.md
-│   ├── cau_hoi/
+│   ├── decisions/         # ghi chép quyết định thiết kế
+│   ├── cau_hoi/           # trả lời Q1 – Q4
 │   └── ho_so_nhom/ai_log.md
+├── artifacts/             # kết quả kiểm thử CN2 đã lưu
+├── tasks/                 # plan.md, todo.md
 ├── scripts/
 │   ├── __init__.py
-│   └── check_rules.py
-└── tests/
+│   ├── check_rules.py     # kiểm tra bộ luật
+│   └── train_cn3.py       # huấn luyện CNN (CN3)
+└── tests/                 # pytest; fixtures/ là dữ liệu mẫu cho test
     ├── test_demo.py
-    ├── test_predict.py
-    ├── test_rules.py
-    └── test_search.py
+    ├── test_search.py
+    ├── test_forward.py, test_backward.py, test_rules.py, test_reasoning_details.py,
+    │   test_knowledge_regressions.py, test_diagnose*.py
+    ├── test_tv3_probability.py, test_probability_boundaries.py
+    ├── test_predict.py, test_model_data.py
+    ├── test_web.py
+    └── test_grid_editor.py, test_route_view.py, test_chan_doan_view.py
 ```
 
 ## 4. Cài đặt
@@ -172,6 +196,7 @@ hiện tại và gửi lại trong mỗi bước.
 Chạy từ gốc repo trên Windows/macOS/Linux:
 
 ```text
+python -m src.app.main
 python demo.py
 python -m src.search.experiment
 python -m pytest
@@ -179,16 +204,23 @@ ruff check .
 python -m scripts.check_rules
 ```
 
+`python -m src.app.main` mở ứng dụng (cần `pygame`). Vào **Bản đồ ruộng và lộ trình drone**: tô ô bệnh,
+vật cản, trạm bằng chuột (trái tô, phải xóa), mở/lưu file JSON, tạo bản đồ ngẫu nhiên, chỉnh k/p,
+rồi bấm **Lập lộ trình** để xem drone bay từng bước (Space chạy/dừng, ← → từng bước, R về đầu).
+Thuật toán: tham lam của CN1; A* toàn cục chỉ bật khi bản đồ ≤ 8 ô bệnh vì chạy chậm.
+
+Vào **Chẩn đoán bệnh từ ảnh lá lúa**: chọn ảnh, bấm **Chẩn đoán**, trả lời từng câu hỏi triệu chứng
+(Có / Không / Chưa biết, hoặc phím C / K / B). Màn hình hiện top-3 của CNN, kết luận, giải thích,
+luật đã dùng và nguồn. Chưa có `models/rice_leaf_classifier.keras` thì màn hình báo chưa có mô hình
+và không kết luận.
+
 `python -m src.search.experiment` chạy thử trên bản đồ mẫu
 `data/sample/maps/map_4x4.json`, in ma trận và chi tiết lộ trình A* toàn cục,
 đồng thời so sánh với tham lam gần nhất.
 
-Nếu ruff chưa có trong PATH dùng `python -m ruff check .`. `python demo.py` là
-demo tích hợp: đọc bản đồ 4 × 4, in dự đoán **GIẢ**, báo `plan_route` chưa cài
-đặt và chạy CN2 với câu trả lời “Chưa biết”. Lệnh này chưa gọi phần A* trong
-`src/drone/`. CN2 trả thông báo chưa đủ chắc, liên hệ cán bộ khuyến nông.
-Demo gọi điều phối ảnh, hệ luật và CNN–Bayes. Predictor giả không đọc ảnh;
-kết quả luôn được ghi là minh họa, không dùng xác nhận bệnh.
+Nếu ruff chưa có trong PATH dùng `python -m ruff check .`. Demo đọc bản đồ 4 × 4,
+thông báo CNN chưa sẵn sàng nếu chưa có artifact, báo “chưa cài đặt” cho CN1.
+Không có số dự đoán mặc định hoặc kết luận bệnh giả.
 
 Các module chưa cung cấp CLI xử lý tham số. Một số thuật toán CN1/CN2 và mô hình
 đã có hàm thư viện; các hàm chưa triển khai ném `NotImplementedError`. Không coi
@@ -227,11 +259,11 @@ Chi tiết trong `docs/interfaces.md`.
 
 Mã ô: `0` lúa khỏe · `1`, `2`, `3` lúa bệnh theo mức · `-1` vật cản (kênh mương có cây cao, trụ điện) · `9` trạm nạp thuốc/đổi pin.
 
-**Hàm giao tiếp chính** (số dự đoán CNN trong bảng là GIẢ; type hint và schema ở `docs/interfaces.md`):
+**Hàm giao tiếp chính** (type hint và schema ở `docs/interfaces.md`):
 
 | Hàm | Module | Đầu ra |
 |-----|--------|--------|
-| `predict_top3(duong_dan_anh)` | `src/model/predict.py` | `[("dao_on", 0.55), ("dom_nau", 0.40), ("bac_la", 0.03)]` |
+| `predict_top3(duong_dan_anh)` | `src/model/predict.py` | 3 nhãn/xác suất từ ảnh và mô hình thật; cần artifact `.keras` |
 | `diagnose(top3, hoi_nguoi_dung)` | `src/rules/diagnose.py` | kết luận, độ tin cậy, các luật đã dùng (giải thích), nguồn tài liệu |
 | `plan_route(ban_do, k, p, thuat_toan)` | `src/search/run.py` | các ô đi qua, sự kiện phun/nạp, tổng quãng đường, số lần về trạm, thời gian chạy |
 

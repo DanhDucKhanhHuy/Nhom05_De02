@@ -226,7 +226,9 @@ class ManHinhChanDoan(ManHinh):
         ket_qua = None
         loi = ""
         try:
-            top3 = predict.predict_top3(self.duong_dan_anh)
+            # chưa có mô hình thì không có top-3
+            if predict.MODEL_PATH.is_file():
+                top3 = predict.predict_top3(self.duong_dan_anh)
             ket_qua = diagnose_image(self.duong_dan_anh, self.hoi)
         except (OSError, ValueError, RuntimeError) as e:
             loi = str(e)
@@ -382,8 +384,8 @@ class ManHinhChanDoan(ManHinh):
 
         y = VUNG_ANH.bottom + 40
         ve_chu(be_mat, "CNN (top-3)", (VUNG_ANH.x, y), co=20, dam=True)
-        if predict.IS_STUB:
-            ve_chu(be_mat, "Bản GIẢ, CN3 chưa có mô hình", (VUNG_ANH.x + 140, y + 3), co=16, mau=MAU_LOI)
+        if not predict.MODEL_PATH.is_file():
+            ve_chu(be_mat, "Chưa có mô hình CNN (.keras)", (VUNG_ANH.x + 140, y + 3), co=16, mau=MAU_LOI)
         if self.top3 is None:
             return
 

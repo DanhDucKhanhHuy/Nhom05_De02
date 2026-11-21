@@ -10,6 +10,7 @@ import pytest
 
 from src.app.chan_doan import diagnose_image
 from src.app.chan_doan_view import ManHinhChanDoan, do_rong_chu, ngat_dong, tao_noi_dung_ket_qua
+from src.model import predict
 
 
 class UngDungGia:
@@ -21,6 +22,32 @@ class UngDungGia:
 def khoi_dong_pygame():
     # không quit: phông đã lưu sẵn sẽ hỏng
     pygame.init()
+
+
+def top3_gia(duong_dan_anh):
+    if not os.path.isfile(duong_dan_anh):
+        raise FileNotFoundError("Không tìm thấy ảnh: " + duong_dan_anh)
+    return [("dao_on", 0.55), ("dom_nau", 0.40), ("bac_la", 0.03)]
+
+
+@pytest.fixture
+def co_mo_hinh(tmp_path, monkeypatch):
+    """Giả có mô hình và ảnh, không cần TensorFlow"""
+    mo_hinh = tmp_path / "mo_hinh.keras"
+    mo_hinh.write_bytes(b"gia")
+    anh = tmp_path / "la.png"
+    pygame.image.save(pygame.Surface((40, 40)), str(anh))
+    monkeypatch.setattr(predict, "MODEL_PATH", mo_hinh)
+    monkeypatch.setattr(predict, "predict_top3", top3_gia)
+    return str(anh)
+
+
+@pytest.fixture
+def chua_co_mo_hinh(tmp_path, monkeypatch):
+    anh = tmp_path / "la.png"
+    pygame.image.save(pygame.Surface((40, 40)), str(anh))
+    monkeypatch.setattr(predict, "MODEL_PATH", tmp_path / "khong_co.keras")
+    return str(anh)
 
 
 def cho_luong(man_hinh):
@@ -51,21 +78,20 @@ def tra_loi_co_het(cau_hoi):
     return True
 
 
-def test_noi_dung_ket_qua_co_du_muc():
-    ket_qua = diagnose_image("anh_gia.jpg", tra_loi_co_het)
+def test_noi_dung_ket_qua_co_du_muc(co_mo_hinh):
+    ket_qua = diagnose_image(co_mo_hinh, tra_loi_co_het)
     cac_chu = []
     for dong in tao_noi_dung_ket_qua(ket_qua):
         cac_chu.append(dong["chu"])
-    assert "Kết luận: chưa đủ chắc chắn" in cac_chu  # CNN giả không được kết luận
     assert "Giải thích" in cac_chu
     assert "Luật đã dùng" in cac_chu
     assert "Nguồn" in cac_chu
 
 
-def test_hoi_dap_tren_man_hinh():
+def test_hoi_dap_tren_man_hinh(co_mo_hinh):
     man_hinh = ManHinhChanDoan(UngDungGia())
-    man_hinh.mo_anh("anh_khong_co.jpg")  # ảnh không mở được vẫn chẩn đoán được
-    assert man_hinh.anh is None
+    man_hinh.mo_anh(co_mo_hinh)
+    assert man_hinh.anh is not None
     man_hinh.bat_dau()
 
     cho_luong(man_hinh)
@@ -83,12 +109,37 @@ def test_hoi_dap_tren_man_hinh():
     assert len(man_hinh.dong_ket_qua) > 0
 
 
-def test_ve_khong_loi():
+def test_chua_co_mo_hinh(chua_co_mo_hinh):
+    man_hinh = ManHinhChanDoan(UngDungGia())
+    man_hinh.mo_anh(chua_co_mo_hinh)
+    man_hinh.bat_dau()
+    cho_luong(man_hinh)
+
+    # không hỏi, không kết luận, báo chưa có mô hình
+    assert man_hinh.so_cau == 0
+    assert man_hinh.loi == ""
+    assert man_hinh.top3 is None
+    assert man_hinh.ket_qua["ket_luan"] is None
+    assert "Chưa có mô hình" in man_hinh.ket_qua["giai_thich"]
+    man_hinh.ve(pygame.Surface((1100, 720)))
+
+
+def test_anh_khong_co_bao_loi(co_mo_hinh):
+    man_hinh = ManHinhChanDoan(UngDungGia())
+    man_hinh.mo_anh("anh_khong_co.jpg")
+    assert man_hinh.anh is None
+    man_hinh.bat_dau()
+    cho_luong(man_hinh)
+    assert man_hinh.ket_qua is None
+    assert man_hinh.loi != ""
+
+
+def test_ve_khong_loi(co_mo_hinh):
     be_mat = pygame.Surface((1100, 720))
     man_hinh = ManHinhChanDoan(UngDungGia())
     man_hinh.ve(be_mat)  # chưa chọn ảnh
 
-    man_hinh.mo_anh("anh_khong_co.jpg")
+    man_hinh.mo_anh(co_mo_hinh)
     man_hinh.bat_dau()
     cho_luong(man_hinh)
     man_hinh.ve(be_mat)  # đang hỏi
