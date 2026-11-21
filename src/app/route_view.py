@@ -32,7 +32,7 @@ def tim_cac_tram(ban_do):
 
 def lap_lo_trinh(ban_do, thuat_toan="greedy"):
     """Gọi thuật toán CN1, trả về LoTrinh"""
-    from src.search.full_astar import astar_route
+    from src.search.Astar import astar_route
     from src.search.greedy import greedy_route
 
     k = ban_do["k"]
