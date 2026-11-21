@@ -4,7 +4,7 @@
 
 Đồ án cuối kỳ – Học kỳ 1, năm học 2026 – 2027 · Thời gian thực hiện: 02/11 – 06/12/2026
 
-> **Trạng thái:** CN2 có 28 luật, suy diễn tiến/lùi, Bayes và luồng chẩn đoán kết hợp giữ nguyên API. CNN hiện là **GIẢ**; chưa đánh giá ảnh thật hoặc hiệu chuẩn CPD, runtime pgmpy cần kiểm chứng. CN1 có tham lam và A* toàn cục, `plan_route` chưa ghép. Ứng dụng Pygame có bản đồ lưới, hoạt cảnh lộ trình và màn hình chẩn đoán ảnh. Xem `docs/kiem_chung.md` và `tasks/todo.md`.
+> **Trạng thái:** CN2 có 28 luật, suy diễn tiến/lùi, Bayes và luồng chẩn đoán kết hợp giữ nguyên API. CN3 đã huấn luyện CNN tự thiết kế và MobileNetV2, đánh giá trên test độc lập (MobileNetV2 accuracy 0,9005; F1 macro 0,8893), và chạy `predict_top3` thật trên 20 ảnh. Artifact `.keras` bị loại khỏi Git, cần đóng gói hoặc liên kết khi nộp. Nhãn ảnh thực tế chưa được xác minh độc lập. CN1 có tham lam và A* toàn cục, `plan_route` chưa ghép. Ứng dụng Pygame có bản đồ lưới, hoạt cảnh lộ trình và màn hình chẩn đoán ảnh. Xem `docs/kiem_chung.md` và `tasks/todo.md`.
 
 ---
 
@@ -43,7 +43,7 @@ Nhom05_De02/
 ├── requirements-dev.txt   # pytest, ruff
 ├── requirements-web.txt   # flask cho demo web CN2
 ├── pyproject.toml
-├── demo.py                # chạy thử tích hợp (CNN giả)
+├── demo.py                # chạy thử tích hợp
 ├── src/
 │   ├── __init__.py
 │   ├── contracts.py       # kiểu dữ liệu dùng chung giữa các module
@@ -82,7 +82,7 @@ Nhom05_De02/
 │   │   ├── custom_cnn.py
 │   │   ├── transfer.py
 │   │   ├── training.py
-│   │   └── predict.py     # GIẢ, IS_STUB=True
+│   │   └── predict.py     # predictor ảnh thật; cần artifact .keras
 │   ├── web/               # CN2 – demo web hệ luật (Flask)
 │   │   ├── __init__.py
 │   │   ├── templates/index.html
@@ -211,18 +211,16 @@ Thuật toán: tham lam của CN1; A* toàn cục chỉ bật khi bản đồ �
 
 Vào **Chẩn đoán bệnh từ ảnh lá lúa**: chọn ảnh, bấm **Chẩn đoán**, trả lời từng câu hỏi triệu chứng
 (Có / Không / Chưa biết, hoặc phím C / K / B). Màn hình hiện top-3 của CNN, kết luận, giải thích,
-luật đã dùng và nguồn. CNN hiện là bản **GIẢ** nên kết luận luôn là "chưa đủ chắc chắn".
+luật đã dùng và nguồn. Chưa có `models/rice_leaf_classifier.keras` thì màn hình báo chưa có mô hình
+và không kết luận.
 
 `python -m src.search.experiment` chạy thử trên bản đồ mẫu
 `data/sample/maps/map_4x4.json`, in ma trận và chi tiết lộ trình A* toàn cục,
 đồng thời so sánh với tham lam gần nhất.
 
-Nếu ruff chưa có trong PATH dùng `python -m ruff check .`. `python demo.py` là
-demo tích hợp: đọc bản đồ 4 × 4, in dự đoán **GIẢ**, báo `plan_route` chưa cài
-đặt và chạy CN2 với câu trả lời “Chưa biết”. Lệnh này chưa gọi phần A* trong
-`src/drone/`. CN2 trả thông báo chưa đủ chắc, liên hệ cán bộ khuyến nông.
-Demo gọi điều phối ảnh, hệ luật và CNN–Bayes. Predictor giả không đọc ảnh;
-kết quả luôn được ghi là minh họa, không dùng xác nhận bệnh.
+Nếu ruff chưa có trong PATH dùng `python -m ruff check .`. Demo đọc bản đồ 4 × 4,
+thông báo CNN chưa sẵn sàng nếu chưa có artifact, báo “chưa cài đặt” cho CN1.
+Không có số dự đoán mặc định hoặc kết luận bệnh giả.
 
 Các module chưa cung cấp CLI xử lý tham số. Một số thuật toán CN1/CN2 và mô hình
 đã có hàm thư viện; các hàm chưa triển khai ném `NotImplementedError`. Không coi
@@ -261,11 +259,11 @@ Chi tiết trong `docs/interfaces.md`.
 
 Mã ô: `0` lúa khỏe · `1`, `2`, `3` lúa bệnh theo mức · `-1` vật cản (kênh mương có cây cao, trụ điện) · `9` trạm nạp thuốc/đổi pin.
 
-**Hàm giao tiếp chính** (số dự đoán CNN trong bảng là GIẢ; type hint và schema ở `docs/interfaces.md`):
+**Hàm giao tiếp chính** (type hint và schema ở `docs/interfaces.md`):
 
 | Hàm | Module | Đầu ra |
 |-----|--------|--------|
-| `predict_top3(duong_dan_anh)` | `src/model/predict.py` | `[("dao_on", 0.55), ("dom_nau", 0.40), ("bac_la", 0.03)]` |
+| `predict_top3(duong_dan_anh)` | `src/model/predict.py` | 3 nhãn/xác suất từ ảnh và mô hình thật; cần artifact `.keras` |
 | `diagnose(top3, hoi_nguoi_dung)` | `src/rules/diagnose.py` | kết luận, độ tin cậy, các luật đã dùng (giải thích), nguồn tài liệu |
 | `plan_route(ban_do, k, p, thuat_toan)` | `src/search/run.py` | các ô đi qua, sự kiện phun/nạp, tổng quãng đường, số lần về trạm, thời gian chạy |
 
