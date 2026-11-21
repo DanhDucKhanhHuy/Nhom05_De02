@@ -1,5 +1,7 @@
 """E3 - Hoạt cảnh lộ trình drone - TV5"""
-import threading
+import multiprocessing
+import queue
+import time
 
 import pygame
 
@@ -7,7 +9,7 @@ from .giao_dien import CAO_THANH_TIEU_DE, MAU, ManHinh, Nut, ve_chu, ve_thanh_ti
 from .grid_editor import KHOE, MAU_LOI, MAU_O, MUC_BENH, TRAM, VUNG_LUOI, X_BANG
 
 TEN_THUAT_TOAN = {"greedy": "Tham lam", "astar": "A* toàn cục"}
-GIOI_HAN_ASTAR = 8  # A* toàn cục chỉ chạy nhanh khi ít ô bệnh
+SO_O_ASTAR_NHANH = 8  # trên mức này A* có thể chạy rất lâu
 
 
 def dem_o_benh(ban_do):
@@ -37,12 +39,21 @@ def lap_lo_trinh(ban_do, thuat_toan="greedy"):
     p = ban_do["p"]
 
     if thuat_toan == "astar":
-        if dem_o_benh(ban_do) > GIOI_HAN_ASTAR:
-            raise ValueError(f"A* toàn cục chỉ dùng cho bản đồ ≤ {GIOI_HAN_ASTAR} ô bệnh.")
         lo_trinh = astar_route(ban_do, k, p)
     else:
         lo_trinh = greedy_route(ban_do, k, p)
     return lo_trinh
+
+
+def tinh_o_tien_trinh_rieng(ban_do, thuat_toan, hang_doi):
+    """Chạy trong tiến trình riêng, gửi kết quả về qua hàng đợi"""
+    try:
+        lo_trinh = lap_lo_trinh(ban_do, thuat_toan)
+        hang_doi.put(("ok", lo_trinh))
+    except ValueError as loi:
+        hang_doi.put(("loi", str(loi)))
+    except MemoryError:
+        hang_doi.put(("loi", "Hết bộ nhớ khi tính lộ trình."))
 
 
 def dung_khung_hinh(ban_do, lo_trinh):
@@ -127,7 +138,8 @@ class ManHinhLoTrinh(ManHinh):
         self.ban_do = ban_do
         self.man_hinh_truoc = man_hinh_truoc
         self.muc_toc_do = 3
-        self.lan_tinh = 0
+        self.tien_trinh = None
+        self.hang_doi = None
         self.tao_cac_nut()
         self.bat_dau_tinh(thuat_toan)
 
@@ -144,12 +156,13 @@ class ManHinhLoTrinh(ManHinh):
 
         nut_tham_lam = Nut("Tham lam", (X_BANG + 110, y + 92, 150, 32), self.chon_tham_lam, co=18)
         nut_astar = Nut("A* toàn cục", (X_BANG + 270, y + 92, 150, 32), self.chon_astar, co=18)
-        if dem_o_benh(self.ban_do) > GIOI_HAN_ASTAR:
-            nut_astar.bat = False
         self.nut_thuat_toan = {"greedy": nut_tham_lam, "astar": nut_astar}
+
+        self.nut_dung_tinh = Nut("Dừng tính", (X_BANG, CAO_THANH_TIEU_DE + 160, 150, 36), self.dung_tinh)
 
     # điều khiển
     def quay_lai(self):
+        self.huy_tien_trinh()
         if self.man_hinh_truoc is not None:
             self.ung_dung.chuyen_den(self.man_hinh_truoc)
         else:
@@ -203,10 +216,11 @@ class ManHinhLoTrinh(ManHinh):
         self.doi_toc_do(1)
 
     def doi_thuat_toan(self, ma):
-        if ma == self.thuat_toan:
+        if ma == self.thuat_toan and self.dang_tinh():
             return
-        if self.dang_tinh():
+        if ma == self.thuat_toan and self.khung:
             return
+        # đang tính dở thì bỏ, tính lại bằng thuật toán mới
         self.bat_dau_tinh(ma)
 
     def chon_tham_lam(self):
@@ -230,34 +244,60 @@ class ManHinhLoTrinh(ManHinh):
         self.buoc = 0
         self.dang_chay = False
         self.tich_luy = 0.0
-        self.ket_qua = None
-        self.lan_tinh += 1
 
-        # tính ở luồng riêng để cửa sổ không bị treo
-        luong = threading.Thread(target=self.tinh, args=(self.lan_tinh, thuat_toan), daemon=True)
-        luong.start()
+        # tính ở tiến trình riêng: cửa sổ không bị treo và dừng được giữa chừng
+        self.huy_tien_trinh()
+        self.hang_doi = multiprocessing.Queue()
+        self.tien_trinh = multiprocessing.Process(
+            target=tinh_o_tien_trinh_rieng,
+            args=(self.ban_do, thuat_toan, self.hang_doi),
+            daemon=True,
+        )
+        self.tien_trinh.start()
+        self.luc_bat_dau = time.monotonic()
 
-    def tinh(self, lan, thuat_toan):
-        try:
-            lo_trinh = lap_lo_trinh(self.ban_do, thuat_toan)
-            ket_qua = ("ok", lo_trinh)
-        except ValueError as loi:
-            ket_qua = ("loi", str(loi))
+    def huy_tien_trinh(self):
+        """Tắt tiến trình đang tính (nếu có)"""
+        if self.tien_trinh is not None:
+            if self.tien_trinh.is_alive():
+                self.tien_trinh.terminate()
+            self.tien_trinh.join(1)
+        self.tien_trinh = None
+        self.hang_doi = None
 
-        # người dùng đã đổi thuật toán thì bỏ kết quả cũ
-        if lan == self.lan_tinh:
-            self.ket_qua = ket_qua
+    def dung_tinh(self):
+        """Bấm nút Dừng tính"""
+        if not self.dang_tinh():
+            return
+        so_giay = int(time.monotonic() - self.luc_bat_dau)
+        self.huy_tien_trinh()
+        self.loi = f"Đã dừng sau {so_giay} giây. Chọn Tham lam để có lộ trình nhanh."
 
     def dang_tinh(self):
-        if self.khung:
-            return False
-        if self.loi:
+        if self.tien_trinh is None:
             return False
         return True
 
-    def nhan_ket_qua(self):
-        loai, du_lieu = self.ket_qua
-        self.ket_qua = None
+    def lay_ket_qua(self):
+        """Xem tiến trình đã gửi kết quả về chưa; chưa có thì trả None"""
+        if self.tien_trinh is None:
+            return None
+        try:
+            return self.hang_doi.get_nowait()
+        except queue.Empty:
+            pass
+
+        if self.tien_trinh.is_alive():
+            return None
+        # tiến trình vừa xong: chờ thêm chút cho dữ liệu kịp tới
+        try:
+            return self.hang_doi.get(timeout=1)
+        except queue.Empty:
+            return ("loi", "Tiến trình tính lộ trình bị dừng bất thường.")
+
+    def nhan_ket_qua(self, ket_qua):
+        self.huy_tien_trinh()
+        loai, du_lieu = ket_qua
         if loai == "ok":
             self.lo_trinh = du_lieu
             khung, vet, thoi_diem_phun = dung_khung_hinh(self.ban_do, du_lieu)
@@ -268,8 +308,9 @@ class ManHinhLoTrinh(ManHinh):
             self.loi = du_lieu
 
     def cap_nhat(self, dt):
-        if self.ket_qua is not None:
-            self.nhan_ket_qua()
+        ket_qua = self.lay_ket_qua()
+        if ket_qua is not None:
+            self.nhan_ket_qua(ket_qua)
 
         if self.dang_chay and self.khung:
             buoc_cuoi = len(self.khung) - 1
@@ -301,6 +342,8 @@ class ManHinhLoTrinh(ManHinh):
             return
 
         tat_ca_nut = [self.nut_quay_lai] + self.nut_dieu_khien + list(self.nut_thuat_toan.values())
+        if self.dang_tinh():
+            tat_ca_nut.append(self.nut_dung_tinh)
         for nut in tat_ca_nut:
             if nut.xu_ly(su_kien):
                 return
@@ -376,8 +419,8 @@ class ManHinhLoTrinh(ManHinh):
         ve_chu(be_mat, "Thuật toán:", (X_BANG, y + 108), co=18, can="midleft")
         for nut in self.nut_thuat_toan.values():
             nut.ve(be_mat)
-        if not self.nut_thuat_toan["astar"].bat:
-            ve_chu(be_mat, f"(A* chỉ dùng khi ≤ {GIOI_HAN_ASTAR} ô bệnh)", (X_BANG + 110, y + 130), co=15,
+        if dem_o_benh(self.ban_do) > SO_O_ASTAR_NHANH:
+            ve_chu(be_mat, f"(A* chạy nhanh khi ≤ {SO_O_ASTAR_NHANH} ô bệnh)", (X_BANG + 110, y + 130), co=15,
                    mau=MAU["chu_phu"])
 
         ve_chu(be_mat, "Phím: Space chạy/dừng · ← → từng bước · R về đầu", (X_BANG, y + 156), co=15,
@@ -393,7 +436,13 @@ class ManHinhLoTrinh(ManHinh):
             ve_chu(be_mat, self.loi, (X_BANG, y + 76), co=17, mau=MAU_LOI)
             return
         if not self.khung:
-            ve_chu(be_mat, "Đang tính lộ trình…", (X_BANG, y + 50), co=20, mau=MAU["chu_phu"])
+            so_giay = int(time.monotonic() - self.luc_bat_dau)
+            ve_chu(be_mat, f"Đang tính lộ trình… {so_giay} giây", (X_BANG, y + 50), co=20, mau=MAU["chu_phu"])
+            so_o_benh = dem_o_benh(self.ban_do)
+            if self.thuat_toan == "astar" and so_o_benh > SO_O_ASTAR_NHANH:
+                ve_chu(be_mat, f"{so_o_benh} ô bệnh: A* có thể chạy rất lâu.", (X_BANG, y + 80), co=17,
+                       mau=MAU_LOI)
+            self.nut_dung_tinh.ve(be_mat)
             return
 
         trang_thai = self.khung[self.buoc]

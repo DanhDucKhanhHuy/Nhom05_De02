@@ -1,0 +1,2 @@
+# Môi trường demo Python 3.11, sử dụng import pygame.
+pygame-ce==2.5.8

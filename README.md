@@ -149,6 +149,10 @@ python -m pip install -r requirements-dev.txt
 python -m pip install -r requirements.txt
 ```
 
+Chỉ cần chạy giao diện Pygame thì có thể cài `requirements-pygame.txt` (pygame-ce 2.5.8).
+Không cài chung với `requirements.txt` trong một môi trường, vì `pygame` và `pygame-ce`
+cùng cung cấp module `pygame`.
+
 CN3 đã chạy với Python 3.11.9 và TensorFlow 2.16.1. TensorFlow 2.16.1 không hỗ trợ Python 3.13 trở lên.
 Chỉ cài `requirements-dev.txt` thì vẫn chạy được test và `demo.py`. Các test cần
 TensorFlow hoặc pgmpy tự bỏ qua khi máy chưa cài.
