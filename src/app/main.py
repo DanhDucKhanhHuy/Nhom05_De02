@@ -1,6 +1,7 @@
 """E1 - Khung ứng dụng - TV5. Chạy: python -m src.app.main"""
 import pygame
 
+from .bayes_view import ManHinhBayes
 from .chan_doan_view import ManHinhChanDoan
 from .giao_dien import MAU, ManHinh, Nut, ve_chu
 from .grid_editor import ManHinhBanDo
@@ -14,15 +15,17 @@ TIEU_DE = "Bác sĩ Lúa"
 class ManHinhChinh(ManHinh):
     def __init__(self, ung_dung):
         super().__init__(ung_dung)
-        x, rong, cao = RONG // 2 - 230, 460, 64
+        x, rong, cao = RONG // 2 - 230, 460, 58
         self.cac_nut = [
-            Nut("Chẩn đoán bệnh từ ảnh lá lúa", (x, 300, rong, cao), co=24,
+            Nut("Chẩn đoán bệnh từ ảnh lá lúa", (x, 290, rong, cao), co=23,
                 khi_bam=lambda: ung_dung.chuyen_den(ManHinhChanDoan(ung_dung))),
-            Nut("Tư vấn theo triệu chứng (Bayes)", (x, 380, rong, cao), co=24,
+            Nut("Tư vấn theo triệu chứng (Bayes)", (x, 360, rong, cao), co=23,
                 khi_bam=lambda: ung_dung.chuyen_den(ManHinhTuVan(ung_dung))),
-            Nut("Bản đồ ruộng và lộ trình drone", (x, 460, rong, cao), co=24,
+            Nut("Mạng Bayes 5 nút", (x, 430, rong, cao), co=23,
+                khi_bam=lambda: ung_dung.chuyen_den(ManHinhBayes(ung_dung))),
+            Nut("Bản đồ ruộng và lộ trình drone", (x, 500, rong, cao), co=23,
                 khi_bam=lambda: ung_dung.chuyen_den(ManHinhBanDo(ung_dung))),
-            Nut("Thoát", (x, 540, rong, cao), co=24, khi_bam=ung_dung.thoat),
+            Nut("Thoát", (x, 570, rong, cao), co=23, khi_bam=ung_dung.thoat),
         ]
 
     def xu_ly_su_kien(self, su_kien):

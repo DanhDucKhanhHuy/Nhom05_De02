@@ -96,6 +96,7 @@ Nhom05_De02/
 │       ├── route_view.py  # E3 – hoạt cảnh lộ trình
 │       ├── chan_doan_view.py # E4 – màn hình chẩn đoán ảnh
 │       ├── tu_van_view.py # E5 – tư vấn theo triệu chứng (luật + Bayes)
+│       ├── bayes_view.py  # E6 – mạng Bayes 5 nút theo ví dụ của đề
 │       ├── chan_doan.py   # điều phối chẩn đoán ảnh
 │       └── thoi_tiet.py   # thời tiết Open-Meteo
 ├── data/
@@ -129,7 +130,8 @@ Nhom05_De02/
     ├── test_tv3_probability.py, test_probability_boundaries.py
     ├── test_predict.py, test_model_data.py
     ├── test_bayes_nhiet_do.py
-    └── test_grid_editor.py, test_route_view.py, test_chan_doan_view.py, test_tu_van_view.py
+    └── test_grid_editor.py, test_route_view.py, test_chan_doan_view.py, test_tu_van_view.py,
+        test_bayes_view.py
 ```
 
 ## 4. Cài đặt
@@ -208,6 +210,9 @@ Vào **Tư vấn theo triệu chứng (Bayes)**: trả lời 25 câu (Có / Khô
 Sau mỗi câu, màn hình cập nhật xác suất Bayes của 4 lớp và các luật đã kích hoạt kèm nguồn.
 Chọn địa điểm ĐBSCL bằng **< >** (Cần Thơ, Long Xuyên, Rạch Giá, Cà Mau…) rồi bấm **Lấy thời tiết**
 (cần mạng) để đưa độ ẩm và nhiệt độ thật vào Bayes. Không cần CNN.
+
+Vào **Mạng Bayes 5 nút**: sơ đồ 5 nút theo ví dụ của đề (độ ẩm, nhiệt độ, lượng đạm → đạo ôn →
+vết hình thoi). Chọn trạng thái từng nút (hoặc Chưa biết), ô đạo ôn hiện ngay P(đạo ôn | bằng chứng).
 
 Vào **Chẩn đoán bệnh từ ảnh lá lúa**: chọn ảnh, bấm **Chẩn đoán**, trả lời từng câu hỏi triệu chứng
 (Có / Không / Chưa biết, hoặc phím C / K / B). Màn hình hiện top-3 của CNN, kết luận, giải thích,
