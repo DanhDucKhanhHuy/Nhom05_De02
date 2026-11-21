@@ -4,7 +4,13 @@
 
 Đồ án cuối kỳ – Học kỳ 1, năm học 2026 – 2027 · Thời gian thực hiện: 02/11 – 06/12/2026
 
-> **Trạng thái:** CN2 có 28 luật, suy diễn tiến/lùi, Bayes và luồng chẩn đoán kết hợp giữ nguyên API. CN3 đã huấn luyện CNN tự thiết kế và MobileNetV2, đánh giá trên test độc lập (MobileNetV2 accuracy 0,9005; F1 macro 0,8893), và chạy `predict_top3` thật trên 20 ảnh. Artifact `.keras` bị loại khỏi Git, cần đóng gói hoặc liên kết khi nộp. Nhãn ảnh thực tế chưa được xác minh độc lập. CN1 có tham lam và A* toàn cục, `plan_route` chưa ghép. Ứng dụng Pygame có bản đồ lưới, hoạt cảnh lộ trình và màn hình chẩn đoán ảnh. Xem `docs/kiem_chung.md` và `tasks/todo.md`.
+> **Trạng thái (21/11/2026):**
+> - **CN1:** có tham lam và A* toàn cục; leo đồi/beam, `plan_route` chưa cài.
+> - **CN2:** 28 luật có nguồn, suy diễn tiến/lùi tự cài, mạng Bayes và kết hợp CNN–Bayes.
+> - **CN3:** đã huấn luyện CNN tự thiết kế và MobileNetV2 (accuracy 0,9005; F1 macro 0,8893 trên test độc lập). File `.keras` không lên Git, phải kèm file hoặc link khi nộp. Nhãn 20 ảnh thực tế chưa xác minh độc lập.
+> - **CN4:** ứng dụng Pygame có menu, bản đồ lưới, hoạt cảnh lộ trình và màn hình chẩn đoán ảnh.
+>
+> Chi tiết ở `docs/kiem_chung.md` và `tasks/todo.md`.
 
 ---
 
@@ -39,10 +45,10 @@ Nhom05_De02/
 ├── .gitignore
 ├── README.md
 ├── AGENTS.md              # quy tắc cho thành viên và AI
-├── requirements.txt       # thư viện chức năng
+├── requirements.txt       # thư viện chức năng (mục 4)
 ├── requirements-dev.txt   # pytest, ruff
-├── pyproject.toml
-├── demo.py                # chạy thử tích hợp
+├── pyproject.toml         # cấu hình pytest, ruff
+├── demo.py                # chạy thử tích hợp trên dòng lệnh
 ├── src/
 │   ├── __init__.py
 │   ├── contracts.py       # kiểu dữ liệu dùng chung giữa các module
@@ -96,8 +102,9 @@ Nhom05_De02/
 │   │   ├── README.md
 │   │   └── maps/map_4x4.json
 │   ├── raw/               # bộ ảnh tải về, không lên Git
-│   └── anh_thuc_te/       # giữ nguon.csv; ảnh không lên Git
-├── models/                # README.md; *.keras không lên Git
+│   └── anh_thuc_te/       # 20 ảnh thử, 4 thư mục lớp + nguon.csv
+├── models/                # README.md; rice_leaf_classifier.keras không lên Git
+├── artifacts/             # kết quả huấn luyện/kiểm thử trên máy, không lên Git
 ├── docs/
 │   ├── mo_hinh_bai_toan.md
 │   ├── interfaces.md      # hợp đồng hàm giữa các phần
@@ -106,7 +113,7 @@ Nhom05_De02/
 │   ├── du_lieu.md
 │   ├── kiem_chung.md
 │   ├── decisions/         # ghi chép quyết định thiết kế
-│   ├── cau_hoi/           # trả lời Q1 – Q4
+│   ├── cau_hoi/           # Q2_xac_suat.md, Q3.md, Q4.md (Q1 chưa có)
 │   └── ho_so_nhom/ai_log.md
 ├── tasks/                 # plan.md, todo.md
 ├── scripts/
@@ -144,17 +151,27 @@ python -m pip install -r requirements-dev.txt
 python -m pip install -r requirements.txt
 ```
 
-Có thể chỉ cài requirements-dev để chạy test/demo khung. Bộ chức năng bắt đầu
-bằng `tensorflow==2.16.1`, `numpy==1.26.4` (<2), `pgmpy==0.1.25`; xem toàn bộ
-trong `requirements.txt`. Đây là ghim phụ thuộc trực tiếp, chưa phải lockfile
-bắc cầu. **Chưa cài thử** toàn bộ trên Python 3.10/3.11.
-Nguồn: [TensorFlow 2.16.1](https://pypi.org/project/tensorflow/2.16.1/),
-[pgmpy 0.1.25](https://pypi.org/project/pgmpy/0.1.25/).
+CN3 đã chạy với Python 3.11.9 và TensorFlow 2.16.1. TensorFlow 2.16.1 không hỗ trợ Python 3.13 trở lên.
+Chỉ cài `requirements-dev.txt` thì vẫn chạy được test và `demo.py`. Các test cần
+TensorFlow hoặc pgmpy tự bỏ qua khi máy chưa cài.
 
-- `scikit-learn` chỉ tính chỉ số đánh giá; A*, leo đồi/beam, suy diễn tiến/lùi tự cài.
-- `requests` dành cho thời tiết; bản khung không gọi API.
-- Notebook huấn luyện có thể chạy Colab/Kaggle GPU, đặt ở `src/model/notebooks/`.
-- Demo không cần TensorFlow, mô hình hoặc ảnh tải ngoài.
+**Thư viện sử dụng** (`requirements.txt`, ghim phiên bản trực tiếp):
+
+| Thư viện | Phiên bản | Dùng ở đâu |
+|---|---|---|
+| `pygame` | 2.5.2 | Ứng dụng CN4 (`src/app/`): cửa sổ, menu, bản đồ lưới, hoạt cảnh |
+| `tensorflow` | 2.16.1 | CN3 (`src/model/`, `scripts/train_cn3.py`): CNN, MobileNetV2, nạp `.keras` |
+| `numpy` | 1.26.4 | CN3 và Bayes; giữ < 2 cho TensorFlow 2.16 |
+| `pillow` | 10.3.0 | Đọc và đổi cỡ ảnh lá lúa (`predict.py`, `prepare_data.py`) |
+| `scikit-learn` | 1.4.2 | Chỉ tính accuracy/precision/recall/F1, ma trận nhầm lẫn (`training.py`) |
+| `pgmpy` | 0.1.25 | Mạng Bayes (`src/rules/bayes.py`) |
+| `requests` | 2.32.3 | Gọi API thời tiết Open-Meteo (`src/app/thoi_tiet.py`) |
+| `pandas` | 2.2.2 | Chưa dùng trong code |
+| `matplotlib` | 3.8.4 | Chưa dùng trong code |
+
+Công cụ (`requirements-dev.txt`): `pytest` 8.3.5 để kiểm thử, `ruff` 0.11.13 để kiểm tra mã.
+
+A*, tham lam, leo đồi/beam và suy diễn tiến/lùi đều tự cài, không dùng thư viện làm thay.
 
 ## 5. Dữ liệu và nguồn tri thức
 
@@ -162,18 +179,22 @@ Nguồn: [TensorFlow 2.16.1](https://pypi.org/project/tensorflow/2.16.1/),
 - **Ảnh thực tế:** ≥ 20 ảnh tự chụp hoặc sưu tầm trong `data/anh_thuc_te/`; nguồn từng ảnh ghi trong `data/anh_thuc_te/nguon.csv`.
 - **Tri thức cho hệ chuyên gia:** 28 luật, danh mục S1–S7. S2 là datasheet EPPO cập nhật 2022; S7 là bài khoa học năm 2006 cho héo/cuộn lá. Xem [hồ sơ nguồn](docs/nguon_tri_thuc.md) và [đối chiếu 28 luật](docs/doi_chieu_luat.md). S3 tải trực tiếp lỗi, S6 mở lại timeout; DN10 còn giới hạn nguồn về mốc vụ và điều kiện kích hoạt. Chưa có duyệt chuyên gia địa phương. Không có thuốc/hoạt chất/liều lượng trong luật.
 
-## 6. Cách chạy khung hiện tại
+## 6. Cách chạy
 
-Chạy từ gốc repo trên Windows/macOS/Linux:
+Chạy từ gốc repo (thư mục chứa README), đã kích hoạt `.venv`:
 
-```text
-python -m src.app.main
-python demo.py
-python -m src.search.experiment
-python -m pytest
-ruff check .
-python -m scripts.check_rules
-```
+| Lệnh | Làm gì |
+|---|---|
+| `python -m src.app.main` | Mở ứng dụng Pygame (CN4) |
+| `python demo.py` | Chạy thử tích hợp trên dòng lệnh |
+| `python -m src.search.experiment` | So sánh A* toàn cục và tham lam trên bản đồ mẫu (CN1) |
+| `python -m src.app.thoi_tiet --place "Can Tho"` | Lấy thời tiết Open-Meteo, cần mạng |
+| `python -m scripts.train_cn3 --epochs 20` | Huấn luyện lại CN3; cần bộ ảnh trong `data/raw/` |
+| `python -m pytest` | Chạy toàn bộ test |
+| `python -m ruff check .` | Kiểm tra mã |
+| `python -m scripts.check_rules` | Kiểm tra 28 luật CN2 |
+
+Màn hình chẩn đoán cần file `models/rice_leaf_classifier.keras`. Xin file này từ TV4 rồi đặt vào `models/`.
 
 `python -m src.app.main` mở ứng dụng (cần `pygame`). Vào **Bản đồ ruộng và lộ trình drone**: tô ô bệnh,
 vật cản, trạm bằng chuột (trái tô, phải xóa), mở/lưu file JSON, tạo bản đồ ngẫu nhiên, chỉnh k/p,
