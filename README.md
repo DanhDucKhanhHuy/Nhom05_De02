@@ -41,7 +41,6 @@ Nhom05_De02/
 ├── AGENTS.md              # quy tắc cho thành viên và AI
 ├── requirements.txt       # thư viện chức năng
 ├── requirements-dev.txt   # pytest, ruff
-├── requirements-web.txt   # flask cho demo web CN2
 ├── pyproject.toml
 ├── demo.py                # chạy thử tích hợp
 ├── src/
@@ -83,10 +82,6 @@ Nhom05_De02/
 │   │   ├── transfer.py
 │   │   ├── training.py
 │   │   └── predict.py     # predictor ảnh thật; cần artifact .keras
-│   ├── web/               # CN2 – demo web hệ luật (Flask)
-│   │   ├── __init__.py
-│   │   ├── templates/index.html
-│   │   └── static/        # app.js, style.css
 │   └── app/               # TV5 – CN4; thời tiết TV3
 │       ├── __init__.py
 │       ├── main.py        # E1 – cửa sổ, menu
@@ -113,7 +108,6 @@ Nhom05_De02/
 │   ├── decisions/         # ghi chép quyết định thiết kế
 │   ├── cau_hoi/           # trả lời Q1 – Q4
 │   └── ho_so_nhom/ai_log.md
-├── artifacts/             # kết quả kiểm thử CN2 đã lưu
 ├── tasks/                 # plan.md, todo.md
 ├── scripts/
 │   ├── __init__.py
@@ -126,7 +120,6 @@ Nhom05_De02/
     │   test_knowledge_regressions.py, test_diagnose*.py
     ├── test_tv3_probability.py, test_probability_boundaries.py
     ├── test_predict.py, test_model_data.py
-    ├── test_web.py
     └── test_grid_editor.py, test_route_view.py, test_chan_doan_view.py
 ```
 
@@ -170,28 +163,6 @@ Nguồn: [TensorFlow 2.16.1](https://pypi.org/project/tensorflow/2.16.1/),
 - **Tri thức cho hệ chuyên gia:** 28 luật, danh mục S1–S7. S2 là datasheet EPPO cập nhật 2022; S7 là bài khoa học năm 2006 cho héo/cuộn lá. Xem [hồ sơ nguồn](docs/nguon_tri_thuc.md) và [đối chiếu 28 luật](docs/doi_chieu_luat.md). S3 tải trực tiếp lỗi, S6 mở lại timeout; DN10 còn giới hạn nguồn về mốc vụ và điều kiện kích hoạt. Chưa có duyệt chuyên gia địa phương. Không có thuốc/hoạt chất/liều lượng trong luật.
 
 ## 6. Cách chạy khung hiện tại
-
-### Demo web hệ luật CN2
-
-Từ thư mục chứa README, chạy PowerShell:
-
-```powershell
-.\.venv\Scripts\python.exe -m pip install -r requirements-web.txt
-.\.venv\Scripts\python.exe -m flask --app src.web run
-```
-
-Mở http://127.0.0.1:5000. Ở **Suy diễn tiến**, bấm **Mẫu vết hình thoi**
-để xem DO01 → DO12 hoặc **Mẫu thừa đạm** để xem DO11. Ở **Suy diễn lùi**,
-chọn mục tiêu, bấm **Bắt đầu hỏi** và trả lời từng câu. Bấm mã luật trong
-vết suy luận để mở mục nguồn tương ứng. Demo này minh họa hệ luật CN2 bằng
-dữ kiện do người dùng cung cấp.
-
-API của trang nhận JSON. `POST /api/forward` nhận đối tượng `answers` ánh xạ
-mã thuộc tính sang `co`, `khong` hoặc `chua_biet`. Đầu ra gồm `input_facts`,
-`derived_facts` và `trace`. `POST /api/backward/step` nhận thêm `goal`
-và trả `status`, `next_question` (mã thuộc tính hoặc null) và `trace`.
-Gửi `answers: {}` ở bước đầu. Trình duyệt giữ câu trả lời trong lượt hỏi
-hiện tại và gửi lại trong mỗi bước.
 
 Chạy từ gốc repo trên Windows/macOS/Linux:
 

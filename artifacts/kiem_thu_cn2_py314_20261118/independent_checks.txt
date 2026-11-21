@@ -1,4 +1,0 @@
-PASS: rule schema, IDs, source references, vocabulary and questions.
-PASS: 30 complete scenarios x 5 shuffled orders; no fact mutation; unique firing IDs; fixed point.
-PASS: 90 forward/backward agreement checks; no callback needed with complete facts.
-PASS: empty facts and CPD numeric validity; nodes= 22
