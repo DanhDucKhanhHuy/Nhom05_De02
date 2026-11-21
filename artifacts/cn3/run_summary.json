@@ -1,0 +1,25 @@
+{
+  "selected_by": "lowest_validation_loss_then_validation_accuracy",
+  "selected_model": "mobilenetv2",
+  "selected_artifact": "D:\\Nhom05_De02\\models\\rice_leaf_classifier.keras",
+  "selected_artifact_sha256": "a3c6dc43df0a237020e5fb67bb9826644b14f9dd4358c4547c8a689c28fb3898",
+  "first_image_smoke_test": {
+    "file": "data/anh_thuc_te/bac_la/BL_001.JPG",
+    "top3": [
+      [
+        "bac_la",
+        0.876558780670166
+      ],
+      [
+        "dom_nau",
+        0.05290965735912323
+      ],
+      [
+        "la_khoe",
+        0.05163035914301872
+      ]
+    ]
+  },
+  "real_image_predictions_written": 20,
+  "real_image_label_status": "folder labels are unverified; no field accuracy reported"
+}

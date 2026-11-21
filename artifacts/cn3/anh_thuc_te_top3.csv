@@ -1,0 +1,21 @@
+﻿tep_anh,nhan_thu_muc_chua_xac_minh,du_doan_1,xac_suat_1,top3_json,so_sanh_tham_khao
+bac_la/BL_001.JPG,bac_la,bac_la,0.876558780670166,"[[""bac_la"", 0.876558780670166], [""dom_nau"", 0.05290965735912323], [""la_khoe"", 0.05163035914301872]]",khop_nhan_thu_muc_chua_xac_minh
+bac_la/BL_002 .jpg,bac_la,bac_la,0.8023783564567566,"[[""bac_la"", 0.8023783564567566], [""la_khoe"", 0.18793201446533203], [""dao_on"", 0.00667177140712738]]",khop_nhan_thu_muc_chua_xac_minh
+bac_la/BL_003.jpg,bac_la,dao_on,0.96295565366745,"[[""dao_on"", 0.96295565366745], [""bac_la"", 0.027131158858537674], [""dom_nau"", 0.009795627556741238]]",khong_khop_nhan_thu_muc_chua_xac_minh
+bac_la/BL_004.jpg,bac_la,dao_on,0.9439858198165894,"[[""dao_on"", 0.9439858198165894], [""dom_nau"", 0.03634324669837952], [""bac_la"", 0.01963246427476406]]",khong_khop_nhan_thu_muc_chua_xac_minh
+bac_la/BL_005.jpg,bac_la,bac_la,0.9054458141326904,"[[""bac_la"", 0.9054458141326904], [""dao_on"", 0.06649370491504669], [""dom_nau"", 0.022824617102742195]]",khop_nhan_thu_muc_chua_xac_minh
+dao_on/DO_001.jpg,dao_on,bac_la,0.44075000286102295,"[[""bac_la"", 0.44075000286102295], [""dao_on"", 0.42680054903030396], [""dom_nau"", 0.09666644036769867]]",khong_khop_nhan_thu_muc_chua_xac_minh
+dao_on/DO_002 .JPG,dao_on,bac_la,0.6623866558074951,"[[""bac_la"", 0.6623866558074951], [""dao_on"", 0.28959256410598755], [""dom_nau"", 0.0323978029191494]]",khong_khop_nhan_thu_muc_chua_xac_minh
+dao_on/DO_003.jpg,dao_on,la_khoe,0.6182199120521545,"[[""la_khoe"", 0.6182199120521545], [""dao_on"", 0.375519335269928], [""dom_nau"", 0.003291935194283724]]",khong_khop_nhan_thu_muc_chua_xac_minh
+dao_on/DO_004.JPG,dao_on,bac_la,0.5164086818695068,"[[""bac_la"", 0.5164086818695068], [""dao_on"", 0.3685671091079712], [""dom_nau"", 0.11424531787633896]]",khong_khop_nhan_thu_muc_chua_xac_minh
+dao_on/DO_005.jpg,dao_on,bac_la,0.5698531866073608,"[[""bac_la"", 0.5698531866073608], [""la_khoe"", 0.3463723659515381], [""dao_on"", 0.08186265081167221]]",khong_khop_nhan_thu_muc_chua_xac_minh
+dom_nau/DN_001.jpg,dom_nau,dom_nau,0.5616940259933472,"[[""dom_nau"", 0.5616940259933472], [""bac_la"", 0.4155920743942261], [""dao_on"", 0.020867398008704185]]",khop_nhan_thu_muc_chua_xac_minh
+dom_nau/DN_002.jpg,dom_nau,dom_nau,0.9424265027046204,"[[""dom_nau"", 0.9424265027046204], [""dao_on"", 0.0487828366458416], [""la_khoe"", 0.008750162087380886]]",khop_nhan_thu_muc_chua_xac_minh
+dom_nau/DN_003.jpg,dom_nau,dom_nau,0.998712420463562,"[[""dom_nau"", 0.998712420463562], [""dao_on"", 0.0012678824132308364], [""bac_la"", 1.9433751731412485e-05]]",khop_nhan_thu_muc_chua_xac_minh
+dom_nau/DN_004.jpg,dom_nau,dom_nau,0.9896419644355774,"[[""dom_nau"", 0.9896419644355774], [""dao_on"", 0.00994675699621439], [""bac_la"", 0.000410062144510448]]",khop_nhan_thu_muc_chua_xac_minh
+dom_nau/DN_005.jpg,dom_nau,dom_nau,0.6595928072929382,"[[""dom_nau"", 0.6595928072929382], [""dao_on"", 0.1760353296995163], [""bac_la"", 0.16124197840690613]]",khop_nhan_thu_muc_chua_xac_minh
+la_khoe/LK_001.jpg,la_khoe,la_khoe,0.9711576104164124,"[[""la_khoe"", 0.9711576104164124], [""dao_on"", 0.02757316455245018], [""dom_nau"", 0.0012611579149961472]]",khop_nhan_thu_muc_chua_xac_minh
+la_khoe/LK_002.jpg,la_khoe,la_khoe,0.9842102527618408,"[[""la_khoe"", 0.9842102527618408], [""dao_on"", 0.01023800391703844], [""bac_la"", 0.004332728683948517]]",khop_nhan_thu_muc_chua_xac_minh
+la_khoe/LK_003.jpg,la_khoe,la_khoe,0.994445264339447,"[[""la_khoe"", 0.994445264339447], [""dom_nau"", 0.003986547701060772], [""dao_on"", 0.0010858278255909681]]",khop_nhan_thu_muc_chua_xac_minh
+la_khoe/LK_004.jpg,la_khoe,la_khoe,0.9998356103897095,"[[""la_khoe"", 0.9998356103897095], [""dao_on"", 0.0001328677317360416], [""bac_la"", 3.013308742083609e-05]]",khop_nhan_thu_muc_chua_xac_minh
+la_khoe/LK_005.jpg,la_khoe,bac_la,0.7176251411437988,"[[""bac_la"", 0.7176251411437988], [""la_khoe"", 0.24946239590644836], [""dao_on"", 0.02939215861260891]]",khong_khop_nhan_thu_muc_chua_xac_minh
