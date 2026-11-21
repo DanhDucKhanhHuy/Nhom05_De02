@@ -28,6 +28,7 @@ ThuaDam ────────┬──> DaoOn
                 └──> BacLa
 
 Giong ─────────────> DaoOn
+NhietDo ───────────> DaoOn
 DinhDuong ────────> DomNau
 
 BacLa ─────────────> LaHeoCuon
@@ -38,6 +39,25 @@ DomNau ────────────> DomTrenBeLa
 
 ThoiTiet ──────────> AmU_SuongSom
 ```
+
+Mạng có 23 nút. Năm nút theo ví dụ của đề: `ThoiTiet` (độ ẩm/mưa), `NhietDo`
+(nhiệt độ), `ThuaDam` (lượng đạm bón), `DaoOn` và `VetHinhThoi`.
+
+`NhietDo` có hai trạng thái `thuan_loi` (20–30 °C) và `khong_thuan_loi`, prior
+50/50. Mỗi dòng CPD cũ của `DaoOn` được tách thành hai dòng: nhiệt độ thuận lợi
+cộng thêm chênh lệch d = min(0,10; p/2; (1 − p)/2), không thuận lợi trừ đi d.
+Trung bình hai dòng bằng p cũ nên khi chưa biết nhiệt độ, mọi xác suất hậu
+nghiệm giữ nguyên như mạng 22 nút. Ngưỡng và độ chênh là giả định của nhóm,
+chưa có nguồn số.
+
+Ví dụ truy vấn hậu nghiệm (pgmpy – VariableElimination):
+
+| Bằng chứng | P(đạo ôn) |
+|---|---|
+| Không có | 13,91% |
+| Vết hình thoi | 69,34% |
+| Vết hình thoi, độ ẩm cao, 20–30 °C, thừa đạm | 88,48% |
+| Vết hình thoi, độ ẩm cao, ngoài 20–30 °C, thừa đạm | 76,20% |
 
 Các cạnh từ bệnh đến dấu hiệu mô tả quan hệ nhân quả/điều kiện hóa giả định của mô hình, không khẳng định một dấu hiệu đơn lẻ đủ chẩn đoán bệnh. Một số dấu hiệu chi tiết được đặt làm nút con của dấu hiệu hình thái chính:
 - `VetTamXamKho` phụ thuộc `VetHinhThoi`;
@@ -96,9 +116,10 @@ Nếu nhiều dữ kiện tạo ra hai trạng thái trái ngược cho cùng n�
 - độ ẩm tương đối `>= 80%` → `tt_am_do_cao` → `ThoiTiet=mua_am`;
 - nếu điều kiện trên không đúng, lượng mưa `>= 1 mm` → `tt_mua_nhieu` → `ThoiTiet=mua_am`;
 - độ ẩm `< 60%` đồng thời lượng mưa `= 0 mm` → `tt_kho_han` → `ThoiTiet=kho`;
+- có số đo nhiệt độ: `20–30 °C` → `tt_nhiet_do_thuan_loi` → `NhietDo=thuan_loi`, ngoài khoảng đó → `tt_nhiet_do_khong_thuan_loi` → `NhietDo=khong_thuan_loi`;
 - các trường hợp khác không tạo bằng chứng.
 
-Các ngưỡng này chỉ phân nhóm điều kiện thời tiết để thử nghiệm mô hình, không phải ngưỡng dịch tễ/chẩn đoán. Sương mù, gió, nhiệt độ hoặc một phép đo riêng lẻ không tự tạo triệu chứng. Hệ thống không suy từ thời tiết thành ruộng thiếu nước, cây héo, có vết bệnh hoặc đã nhiễm bệnh. Thuộc tính người dùng `am_u_va_suong_som` là quan sát riêng `AmU_SuongSom`, không đồng nhất với nút đo thời tiết `ThoiTiet`.
+Các ngưỡng này chỉ phân nhóm điều kiện thời tiết để thử nghiệm mô hình, không phải ngưỡng dịch tễ/chẩn đoán. Sương mù, gió, nhiệt độ hoặc một phép đo riêng lẻ không tự tạo triệu chứng; nhiệt độ chỉ là bằng chứng cho nút `NhietDo`. Hệ thống không suy từ thời tiết thành ruộng thiếu nước, cây héo, có vết bệnh hoặc đã nhiễm bệnh. Thuộc tính người dùng `am_u_va_suong_som` là quan sát riêng `AmU_SuongSom`, không đồng nhất với nút đo thời tiết `ThoiTiet`.
 
 ## 6. CPD, giả định và nguồn định tính
 
