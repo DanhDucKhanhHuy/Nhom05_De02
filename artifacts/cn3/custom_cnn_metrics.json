@@ -1,0 +1,123 @@
+{
+  "accuracy": 0.6980461811722913,
+  "precision_macro": 0.6887798480135163,
+  "recall_macro": 0.6729693906495784,
+  "f1_macro": 0.6721453401660354,
+  "per_class": {
+    "dao_on": {
+      "precision": 0.5584415584415584,
+      "recall": 0.41346153846153844,
+      "f1": 0.47513812154696133,
+      "support": 104
+    },
+    "bac_la": {
+      "precision": 0.8888888888888888,
+      "recall": 0.9681528662420382,
+      "f1": 0.926829268292683,
+      "support": 157
+    },
+    "dom_nau": {
+      "precision": 0.5577889447236181,
+      "recall": 0.7302631578947368,
+      "f1": 0.6324786324786325,
+      "support": 152
+    },
+    "la_khoe": {
+      "precision": 0.75,
+      "recall": 0.58,
+      "f1": 0.6541353383458647,
+      "support": 150
+    }
+  },
+  "confusion_matrix": [
+    [
+      43,
+      2,
+      40,
+      19
+    ],
+    [
+      0,
+      152,
+      0,
+      5
+    ],
+    [
+      20,
+      16,
+      111,
+      5
+    ],
+    [
+      14,
+      1,
+      48,
+      87
+    ]
+  ],
+  "class_names": [
+    "dao_on",
+    "bac_la",
+    "dom_nau",
+    "la_khoe"
+  ],
+  "test_samples": 563,
+  "ho_so": {
+    "model": "custom_cnn",
+    "validation_accuracy": 0.6850534081459045,
+    "validation_loss": 0.7400324940681458,
+    "epochs_run": 14,
+    "tensorflow": "2.16.1",
+    "dataset_doi": "10.17632/n8jpkpfz5p.1",
+    "dataset_license": "CC BY 4.0",
+    "class_order": [
+      "dao_on",
+      "bac_la",
+      "dom_nau",
+      "la_khoe"
+    ],
+    "source_class_counts": {
+      "dao_on": 521,
+      "bac_la": 785,
+      "dom_nau": 761,
+      "la_khoe": 753
+    },
+    "split_counts_unique_files": {
+      "train": {
+        "total": 1689,
+        "per_class": {
+          "dao_on": 313,
+          "bac_la": 471,
+          "dom_nau": 456,
+          "la_khoe": 449
+        }
+      },
+      "validation": {
+        "total": 562,
+        "per_class": {
+          "dao_on": 104,
+          "bac_la": 157,
+          "dom_nau": 152,
+          "la_khoe": 149
+        }
+      },
+      "test": {
+        "total": 563,
+        "per_class": {
+          "dao_on": 104,
+          "bac_la": 157,
+          "dom_nau": 152,
+          "la_khoe": 150
+        }
+      }
+    },
+    "real_images_excluded_from_splits": 20,
+    "seed": 1314,
+    "batch_size": 32,
+    "image_size": [
+      224,
+      224
+    ],
+    "artifact_sha256": "c418fd3816894c79ecc6f3d23e4f3c5599c722c859cc116cdb197721486926ea"
+  }
+}
