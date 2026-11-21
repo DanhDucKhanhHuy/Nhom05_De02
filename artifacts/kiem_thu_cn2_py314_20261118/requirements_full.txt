@@ -1,5 +1,0 @@
-ERROR: Could not find a version that satisfies the requirement tensorflow==2.16.1 (from versions: 2.22.0rc0, 2.22.0rc1)
-
-[notice] A new release of pip is available: 25.3 -> 26.3
-[notice] To update, run: C:\Users\LENOVO\OneDrive - Hochiminh City University of Education\Desktop\BacSiLua\Nhom05_De02\.venv-cn2-py314\Scripts\python.exe -m pip install --upgrade pip
-ERROR: No matching distribution found for tensorflow==2.16.1
