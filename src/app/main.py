@@ -4,6 +4,7 @@ import pygame
 from .chan_doan_view import ManHinhChanDoan
 from .giao_dien import MAU, ManHinh, Nut, ve_chu
 from .grid_editor import ManHinhBanDo
+from .tu_van_view import ManHinhTuVan
 
 RONG, CAO = 1100, 720
 FPS = 60
@@ -15,11 +16,13 @@ class ManHinhChinh(ManHinh):
         super().__init__(ung_dung)
         x, rong, cao = RONG // 2 - 230, 460, 64
         self.cac_nut = [
-            Nut("Chẩn đoán bệnh từ ảnh lá lúa", (x, 320, rong, cao), co=24,
+            Nut("Chẩn đoán bệnh từ ảnh lá lúa", (x, 300, rong, cao), co=24,
                 khi_bam=lambda: ung_dung.chuyen_den(ManHinhChanDoan(ung_dung))),
-            Nut("Bản đồ ruộng và lộ trình drone", (x, 400, rong, cao), co=24,
+            Nut("Tư vấn theo triệu chứng (Bayes)", (x, 380, rong, cao), co=24,
+                khi_bam=lambda: ung_dung.chuyen_den(ManHinhTuVan(ung_dung))),
+            Nut("Bản đồ ruộng và lộ trình drone", (x, 460, rong, cao), co=24,
                 khi_bam=lambda: ung_dung.chuyen_den(ManHinhBanDo(ung_dung))),
-            Nut("Thoát", (x, 480, rong, cao), co=24, khi_bam=ung_dung.thoat),
+            Nut("Thoát", (x, 540, rong, cao), co=24, khi_bam=ung_dung.thoat),
         ]
 
     def xu_ly_su_kien(self, su_kien):

@@ -8,7 +8,7 @@
 > - **CN1:** có tham lam và A* toàn cục; leo đồi/beam, `plan_route` chưa cài.
 > - **CN2:** 28 luật có nguồn, suy diễn tiến/lùi tự cài, mạng Bayes và kết hợp CNN–Bayes.
 > - **CN3:** đã huấn luyện CNN tự thiết kế và MobileNetV2 (accuracy 0,9005; F1 macro 0,8893 trên test độc lập). File `.keras` không lên Git, phải kèm file hoặc link khi nộp. Nhãn 20 ảnh thực tế chưa xác minh độc lập.
-> - **CN4:** ứng dụng Pygame có menu, bản đồ lưới, hoạt cảnh lộ trình và màn hình chẩn đoán ảnh.
+> - **CN4:** ứng dụng Pygame có menu, bản đồ lưới, hoạt cảnh lộ trình, màn hình chẩn đoán ảnh và màn hình tư vấn theo triệu chứng (luật + Bayes, không cần CNN).
 >
 > Chi tiết ở `docs/kiem_chung.md` và `tasks/todo.md`.
 
@@ -95,6 +95,7 @@ Nhom05_De02/
 │       ├── grid_editor.py # E2 – bản đồ lưới
 │       ├── route_view.py  # E3 – hoạt cảnh lộ trình
 │       ├── chan_doan_view.py # E4 – màn hình chẩn đoán ảnh
+│       ├── tu_van_view.py # E5 – tư vấn theo triệu chứng (luật + Bayes)
 │       ├── chan_doan.py   # điều phối chẩn đoán ảnh
 │       └── thoi_tiet.py   # thời tiết Open-Meteo
 ├── data/
@@ -127,7 +128,8 @@ Nhom05_De02/
     │   test_knowledge_regressions.py, test_diagnose*.py
     ├── test_tv3_probability.py, test_probability_boundaries.py
     ├── test_predict.py, test_model_data.py
-    └── test_grid_editor.py, test_route_view.py, test_chan_doan_view.py
+    ├── test_bayes_nhiet_do.py
+    └── test_grid_editor.py, test_route_view.py, test_chan_doan_view.py, test_tu_van_view.py
 ```
 
 ## 4. Cài đặt
@@ -199,7 +201,12 @@ Màn hình chẩn đoán cần file `models/rice_leaf_classifier.keras`. Xin fil
 `python -m src.app.main` mở ứng dụng (cần `pygame`). Vào **Bản đồ ruộng và lộ trình drone**: tô ô bệnh,
 vật cản, trạm bằng chuột (trái tô, phải xóa), mở/lưu file JSON, tạo bản đồ ngẫu nhiên, chỉnh k/p,
 rồi bấm **Lập lộ trình** để xem drone bay từng bước (Space chạy/dừng, ← → từng bước, R về đầu).
-Thuật toán: tham lam của CN1; A* toàn cục chỉ bật khi bản đồ ≤ 8 ô bệnh vì chạy chậm.
+Thuật toán: tham lam hoặc A* toàn cục của CN1. A* không giới hạn số ô bệnh nhưng chạy rất lâu khi
+nhiều hơn 8 ô; lúc đang tính có thể bấm **Dừng tính** hoặc chọn Tham lam để bỏ A*.
+
+Vào **Tư vấn theo triệu chứng (Bayes)**: trả lời 25 câu (Có / Không / Chưa biết, phím C / K / B).
+Sau mỗi câu, màn hình cập nhật xác suất Bayes của 4 lớp và các luật đã kích hoạt kèm nguồn.
+Bấm **Lấy thời tiết Cần Thơ** (cần mạng) để đưa độ ẩm và nhiệt độ thật vào Bayes. Không cần CNN.
 
 Vào **Chẩn đoán bệnh từ ảnh lá lúa**: chọn ảnh, bấm **Chẩn đoán**, trả lời từng câu hỏi triệu chứng
 (Có / Không / Chưa biết, hoặc phím C / K / B). Màn hình hiện top-3 của CNN, kết luận, giải thích,
