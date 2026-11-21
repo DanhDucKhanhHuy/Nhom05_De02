@@ -6,7 +6,7 @@ MaLop = Literal["dao_on", "bac_la", "dom_nau", "la_khoe"]
 ToaDo = tuple[int, int]
 Top3 = list[tuple[MaLop, float]]
 HoiNguoiDung = Callable[[str], bool | None]
-ThuatToan = Literal["hill", "beam", "greedy"]
+ThuatToan = Literal["hill", "greedy"]
 
 
 class BanDo(TypedDict):

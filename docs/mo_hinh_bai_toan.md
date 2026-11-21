@@ -53,11 +53,11 @@ nạp không giới hạn và chi phí phun bằng 0, có thể phục vụ từ
 Điều kiện chỉ liên thông hoặc chỉ đủ pin đến ô bệnh là chưa đủ.
 
 Chia hai tầng: TV1 tự cài A* tìm từng chặng giữa ô bệnh/trạm, sau đó tự cài leo
-đồi hoặc beam chọn thứ tự ghé. Tầng thứ hai phải chèn lượt nạp hợp lệ và kiểm tra
+đồi chọn thứ tự ghé. Tầng thứ hai phải chèn lượt nạp hợp lệ và kiểm tra
 thuốc/pin trên toàn hành trình. So sánh với tham lam cùng bản đồ và ngân sách.
 Không coi đường A* từng chặng là lời giải đầy đủ của bài toán có tài nguyên.
 Không khả thi: `plan_route` dự kiến ném `ValueError`, không trả đường đi một phần
-như thể hoàn tất. `plan_route`, leo đồi và beam search hiện chưa cài đặt.
+như thể hoàn tất.
 
 ## CN2: hệ chuyên gia và mạng Bayes
 

@@ -5,7 +5,7 @@
 Đồ án cuối kỳ – Học kỳ 1, năm học 2026 – 2027 · Thời gian thực hiện: 02/11 – 06/12/2026
 
 > **Trạng thái (21/11/2026):**
-> - **CN1:** có tham lam và A* toàn cục; leo đồi/beam, `plan_route` chưa cài.
+> - **CN1:** có tham lam, A* toàn cục, leo đồi và `plan_route`.
 > - **CN2:** 28 luật có nguồn, suy diễn tiến/lùi tự cài, mạng Bayes và kết hợp CNN–Bayes.
 > - **CN3:** đã huấn luyện CNN tự thiết kế và MobileNetV2 (accuracy 0,9005; F1 macro 0,8893 trên test độc lập). File `.keras` không lên Git, phải kèm file hoặc link khi nộp. Nhãn 20 ảnh thực tế chưa xác minh độc lập.
 > - **CN4:** ứng dụng Pygame có menu, bản đồ lưới, hoạt cảnh lộ trình và màn hình chẩn đoán ảnh.
@@ -29,7 +29,7 @@ Luồng sử dụng của Bác sĩ Lúa:
 
 | # | Chức năng | Kỹ thuật chính | Thư mục |
 |---|-----------|----------------|---------|
-| 1 | Lập lộ trình drone phun thuốc | Mô hình hóa không gian trạng thái; **tự cài đặt** A* cho từng chặng; leo đồi hoặc beam search chọn thứ tự ghé ô bệnh (TSP có ràng buộc nạp thuốc/pin); so sánh với chiến lược tham lam | `src/search/` |
+| 1 | Lập lộ trình drone phun thuốc | Mô hình hóa không gian trạng thái; **tự cài đặt** A* cho từng chặng; leo đồi chọn thứ tự ghé ô bệnh (TSP có ràng buộc nạp thuốc/pin); so sánh với chiến lược tham lam | `src/search/` |
 | 2 | Hệ chuyên gia tư vấn và mạng Bayes | ≥ 20 luật lấy từ tài liệu khuyến nông chính thống; **tự cài đặt** suy diễn tiến và suy diễn lùi; mạng Bayes ≥ 5 nút bằng pgmpy | `src/rules/` |
 | 3 | Nhận diện bệnh lá lúa | CNN tự thiết kế và transfer learning (MobileNetV2 hoặc EfficientNetB0) bằng TensorFlow/Keras; tăng cường dữ liệu; đánh giá accuracy, precision, recall, F1, ma trận nhầm lẫn | `src/model/` |
 | 4 | Ứng dụng tích hợp | Giao diện tiếng Việt, bản đồ lưới, hoạt cảnh lộ trình (Pygame hoặc matplotlib) | `src/app/` |
@@ -62,13 +62,11 @@ Nhom05_De02/
 │   ├── search/            # TV1 – CN1: lập lộ trình
 │   │   ├── __init__.py
 │   │   ├── greedy.py      # tham lam (đã chạy)
-│   │   ├── full_astar.py  # A* toàn cục (đã chạy)
+│   │   ├── Astar.py       # A* toàn cục (đã chạy)
+│   │   ├── Hill_Climbing.py # leo đồi (đã chạy)
 │   │   ├── route_utils.py
 │   │   ├── experiment.py  # so sánh thuật toán
-│   │   ├── run.py         # plan_route (chưa cài)
-│   │   ├── order_opt.py   # leo đồi / beam (chưa cài)
-│   │   ├── astar.py       # (chưa cài)
-│   │   └── grid.py        # (chưa cài)
+│   │   └── run.py         # plan_route: chọn hill / greedy
 │   ├── rules/             # TV2/TV3 – CN2
 │   │   ├── __init__.py
 │   │   ├── rules.json     # luật IF–THEN có nguồn
@@ -171,7 +169,7 @@ TensorFlow hoặc pgmpy tự bỏ qua khi máy chưa cài.
 
 Công cụ (`requirements-dev.txt`): `pytest` 8.3.5 để kiểm thử, `ruff` 0.11.13 để kiểm tra mã.
 
-A*, tham lam, leo đồi/beam và suy diễn tiến/lùi đều tự cài, không dùng thư viện làm thay.
+A*, tham lam, leo đồi và suy diễn tiến/lùi đều tự cài, không dùng thư viện làm thay.
 
 ## 5. Dữ liệu và nguồn tri thức
 
@@ -277,12 +275,12 @@ Phân công chi tiết: `docs/ho_so_nhom/` (Mẫu 01 – Kế hoạch và phân 
 |------|-----------|----------------|-----|
 | 1 | 02/11 – 08/11 | Mô hình hóa 3 bài toán, quy ước module, README, Mẫu 01 | **Kiểm soát lần 1 – 23h59 CN 08/11** |
 | 2 | 09/11 – 15/11 | A*, tham lam; ≥ 20 luật, suy diễn tiến; dữ liệu, CNN tự thiết kế; khung ứng dụng | |
-| 3 | 16/11 – 22/11 | Leo đồi/beam và so sánh; suy diễn lùi; mạng Bayes; transfer learning; hoạt cảnh | **Kiểm soát lần 2 – 23h59 CN 22/11** |
+| 3 | 16/11 – 22/11 | Leo đồi và so sánh; suy diễn lùi; mạng Bayes; transfer learning; hoạt cảnh | **Kiểm soát lần 2 – 23h59 CN 22/11** |
 | 4 | 23/11 – 29/11 | Tích hợp ứng dụng; thử ≥ 20 ảnh thực tế; Q1 – Q4; phần mở rộng | |
 | 5 | 30/11 – 06/12 | Báo cáo, slide, đóng gói code; Mẫu 03, 04 | **Nộp cuối kỳ – 23h59 CN 06/12** |
 
 - [ ] Mô hình hóa bài toán, README bản đầu, Mẫu 01, Mẫu 02 Tuần 1
-- [ ] CN1 chạy được: A*, tham lam, leo đồi/beam, bảng so sánh
+- [ ] CN1 chạy được: A*, tham lam, leo đồi, bảng so sánh
 - [ ] CN2 chạy được: ≥ 20 luật, suy diễn tiến, suy diễn lùi, mạng Bayes
 - [ ] CN3: kết quả đánh giá 2 mô hình, thử ≥ 20 ảnh thực tế
 - [ ] CN4: ứng dụng chạy đầu – cuối, có hoạt cảnh lộ trình

@@ -8,16 +8,15 @@ from src.search.run import plan_route
 
 
 def main() -> None:
-    """Đọc dữ liệu mẫu, in giải thích CN2 và báo phần CN1 chưa triển khai."""
+    """Đọc dữ liệu mẫu, in lộ trình CN1 và trạng thái CN2/CN3."""
     duong_dan = Path(__file__).resolve().parent / "data/sample/maps/map_4x4.json"
     ban_do = json.loads(duong_dan.read_text(encoding="utf-8"))
     print(f"Bản đồ minh họa: {ban_do['rows']} × {ban_do['cols']}")
     trang_thai_cnn = "chưa có mô hình" if not MODEL_PATH.is_file() else "đã có artifact"
     print(f"CN3 — {trang_thai_cnn}; cần ảnh đầu vào để dự đoán.")
-    try:
-        print("CN1:", plan_route(ban_do, ban_do["k"], ban_do["p"], "hill"))
-    except NotImplementedError:
-        print("CN1: chưa cài đặt")
+    lo_trinh = plan_route(ban_do, ban_do["k"], ban_do["p"], "hill")
+    print(f"CN1 — leo đồi: quãng đường {lo_trinh['tong_quang_duong']}, "
+          f"về trạm {lo_trinh['so_lan_ve_tram']} lần")
     trang_thai_cn2 = (
         "đã có mô hình CNN; chờ ảnh đầu vào để chẩn đoán tích hợp."
         if MODEL_PATH.is_file()
