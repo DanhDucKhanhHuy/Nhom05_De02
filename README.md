@@ -4,7 +4,13 @@
 
 Đồ án cuối kỳ – Học kỳ 1, năm học 2026 – 2027 · Thời gian thực hiện: 02/11 – 06/12/2026
 
-> **Trạng thái:** CN2 có 28 luật, suy diễn tiến/lùi, Bayes và luồng chẩn đoán kết hợp giữ nguyên API. CNN hiện là **GIẢ**; chưa đánh giá ảnh thật hoặc hiệu chuẩn CPD, runtime pgmpy cần kiểm chứng. CN1 và giao diện ứng dụng còn phát triển. Xem `docs/kiem_chung.md` và `tasks/todo.md`.
+> **Trạng thái (21/11/2026):**
+> - **CN1:** có tham lam và A* toàn cục; leo đồi/beam, `plan_route` chưa cài.
+> - **CN2:** 28 luật có nguồn, suy diễn tiến/lùi tự cài, mạng Bayes và kết hợp CNN–Bayes.
+> - **CN3:** đã huấn luyện CNN tự thiết kế và MobileNetV2 (accuracy 0,9005; F1 macro 0,8893 trên test độc lập). File `.keras` không lên Git, phải kèm file hoặc link khi nộp. Nhãn 20 ảnh thực tế chưa xác minh độc lập.
+> - **CN4:** ứng dụng Pygame có menu, bản đồ lưới, hoạt cảnh lộ trình, màn hình chẩn đoán ảnh và màn hình tư vấn theo triệu chứng (luật + Bayes, không cần CNN).
+>
+> Chi tiết ở `docs/kiem_chung.md` và `tasks/todo.md`.
 
 ---
 
@@ -36,35 +42,43 @@ Luồng sử dụng của Bác sĩ Lúa:
 
 ```text
 Nhom05_De02/
-├── .git/                  # lịch sử hiện có
 ├── .gitignore
 ├── README.md
-├── AGENTS.md
-├── requirements.txt
-├── requirements-dev.txt
-├── pyproject.toml
-├── .claude/settings.json
-├── demo.py
+├── AGENTS.md              # quy tắc cho thành viên và AI
+├── requirements.txt       # thư viện chức năng (mục 4)
+├── requirements-dev.txt   # pytest, ruff
+├── pyproject.toml         # cấu hình pytest, ruff
+├── demo.py                # chạy thử tích hợp trên dòng lệnh
 ├── src/
 │   ├── __init__.py
-│   ├── contracts.py       # kiểu giao tiếp dùng chung
-│   ├── search/            # TV1 – CN1
+│   ├── contracts.py       # kiểu dữ liệu dùng chung giữa các module
+│   ├── drone/             # TV1 – CN1: không gian trạng thái drone
 │   │   ├── __init__.py
-│   │   ├── grid.py
-│   │   ├── astar.py
-│   │   ├── greedy.py
-│   │   ├── order_opt.py
-│   │   ├── run.py
-│   │   └── experiment.py
+│   │   ├── state.py       # trạng thái: vị trí, thuốc, pin, ô chưa phun
+│   │   ├── operators.py   # hành động bay / phun / nạp
+│   │   ├── navigation.py
+│   │   ├── problem.py
+│   │   └── A_star.py      # A* cho từng chặng
+│   ├── search/            # TV1 – CN1: lập lộ trình
+│   │   ├── __init__.py
+│   │   ├── greedy.py      # tham lam (đã chạy)
+│   │   ├── full_astar.py  # A* toàn cục (đã chạy)
+│   │   ├── route_utils.py
+│   │   ├── experiment.py  # so sánh thuật toán
+│   │   ├── run.py         # plan_route (chưa cài)
+│   │   ├── order_opt.py   # leo đồi / beam (chưa cài)
+│   │   ├── astar.py       # (chưa cài)
+│   │   └── grid.py        # (chưa cài)
 │   ├── rules/             # TV2/TV3 – CN2
 │   │   ├── __init__.py
-│   │   ├── rules.json
+│   │   ├── rules.json     # luật IF–THEN có nguồn
 │   │   ├── sources.json
 │   │   ├── vocabulary.json
-│   │   ├── forward.py
-│   │   ├── backward.py
-│   │   ├── bayes.py
-│   │   ├── ket_hop.py
+│   │   ├── forward.py     # suy diễn tiến
+│   │   ├── backward.py    # suy diễn lùi
+│   │   ├── trace.py       # vết luật đã dùng
+│   │   ├── bayes.py       # mạng Bayes
+│   │   ├── ket_hop.py     # kết hợp CNN + Bayes
 │   │   └── diagnose.py
 │   ├── model/             # TV4 – CN3
 │   │   ├── __init__.py
@@ -72,54 +86,63 @@ Nhom05_De02/
 │   │   ├── data_pipeline.py
 │   │   ├── custom_cnn.py
 │   │   ├── transfer.py
-│   │   ├── predict.py      # GIẢ, IS_STUB=True
-│   │   └── notebooks/
+│   │   ├── training.py
+│   │   └── predict.py     # predictor ảnh thật; cần artifact .keras
 │   └── app/               # TV5 – CN4; thời tiết TV3
 │       ├── __init__.py
-│       ├── main.py
-│       ├── grid_editor.py
-│       ├── route_view.py
-│       ├── chan_doan.py
-│       └── thoi_tiet.py
+│       ├── main.py        # E1 – cửa sổ, menu
+│       ├── giao_dien.py   # màu, phông, nút dùng chung
+│       ├── grid_editor.py # E2 – bản đồ lưới
+│       ├── route_view.py  # E3 – hoạt cảnh lộ trình
+│       ├── chan_doan_view.py # E4 – màn hình chẩn đoán ảnh
+│       ├── tu_van_view.py # E5 – tư vấn theo triệu chứng (luật + Bayes)
+│       ├── bayes_view.py  # E6 – mạng Bayes 5 nút theo ví dụ của đề
+│       ├── chan_doan.py   # điều phối chẩn đoán ảnh
+│       └── thoi_tiet.py   # thời tiết Open-Meteo
 ├── data/
 │   ├── sample/
 │   │   ├── README.md
 │   │   └── maps/map_4x4.json
-│   ├── raw/               # không lên Git
-│   └── anh_thuc_te/        # giữ nguon.csv; ảnh không lên Git
-├── models/                # .gitkeep, README.md; *.keras không lên Git
+│   ├── raw/               # bộ ảnh tải về, không lên Git
+│   └── anh_thuc_te/       # 20 ảnh thử, 4 thư mục lớp + nguon.csv
+├── models/                # README.md; rice_leaf_classifier.keras không lên Git
+├── artifacts/             # kết quả huấn luyện/kiểm thử trên máy, không lên Git
 ├── docs/
 │   ├── mo_hinh_bai_toan.md
-│   ├── interfaces.md
+│   ├── interfaces.md      # hợp đồng hàm giữa các phần
 │   ├── nguon_tri_thuc.md
+│   ├── doi_chieu_luat.md
 │   ├── du_lieu.md
 │   ├── kiem_chung.md
-│   ├── cau_hoi/
+│   ├── decisions/         # ghi chép quyết định thiết kế
+│   ├── cau_hoi/           # Q2_xac_suat.md, Q3.md, Q4.md (Q1 chưa có)
 │   └── ho_so_nhom/ai_log.md
+├── tasks/                 # plan.md, todo.md
 ├── scripts/
 │   ├── __init__.py
-│   └── check_rules.py
-└── tests/
+│   ├── check_rules.py     # kiểm tra bộ luật
+│   └── train_cn3.py       # huấn luyện CNN (CN3)
+└── tests/                 # pytest; fixtures/ là dữ liệu mẫu cho test
     ├── test_demo.py
-    ├── test_predict.py
-    ├── test_rules.py
-    └── test_search.py
+    ├── test_search.py
+    ├── test_forward.py, test_backward.py, test_rules.py, test_reasoning_details.py,
+    │   test_knowledge_regressions.py, test_diagnose*.py
+    ├── test_tv3_probability.py, test_probability_boundaries.py
+    ├── test_predict.py, test_model_data.py
+    ├── test_bayes_nhiet_do.py
+    └── test_grid_editor.py, test_route_view.py, test_chan_doan_view.py, test_tu_van_view.py,
+        test_bayes_view.py
 ```
 
 ## 4. Cài đặt
 
-Dùng **Python 3.11** cho môi trường cài đặt và demo. Sau khi clone, chuyển
+Dùng **Python 3.10 hoặc 3.11** cho môi trường chức năng. Sau khi clone, chuyển
 vào gốc repo chứa README (`Nhom05_De02`). Nếu clone đặt tên khác thì dùng tên đó.
 
-```powershell
-py -3.11 --version
-py -3.11 -m venv .venv
-.\.venv\Scripts\python.exe --version
+```text
+python --version
+python -m venv .venv
 ```
-
-Trên macOS/Linux, dùng `python3.11 -m venv .venv`.
-Nếu đã có `.venv` từ Python 3.14, tạo môi trường Python 3.11 mới trên máy
-demo và dùng trình thông dịch trong môi trường đó. Mỗi máy tạo môi trường riêng.
 
 Kích hoạt theo shell; các lệnh sau đó dùng chung:
 
@@ -127,30 +150,32 @@ Kích hoạt theo shell; các lệnh sau đó dùng chung:
 - Windows cmd: `.venv\Scripts\activate.bat`
 - macOS/Linux bash hoặc zsh: `source .venv/bin/activate`
 
-Chọn tệp phụ thuộc theo phần cần chạy:
+```text
+python -m pip install -r requirements-dev.txt
+python -m pip install -r requirements.txt
+```
 
-- Demo CN2 bằng Pygame: `python -m pip install -r requirements-pygame.txt`.
-- Demo CN2 bằng web: `python -m pip install -r requirements-web.txt`.
-- Kiểm thử và lint: `python -m pip install -r requirements-dev.txt`.
-- Môi trường đầy đủ cho AI và ứng dụng desktop:
-  `python -m pip install -r requirements.txt`.
+CN3 đã chạy với Python 3.11.9 và TensorFlow 2.16.1. TensorFlow 2.16.1 không hỗ trợ Python 3.13 trở lên.
+Chỉ cài `requirements-dev.txt` thì vẫn chạy được test và `demo.py`. Các test cần
+TensorFlow hoặc pgmpy tự bỏ qua khi máy chưa cài.
 
-Demo Pygame CN2 dùng `pygame-ce`. Bộ phụ thuộc đầy đủ ghim `pygame` bản gốc.
-Hai gói cùng cung cấp module `pygame`, nên dùng môi trường riêng cho mỗi bộ
-phụ thuộc này.
+**Thư viện sử dụng** (`requirements.txt`, ghim phiên bản trực tiếp):
 
-Bộ chức năng bắt đầu bằng `tensorflow==2.16.1`, `numpy==1.26.4` (<2), `pgmpy==0.1.25`; xem toàn bộ
-trong `requirements.txt`. Đây là ghim phụ thuộc trực tiếp, chưa phải lockfile
-bắc cầu. **Chưa cài thử** toàn bộ trên Python 3.11.
-Demo Pygame hiện đã được kiểm tra trên Python 3.14.3 với pygame-ce 2.5.8;
-cần chạy xác nhận trên máy Python 3.11 trước buổi trình bày.
-Nguồn: [TensorFlow 2.16.1](https://pypi.org/project/tensorflow/2.16.1/),
-[pgmpy 0.1.25](https://pypi.org/project/pgmpy/0.1.25/).
+| Thư viện | Phiên bản | Dùng ở đâu |
+|---|---|---|
+| `pygame` | 2.5.2 | Ứng dụng CN4 (`src/app/`): cửa sổ, menu, bản đồ lưới, hoạt cảnh |
+| `tensorflow` | 2.16.1 | CN3 (`src/model/`, `scripts/train_cn3.py`): CNN, MobileNetV2, nạp `.keras` |
+| `numpy` | 1.26.4 | CN3 và Bayes; giữ < 2 cho TensorFlow 2.16 |
+| `pillow` | 10.3.0 | Đọc và đổi cỡ ảnh lá lúa (`predict.py`, `prepare_data.py`) |
+| `scikit-learn` | 1.4.2 | Chỉ tính accuracy/precision/recall/F1, ma trận nhầm lẫn (`training.py`) |
+| `pgmpy` | 0.1.25 | Mạng Bayes (`src/rules/bayes.py`) |
+| `requests` | 2.32.3 | Gọi API thời tiết Open-Meteo (`src/app/thoi_tiet.py`) |
+| `pandas` | 2.2.2 | Chưa dùng trong code |
+| `matplotlib` | 3.8.4 | Chưa dùng trong code |
 
-- `scikit-learn` chỉ tính chỉ số đánh giá; A*, leo đồi/beam, suy diễn tiến/lùi tự cài.
-- `requests` dành cho thời tiết; bản khung không gọi API.
-- Notebook huấn luyện có thể chạy Colab/Kaggle GPU, đặt ở `src/model/notebooks/`.
-- Demo không cần TensorFlow, mô hình hoặc ảnh tải ngoài.
+Công cụ (`requirements-dev.txt`): `pytest` 8.3.5 để kiểm thử, `ruff` 0.11.13 để kiểm tra mã.
+
+A*, tham lam, leo đồi/beam và suy diễn tiến/lùi đều tự cài, không dùng thư viện làm thay.
 
 ## 5. Dữ liệu và nguồn tri thức
 
@@ -158,73 +183,49 @@ Nguồn: [TensorFlow 2.16.1](https://pypi.org/project/tensorflow/2.16.1/),
 - **Ảnh thực tế:** ≥ 20 ảnh tự chụp hoặc sưu tầm trong `data/anh_thuc_te/`; nguồn từng ảnh ghi trong `data/anh_thuc_te/nguon.csv`.
 - **Tri thức cho hệ chuyên gia:** 28 luật, danh mục S1–S7. S2 là datasheet EPPO cập nhật 2022; S7 là bài khoa học năm 2006 cho héo/cuộn lá. Xem [hồ sơ nguồn](docs/nguon_tri_thuc.md) và [đối chiếu 28 luật](docs/doi_chieu_luat.md). S3 tải trực tiếp lỗi, S6 mở lại timeout; DN10 còn giới hạn nguồn về mốc vụ và điều kiện kích hoạt. Chưa có duyệt chuyên gia địa phương. Không có thuốc/hoạt chất/liều lượng trong luật.
 
-## 6. Cách chạy khung hiện tại
+## 6. Cách chạy
 
-### Demo CN2 bằng Pygame
+Chạy từ gốc repo (thư mục chứa README), đã kích hoạt `.venv`:
 
-Trên máy Windows có Python 3.11, mở PowerShell tại thư mục chứa README.
-Tạo `.venv` một lần nếu chưa có, sau đó cài và chạy:
+| Lệnh | Làm gì |
+|---|---|
+| `python -m src.app.main` | Mở ứng dụng Pygame (CN4) |
+| `python demo.py` | Chạy thử tích hợp trên dòng lệnh |
+| `python -m src.search.experiment` | So sánh A* toàn cục và tham lam trên bản đồ mẫu (CN1) |
+| `python -m src.app.thoi_tiet --place "Can Tho"` | Lấy thời tiết Open-Meteo, cần mạng |
+| `python -m scripts.train_cn3 --epochs 20` | Huấn luyện lại CN3; cần bộ ảnh trong `data/raw/` |
+| `python -m pytest` | Chạy toàn bộ test |
+| `python -m ruff check .` | Kiểm tra mã |
+| `python -m scripts.check_rules` | Kiểm tra 28 luật CN2 |
 
-```powershell
-py -3.11 -m venv .venv
-.\.venv\Scripts\python.exe --version
-.\.venv\Scripts\python.exe -m pip install -r requirements-pygame.txt
-.\.venv\Scripts\python.exe -m src.app.cn2_demo
-```
+Màn hình chẩn đoán cần file `models/rice_leaf_classifier.keras`. Xin file này từ TV4 rồi đặt vào `models/`.
 
-Tệp `requirements-pygame.txt` cài pygame-ce 2.5.8, cung cấp module `pygame`.
-Những lần chạy tiếp theo chỉ cần lệnh cuối. Internet cần cho bước cài thư viện.
+`python -m src.app.main` mở ứng dụng (cần `pygame`). Vào **Bản đồ ruộng và lộ trình drone**: tô ô bệnh,
+vật cản, trạm bằng chuột (trái tô, phải xóa), mở/lưu file JSON, tạo bản đồ ngẫu nhiên, chỉnh k/p,
+rồi bấm **Lập lộ trình** để xem drone bay từng bước (Space chạy/dừng, ← → từng bước, R về đầu).
+Thuật toán: tham lam hoặc A* toàn cục của CN1. A* không giới hạn số ô bệnh nhưng chạy rất lâu khi
+nhiều hơn 8 ô; lúc đang tính có thể bấm **Dừng tính** hoặc chọn Tham lam để bỏ A*.
 
-Trong **Suy diễn tiến**, chọn mẫu hình thoi để xem DO01 → DO12,
-hoặc mẫu thừa đạm để xem DO11. Bấm giá trị dưới dấu hiệu để chuyển
-Chưa trả lời → Có → Không → Chưa biết. Nút Trang tiếp mở nhóm dấu hiệu kế tiếp.
-Trong **Suy diễn lùi**, chọn mục tiêu, bấm Bắt đầu hỏi và trả lời Có/Không/Chưa biết.
-Kết quả bên phải hiển thị vết luật, nguồn và giới hạn nguồn. Cuộn chuột để đọc.
-Nút Làm lại xóa phiên dữ kiện. Esc đóng cửa sổ.
-Ứng dụng chính `python -m src.app.main` cũng có nút mở demo CN2.
+Vào **Tư vấn theo triệu chứng (Bayes)**: trả lời 25 câu (Có / Không / Chưa biết, phím C / K / B).
+Sau mỗi câu, màn hình cập nhật xác suất Bayes của 4 lớp và các luật đã kích hoạt kèm nguồn.
+Chọn địa điểm ĐBSCL bằng **< >** (Cần Thơ, Long Xuyên, Rạch Giá, Cà Mau…) rồi bấm **Lấy thời tiết**
+(cần mạng) để đưa độ ẩm và nhiệt độ thật vào Bayes. Không cần CNN.
 
-### Demo web hệ luật CN2
+Vào **Mạng Bayes 5 nút**: sơ đồ 5 nút theo ví dụ của đề (độ ẩm, nhiệt độ, lượng đạm → đạo ôn →
+vết hình thoi). Chọn trạng thái từng nút (hoặc Chưa biết), ô đạo ôn hiện ngay P(đạo ôn | bằng chứng).
 
-Từ thư mục chứa README, chạy PowerShell:
-
-```powershell
-.\.venv\Scripts\python.exe -m pip install -r requirements-web.txt
-.\.venv\Scripts\python.exe -m flask --app src.web run
-```
-
-Mở http://127.0.0.1:5000. Ở **Suy diễn tiến**, bấm **Mẫu vết hình thoi**
-để xem DO01 → DO12 hoặc **Mẫu thừa đạm** để xem DO11. Ở **Suy diễn lùi**,
-chọn mục tiêu, bấm **Bắt đầu hỏi** và trả lời từng câu. Bấm mã luật trong
-vết suy luận để mở mục nguồn tương ứng. Demo này minh họa hệ luật CN2 bằng
-dữ kiện do người dùng cung cấp.
-
-API của trang nhận JSON. `POST /api/forward` nhận đối tượng `answers` ánh xạ
-mã thuộc tính sang `co`, `khong` hoặc `chua_biet`. Đầu ra gồm `input_facts`,
-`derived_facts` và `trace`. `POST /api/backward/step` nhận thêm `goal`
-và trả `status`, `next_question` (mã thuộc tính hoặc null) và `trace`.
-Gửi `answers: {}` ở bước đầu. Trình duyệt giữ câu trả lời trong lượt hỏi
-hiện tại và gửi lại trong mỗi bước.
-
-Chạy từ gốc repo trên Windows/macOS/Linux:
-
-```text
-python demo.py
-python -m src.search.experiment
-python -m pytest
-ruff check .
-python -m scripts.check_rules
-```
+Vào **Chẩn đoán bệnh từ ảnh lá lúa**: chọn ảnh, bấm **Chẩn đoán**, trả lời từng câu hỏi triệu chứng
+(Có / Không / Chưa biết, hoặc phím C / K / B). Màn hình hiện top-3 của CNN, kết luận, giải thích,
+luật đã dùng và nguồn. Chưa có `models/rice_leaf_classifier.keras` thì màn hình báo chưa có mô hình
+và không kết luận.
 
 `python -m src.search.experiment` chạy thử trên bản đồ mẫu
 `data/sample/maps/map_4x4.json`, in ma trận và chi tiết lộ trình A* toàn cục,
 đồng thời so sánh với tham lam gần nhất.
 
-Nếu ruff chưa có trong PATH dùng `python -m ruff check .`. `python demo.py` là
-demo tích hợp: đọc bản đồ 4 × 4, in dự đoán **GIẢ**, báo `plan_route` chưa cài
-đặt và chạy CN2 với câu trả lời “Chưa biết”. Lệnh này chưa gọi phần A* trong
-`src/drone/`. CN2 trả thông báo chưa đủ chắc, liên hệ cán bộ khuyến nông.
-Demo gọi điều phối ảnh, hệ luật và CNN–Bayes. Predictor giả không đọc ảnh;
-kết quả luôn được ghi là minh họa, không dùng xác nhận bệnh.
+Nếu ruff chưa có trong PATH dùng `python -m ruff check .`. Demo đọc bản đồ 4 × 4,
+thông báo CNN chưa sẵn sàng nếu chưa có artifact, báo “chưa cài đặt” cho CN1.
+Không có số dự đoán mặc định hoặc kết luận bệnh giả.
 
 Các module chưa cung cấp CLI xử lý tham số. Một số thuật toán CN1/CN2 và mô hình
 đã có hàm thư viện; các hàm chưa triển khai ném `NotImplementedError`. Không coi
@@ -263,11 +264,11 @@ Chi tiết trong `docs/interfaces.md`.
 
 Mã ô: `0` lúa khỏe · `1`, `2`, `3` lúa bệnh theo mức · `-1` vật cản (kênh mương có cây cao, trụ điện) · `9` trạm nạp thuốc/đổi pin.
 
-**Hàm giao tiếp chính** (số dự đoán CNN trong bảng là GIẢ; type hint và schema ở `docs/interfaces.md`):
+**Hàm giao tiếp chính** (type hint và schema ở `docs/interfaces.md`):
 
 | Hàm | Module | Đầu ra |
 |-----|--------|--------|
-| `predict_top3(duong_dan_anh)` | `src/model/predict.py` | `[("dao_on", 0.55), ("dom_nau", 0.40), ("bac_la", 0.03)]` |
+| `predict_top3(duong_dan_anh)` | `src/model/predict.py` | 3 nhãn/xác suất từ ảnh và mô hình thật; cần artifact `.keras` |
 | `diagnose(top3, hoi_nguoi_dung)` | `src/rules/diagnose.py` | kết luận, độ tin cậy, các luật đã dùng (giải thích), nguồn tài liệu |
 | `plan_route(ban_do, k, p, thuat_toan)` | `src/search/run.py` | các ô đi qua, sự kiện phun/nạp, tổng quãng đường, số lần về trạm, thời gian chạy |
 
