@@ -43,12 +43,6 @@ def test_astar_tren_ban_do_nho():
     kiem_tra_khung(ban_do, lap_lo_trinh(ban_do, "astar"))
 
 
-def test_astar_tu_choi_ban_do_nhieu_o_benh():
-    ban_do = tao_ngau_nhien(20, 20, p=100, rng=random.Random(1))
-    with pytest.raises(ValueError, match="A\\*"):
-        lap_lo_trinh(ban_do, "astar")
-
-
 class UngDungGia:
     def ve_man_hinh_chinh(self):
         pass
@@ -60,7 +54,7 @@ class UngDungGia:
 def cho_tinh_xong(man_hinh):
     import time
 
-    for _ in range(300):
+    for _ in range(1000):
         man_hinh.cap_nhat(0)
         if man_hinh.khung or man_hinh.loi:
             return
@@ -91,7 +85,7 @@ def test_man_hinh_chay_dung_va_tung_buoc():
     assert man_hinh.buoc == 0
 
 
-def test_man_hinh_doi_thuat_toan_va_bao_loi():
+def test_man_hinh_doi_thuat_toan():
     from src.app.route_view import ManHinhLoTrinh
 
     nho = tao_ngau_nhien(6, 6, p=100, ty_le_benh=0.15, rng=random.Random(7))
@@ -101,10 +95,25 @@ def test_man_hinh_doi_thuat_toan_va_bao_loi():
     cho_tinh_xong(man_hinh)
     assert man_hinh.thuat_toan == "astar" and man_hinh.khung
 
+
+def test_astar_nhieu_o_benh_dung_duoc_va_doi_sang_tham_lam():
+    from src.app.route_view import ManHinhLoTrinh
+
+    # 20x20 nhiều ô bệnh: A* không còn bị chặn, nhưng chạy rất lâu
     lon = tao_ngau_nhien(20, 20, p=100, rng=random.Random(1))
     man_hinh = ManHinhLoTrinh(UngDungGia(), lon, thuat_toan="astar")
+    man_hinh.cap_nhat(0)
+    assert man_hinh.dang_tinh() and not man_hinh.loi
+
+    man_hinh.dung_tinh()
+    assert not man_hinh.dang_tinh() and "Đã dừng" in man_hinh.loi
+
+    # đang tính A* mà bấm Tham lam thì bỏ A*, ra lộ trình tham lam
+    man_hinh.doi_thuat_toan("astar")
+    assert man_hinh.dang_tinh()
+    man_hinh.doi_thuat_toan("greedy")
     cho_tinh_xong(man_hinh)
-    assert "A*" in man_hinh.loi and not man_hinh.nut_thuat_toan["astar"].bat
+    assert man_hinh.thuat_toan == "greedy" and man_hinh.khung and not man_hinh.loi
 
 
 def test_quay_lai_man_hinh_ban_do():
