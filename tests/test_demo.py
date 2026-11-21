@@ -13,7 +13,7 @@ def test_demo_runs():
     assert result.returncode == 0, result.stderr
     expected_cnn_status = "đã có artifact" if MODEL_PATH.is_file() else "chưa có mô hình"
     assert f"CN3 — {expected_cnn_status}" in result.stdout
-    assert "CN1: chưa cài đặt" in result.stdout
+    assert "CN1 — leo đồi: quãng đường" in result.stdout
     assert "Không có số dự đoán mặc định" not in result.stdout
     assert "CN2:" in result.stdout
     assert "CN2 chẩn đoán tích hợp: chưa cài đặt" not in result.stdout

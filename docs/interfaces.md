@@ -83,7 +83,7 @@ from src.contracts import BanDo, LoTrinh, ThuatToan
 def plan_route(ban_do: BanDo, k: int, p: int, thuat_toan: ThuatToan) -> LoTrinh: ...
 ```
 
-Module `src/search/run.py`; thuật toán là `hill`, `beam` hoặc `greedy`.
+Module `src/search/run.py`; thuật toán là `hill` hoặc `greedy`.
 k,p truyền vào ưu tiên hơn giá trị mặc định trong JSON. Không sửa bản đồ đầu vào.
 Đầu vào sai hoặc không có hành trình hoàn tất dự kiến ném `ValueError`.
 Hiện hàm luôn ném `NotImplementedError`.
