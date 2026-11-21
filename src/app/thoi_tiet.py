@@ -90,15 +90,39 @@ def lay_thoi_tiet(latitude: float, longitude: float) -> dict[str, Any]:
 
 def tao_bang_chung_bayes(weather: dict[str, Any]) -> list[str]:
     """
-    Chuyển số đo thời tiết thành đúng một bằng chứng cho nút ThoiTiet.
+    Chuyển số đo thời tiết thành bằng chứng cho nút ThoiTiet (độ ẩm) và NhietDo.
 
     Quy tắc kỹ thuật được công bố:
     - độ ẩm >= 80% hoặc mưa >= 1 mm -> tt_am_do_cao / tt_mua_nhieu (mua_am);
     - độ ẩm < 60% và lượng mưa = 0 mm -> tt_kho_han (kho);
-    - các trường hợp còn lại -> không tạo bằng chứng.
+    - các trường hợp còn lại -> không tạo bằng chứng độ ẩm;
+    - có nhiệt độ: 20–30 °C -> tt_nhiet_do_thuan_loi, ngoài khoảng đó ->
+      tt_nhiet_do_khong_thuan_loi; không có số đo nhiệt độ thì bỏ qua.
     Đây chỉ là phân nhóm thời tiết theo ngưỡng minh họa, không suy ra tình trạng
     ruộng, cây hay triệu chứng bệnh. Sương mù/gió không tự chuyển thành evidence.
     """
+    cac_ma = _bang_chung_do_am(weather)
+    ma_nhiet_do = _bang_chung_nhiet_do(weather)
+    if ma_nhiet_do is not None:
+        cac_ma.append(ma_nhiet_do)
+    return cac_ma
+
+
+def _bang_chung_nhiet_do(weather: dict[str, Any]) -> str | None:
+    """Nhiệt độ 20–30 °C xem là thuận lợi cho đạo ôn (ngưỡng minh họa)"""
+    nhiet_do = weather.get("temperature_c")
+    if nhiet_do is None:
+        return None
+    nhiet_do = float(nhiet_do)
+    if not math.isfinite(nhiet_do):
+        raise ValueError("Nhiệt độ phải là số hữu hạn.")
+    if 20 <= nhiet_do <= 30:
+        return "tt_nhiet_do_thuan_loi"
+    return "tt_nhiet_do_khong_thuan_loi"
+
+
+def _bang_chung_do_am(weather: dict[str, Any]) -> list[str]:
+    """Phân nhóm độ ẩm / mưa cho nút ThoiTiet"""
     humidity = weather.get("humidity_percent")
     rain = weather.get("precipitation_mm")
     if humidity is None or rain is None:

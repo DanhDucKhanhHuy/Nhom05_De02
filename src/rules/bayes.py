@@ -18,6 +18,7 @@ VOCABULARY_PATH = Path(__file__).with_name("vocabulary.json")
 # định tính do nhóm đặt để kiểm thử mô hình, không phải tần suất thực nghiệm.
 NGUON_CPD = {
     "ThoiTiet": (),
+    "NhietDo": (),
     "ThuaDam": (),
     "Giong": (),
     "DinhDuong": (),
@@ -44,11 +45,12 @@ NGUON_CPD = {
 # Ghi rõ giả định quan hệ và giới hạn từng CPD. Số xác suất không được suy ra
 # trực tiếp từ các tài liệu S1-S4.
 GIA_DINH_CPD = {
-    "ThoiTiet": "Prior minh họa cho nhóm thời tiết ẩm/mưa so với khô; không phải tần suất khí hậu.",
+    "ThoiTiet": "Prior minh họa cho nhóm độ ẩm/mưa (ẩm so với khô); không phải tần suất khí hậu.",
+    "NhietDo": "Prior minh họa 50/50 cho nhiệt độ thuận lợi/không thuận lợi với đạo ôn; ngưỡng 20–30 °C là quy ước kỹ thuật của nhóm, chưa có nguồn số.",
     "ThuaDam": "Prior minh họa cho việc bón đạm vượt khuyến cáo; không phải tỷ lệ ruộng thực tế.",
     "Giong": "Prior minh họa giống nhiễm/kháng; chưa học từ cơ cấu giống.",
     "DinhDuong": "Prior minh họa đất đủ/thiếu dinh dưỡng; chưa học từ xét nghiệm đất.",
-    "DaoOn": "Giả định đạo ôn thuận lợi hơn khi thời tiết ẩm, đạm vượt khuyến cáo và giống nhiễm; S1/S4 chỉ hỗ trợ định tính.",
+    "DaoOn": "Giả định đạo ôn thuận lợi hơn khi thời tiết ẩm, nhiệt độ thuận lợi, đạm vượt khuyến cáo và giống nhiễm; S1/S4 chỉ hỗ trợ định tính. Phần nhiệt độ được chia đều quanh CPD cũ nên khi chưa biết nhiệt độ thì kết quả không đổi.",
     "BacLa": "Giả định bạc lá thuận lợi hơn khi thời tiết ẩm và đạm vượt khuyến cáo; S2 hỗ trợ định tính.",
     "DomNau": "CPD minh họa tăng xác suất khi dinh dưỡng thiếu; nhóm mua_am được đặt cao hơn kho. Chiều tác động thời tiết và các con số là giả định cần duyệt, không phải kết quả định lượng từ S3.",
     "AmU_SuongSom": "Quan sát âm u kèm sương được điều kiện hóa theo nhóm thời tiết; không đại diện tình trạng ruộng/cây.",
@@ -77,6 +79,24 @@ def _cpd_nhi_phan(parent_co: float, parent_khong: float) -> dict:
     }
 
 
+def _them_nhiet_do(cpd_cu: dict) -> dict:
+    """Tách mỗi dòng CPD đạo ôn theo nhiệt độ.
+
+    Nhiệt độ thuận lợi cộng thêm chênh lệch, không thuận lợi trừ đi đúng bằng đó.
+    Prior NhietDo là 50/50 nên trung bình hai dòng bằng xác suất cũ: chưa biết
+    nhiệt độ thì kết quả giống mạng cũ.
+    """
+    cpd_moi = {}
+    for trang_thai_cha, (p_co, _) in cpd_cu.items():
+        chenh_lech = min(0.10, p_co / 2, (1.0 - p_co) / 2)
+        p_thuan_loi = round(p_co + chenh_lech, 4)
+        p_khong_thuan_loi = round(p_co - chenh_lech, 4)
+        cpd_moi[trang_thai_cha + ("thuan_loi",)] = [p_thuan_loi, round(1.0 - p_thuan_loi, 4)]
+        cpd_moi[trang_thai_cha + ("khong_thuan_loi",)] = [p_khong_thuan_loi,
+                                                          round(1.0 - p_khong_thuan_loi, 4)]
+    return cpd_moi
+
+
 def _nut_nhi_phan(label: str, parent: str, p_parent_co: float, p_parent_khong: float,
                   source: tuple[str, ...]) -> dict:
     return {
@@ -91,10 +111,16 @@ def _nut_nhi_phan(label: str, parent: str, p_parent_co: float, p_parent_khong: f
 # NUT được sắp theo thứ tự topo: cha luôn đứng trước con.
 NUT: dict[str, dict] = {
     "ThoiTiet": {
-        "nhan": "Nhóm thời tiết đo/quan sát",
+        "nhan": "Độ ẩm / mưa (nhóm thời tiết)",
         "gia_tri": ["mua_am", "kho"],
         "cha": [],
         "cpd": {(): [0.60, 0.40]},
+    },
+    "NhietDo": {
+        "nhan": "Nhiệt độ (thuận lợi cho đạo ôn: 20–30 °C)",
+        "gia_tri": ["thuan_loi", "khong_thuan_loi"],
+        "cha": [],
+        "cpd": {(): [0.50, 0.50]},
     },
     "ThuaDam": {
         "nhan": "Bón đạm vượt khuyến cáo",
@@ -117,8 +143,8 @@ NUT: dict[str, dict] = {
     "DaoOn": {
         "nhan": "Bệnh đạo ôn",
         "gia_tri": ["co", "khong"],
-        "cha": ["ThoiTiet", "ThuaDam", "Giong"],
-        "cpd": {
+        "cha": ["ThoiTiet", "ThuaDam", "Giong", "NhietDo"],
+        "cpd": _them_nhiet_do({
             ("mua_am", "co", "nhiem"): [0.78, 0.22],
             ("mua_am", "co", "khang"): [0.48, 0.52],
             ("mua_am", "khong", "nhiem"): [0.54, 0.46],
@@ -127,7 +153,7 @@ NUT: dict[str, dict] = {
             ("kho", "co", "khang"): [0.18, 0.82],
             ("kho", "khong", "nhiem"): [0.16, 0.84],
             ("kho", "khong", "khang"): [0.06, 0.94],
-        },
+        }),
     },
     "BacLa": {
         "nhan": "Bệnh bạc lá",
@@ -214,6 +240,8 @@ ANH_XA_BANG_CHUNG: dict[str, tuple[str, str]] = {
     "tt_am_do_cao": ("ThoiTiet", "mua_am"),
     "tt_mua_nhieu": ("ThoiTiet", "mua_am"),
     "tt_kho_han": ("ThoiTiet", "kho"),
+    "tt_nhiet_do_thuan_loi": ("NhietDo", "thuan_loi"),
+    "tt_nhiet_do_khong_thuan_loi": ("NhietDo", "khong_thuan_loi"),
     "tq_giong_nhiem": ("Giong", "nhiem"),
     "tq_dat_ngheo": ("DinhDuong", "thieu"),
 }
@@ -303,7 +331,7 @@ def bang_chung_bayes(
                 )
                 continue
             node, state = ANH_XA_BANG_CHUNG[key]
-        elif key in {"ThoiTiet", "Giong", "DinhDuong"}:
+        elif key in {"ThoiTiet", "NhietDo", "Giong", "DinhDuong"}:
             value = str(raw_value).strip()
             if value not in NUT[key]["gia_tri"]:
                 notes.add(f"Bỏ qua mã cũ {key}={value}: trạng thái không được định nghĩa.")
