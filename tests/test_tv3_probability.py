@@ -332,10 +332,11 @@ def test_zero_cnn_bayes_product_raises(monkeypatch):
         )
 
 
-def test_predict_top3_stub_runs_without_tensorflow():
+def test_predictor_requires_real_image_and_never_returns_fixed_probabilities():
     module = importlib.import_module("src.model.predict")
     assert module.IS_STUB is True
-    assert len(module.predict_top3("unused.jpg")) == 3
+    with pytest.raises(FileNotFoundError, match="Không tìm thấy ảnh"):
+        module.predict_top3("unused.jpg")
 
 
 def test_cpd_rejects_invalid_probability_values(monkeypatch):
