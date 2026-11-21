@@ -74,6 +74,23 @@ def test_man_hinh_tra_loi_cau_truoc_lam_lai_quay_lai():
     assert ung_dung.ve_lai_menu
 
 
+def test_chon_dia_diem_di_vong_tron():
+    from src.app.tu_van_view import DIA_DIEM
+
+    man_hinh = ManHinhTuVan(UngDungGia())
+    assert man_hinh.ten_dia_diem() == "Cần Thơ"
+    man_hinh.dia_diem_sau()
+    assert man_hinh.ten_dia_diem() == DIA_DIEM[1][0]
+    man_hinh.dia_diem_truoc()
+    man_hinh.dia_diem_truoc()  # từ đầu lùi thì về cuối danh sách
+    assert man_hinh.ten_dia_diem() == DIA_DIEM[-1][0]
+
+    # đang lấy thời tiết thì không đổi địa điểm
+    man_hinh.dang_lay_thoi_tiet = True
+    man_hinh.dia_diem_sau()
+    assert man_hinh.ten_dia_diem() == DIA_DIEM[-1][0]
+
+
 def test_nhan_ket_qua_thoi_tiet_khong_can_mang():
     man_hinh = ManHinhTuVan(UngDungGia())
     man_hinh.tra_loi_co()

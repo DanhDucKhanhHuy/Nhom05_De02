@@ -9,7 +9,23 @@ from .chan_doan_view import TEN_LOP, ngat_dong
 from .giao_dien import CAO_THANH_TIEU_DE, MAU, ManHinh, Nut, ve_chu, ve_thanh_tieu_de
 
 THU_MUC_LUAT = Path(__file__).resolve().parents[1] / "rules"
-TOA_DO_CAN_THO = (10.045, 105.746)
+# (tên, vĩ độ, kinh độ) các thành phố, thị xã vùng ĐBSCL
+DIA_DIEM = [
+    ("Cần Thơ", 10.045, 105.746),
+    ("Long Xuyên", 10.386, 105.435),
+    ("Châu Đốc", 10.707, 105.117),
+    ("Rạch Giá", 10.012, 105.081),
+    ("Cao Lãnh", 10.460, 105.633),
+    ("Mỹ Tho", 10.360, 106.360),
+    ("Tân An", 10.535, 106.413),
+    ("Vĩnh Long", 10.254, 105.972),
+    ("Bến Tre", 10.243, 106.375),
+    ("Trà Vinh", 9.935, 106.345),
+    ("Sóc Trăng", 9.603, 105.980),
+    ("Vị Thanh", 9.784, 105.470),
+    ("Bạc Liêu", 9.285, 105.724),
+    ("Cà Mau", 9.177, 105.150),
+]
 TEN_TRA_LOI = {"co": "Có", "khong": "Không", "chua_biet": "Chưa biết"}
 THU_TU_LOP = ("dao_on", "bac_la", "dom_nau", "la_khoe")
 MAU_LOP = {
@@ -95,6 +111,7 @@ class ManHinhTuVan(ManHinh):
         self.tra_loi = {}        # thuộc tính -> co / khong / chua_biet
         self.vi_tri = 0          # đang hỏi câu thứ mấy
         self.ma_thoi_tiet = []   # vd ["tt_am_do_cao"]
+        self.chi_so_dia_diem = 0  # đang chọn địa điểm nào trong DIA_DIEM
         self.thoi_tiet = ""      # dòng chữ hiện thời tiết
         self.loi_thoi_tiet = ""
         self.dang_lay_thoi_tiet = False
@@ -110,10 +127,13 @@ class ManHinhTuVan(ManHinh):
         self.nut_chua_biet = Nut("Chưa biết (B)", (X_TRAI + 400, y, 180, 44), self.tra_loi_chua_biet)
         self.nut_cau_truoc = Nut("← Câu trước", (X_TRAI, y + 60, 180, 38), self.cau_truoc, co=18)
         self.nut_lam_lai = Nut("Làm lại", (X_TRAI + 200, y + 60, 180, 38), self.lam_lai, co=18)
-        self.nut_thoi_tiet = Nut("Lấy thời tiết Cần Thơ", (X_TRAI, CAO_THANH_TIEU_DE + 470, 260, 40),
+        y_thoi_tiet = CAO_THANH_TIEU_DE + 470
+        nut_truoc = Nut("<", (X_TRAI, y_thoi_tiet, 40, 40), self.dia_diem_truoc, co=20)
+        nut_sau = Nut(">", (X_TRAI + 200, y_thoi_tiet, 40, 40), self.dia_diem_sau, co=20)
+        self.nut_thoi_tiet = Nut("Lấy thời tiết", (X_TRAI + 260, y_thoi_tiet, 180, 40),
                                  self.lay_thoi_tiet, co=18)
         self.cac_nut = [self.nut_quay_lai, self.nut_co, self.nut_khong, self.nut_chua_biet,
-                        self.nut_cau_truoc, self.nut_lam_lai, self.nut_thoi_tiet]
+                        self.nut_cau_truoc, self.nut_lam_lai, nut_truoc, nut_sau, self.nut_thoi_tiet]
 
     # trả lời
     def da_hoi_het(self):
@@ -158,22 +178,40 @@ class ManHinhTuVan(ManHinh):
         self.ung_dung.ve_man_hinh_chinh()
 
     # thời tiết (gọi mạng nên chạy ở luồng riêng)
+    def ten_dia_diem(self):
+        ten, _, _ = DIA_DIEM[self.chi_so_dia_diem]
+        return ten
+
+    def doi_dia_diem(self, buoc):
+        """Chọn địa điểm trước/sau, đi vòng tròn"""
+        if self.dang_lay_thoi_tiet:
+            return
+        so_dia_diem = len(DIA_DIEM)
+        self.chi_so_dia_diem = (self.chi_so_dia_diem + buoc) % so_dia_diem
+
+    def dia_diem_truoc(self):
+        self.doi_dia_diem(-1)
+
+    def dia_diem_sau(self):
+        self.doi_dia_diem(1)
+
     def lay_thoi_tiet(self):
         if self.dang_lay_thoi_tiet:
             return
         self.dang_lay_thoi_tiet = True
         self.loi_thoi_tiet = ""
-        luong = threading.Thread(target=self.tai_thoi_tiet, daemon=True)
+        dia_diem = DIA_DIEM[self.chi_so_dia_diem]
+        luong = threading.Thread(target=self.tai_thoi_tiet, args=(dia_diem,), daemon=True)
         luong.start()
 
-    def tai_thoi_tiet(self):
+    def tai_thoi_tiet(self, dia_diem):
         from src.app.thoi_tiet import lay_thoi_tiet, tao_bang_chung_bayes
 
+        ten, vi_do, kinh_do = dia_diem
         try:
-            vi_do, kinh_do = TOA_DO_CAN_THO
             thoi_tiet = lay_thoi_tiet(vi_do, kinh_do)
             cac_ma = tao_bang_chung_bayes(thoi_tiet)
-            chu = (f"Cần Thơ: {thoi_tiet['temperature_c']} °C, độ ẩm {thoi_tiet['humidity_percent']} %, "
+            chu = (f"{ten}: {thoi_tiet['temperature_c']} °C, độ ẩm {thoi_tiet['humidity_percent']} %, "
                    f"mưa {thoi_tiet['precipitation_mm']} mm")
             self.ket_qua_thoi_tiet = ("ok", cac_ma, chu)
         except (OSError, ValueError, KeyError) as loi:
@@ -248,6 +286,10 @@ class ManHinhTuVan(ManHinh):
             ve_chu(be_mat, dong, (X_TRAI, y + 28 + i * 24), co=16, mau=mau)
 
     def ve_thoi_tiet(self, be_mat):
+        # tên địa điểm nằm giữa hai nút < >
+        y_nut = CAO_THANH_TIEU_DE + 470
+        ve_chu(be_mat, self.ten_dia_diem(), (X_TRAI + 120, y_nut + 20), co=18, can="center")
+
         y = CAO_THANH_TIEU_DE + 520
         if self.dang_lay_thoi_tiet:
             ve_chu(be_mat, "Đang lấy thời tiết…", (X_TRAI, y), co=17, mau=MAU["chu_phu"])

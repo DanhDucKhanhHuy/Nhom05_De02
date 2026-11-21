@@ -206,7 +206,8 @@ nhiều hơn 8 ô; lúc đang tính có thể bấm **Dừng tính** hoặc ch�
 
 Vào **Tư vấn theo triệu chứng (Bayes)**: trả lời 25 câu (Có / Không / Chưa biết, phím C / K / B).
 Sau mỗi câu, màn hình cập nhật xác suất Bayes của 4 lớp và các luật đã kích hoạt kèm nguồn.
-Bấm **Lấy thời tiết Cần Thơ** (cần mạng) để đưa độ ẩm và nhiệt độ thật vào Bayes. Không cần CNN.
+Chọn địa điểm ĐBSCL bằng **< >** (Cần Thơ, Long Xuyên, Rạch Giá, Cà Mau…) rồi bấm **Lấy thời tiết**
+(cần mạng) để đưa độ ẩm và nhiệt độ thật vào Bayes. Không cần CNN.
 
 Vào **Chẩn đoán bệnh từ ảnh lá lúa**: chọn ảnh, bấm **Chẩn đoán**, trả lời từng câu hỏi triệu chứng
 (Có / Không / Chưa biết, hoặc phím C / K / B). Màn hình hiện top-3 của CNN, kết luận, giải thích,
