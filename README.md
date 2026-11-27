@@ -7,8 +7,8 @@
 > **Trạng thái (21/11/2026):**
 > - **CN1:** có tham lam, A* toàn cục, leo đồi và `plan_route`.
 > - **CN2:** 28 luật có nguồn, suy diễn tiến/lùi tự cài, mạng Bayes và kết hợp CNN–Bayes.
-> - **CN3:** đã huấn luyện CNN tự thiết kế và MobileNetV2 (accuracy 0,9005; F1 macro 0,8893 trên test độc lập). File `.keras` không lên Git, phải kèm file hoặc link khi nộp. Nhãn 20 ảnh thực tế chưa xác minh độc lập.
-> - **CN4:** ứng dụng Pygame có menu, bản đồ lưới, hoạt cảnh lộ trình, màn hình chẩn đoán ảnh và màn hình tư vấn theo triệu chứng (luật + Bayes, không cần CNN).
+> - **CN3:** đã huấn luyện CNN tự thiết kế và MobileNetV2 (accuracy 0,9005; F1 macro 0,8893 trên test độc lập). File `.keras` đã có trong repo (`models/`, `artifacts/cn3/`). Nhãn 20 ảnh thực tế chưa xác minh độc lập.
+> - **CN4:** ứng dụng Pygame có menu, bản đồ lưới, hoạt cảnh lộ trình (tham lam, A*), màn hình chẩn đoán ảnh, màn hình tư vấn theo triệu chứng (luật + Bayes, không cần CNN) và mạng Bayes 5 nút.
 >
 > Chi tiết ở `docs/kiem_chung.md` và `tasks/todo.md`.
 
@@ -198,9 +198,10 @@ Chạy từ gốc repo (thư mục chứa README), đã kích hoạt `.venv`:
 | `python -m scripts.train_cn3 --epochs 20` | Huấn luyện lại CN3; cần bộ ảnh trong `data/raw/` |
 | `python -m pytest` | Chạy toàn bộ test |
 | `python -m ruff check .` | Kiểm tra mã |
+| `git archive --format=zip --prefix=Nhom05_De02/ -o Nhom05_De02_code.zip main` | Đóng gói code nộp bài (gồm cả file `.keras`, khoảng 23 MB) |
 | `python -m scripts.check_rules` | Kiểm tra 28 luật CN2 |
 
-Màn hình chẩn đoán cần file `models/rice_leaf_classifier.keras`. Xin file này từ TV4 rồi đặt vào `models/`.
+Màn hình chẩn đoán dùng file `models/rice_leaf_classifier.keras`, đã có sẵn trong repo.
 
 `python -m src.app.main` mở ứng dụng (cần `pygame`). Vào **Bản đồ ruộng và lộ trình drone**: tô ô bệnh,
 vật cản, trạm bằng chuột (trái tô, phải xóa), mở/lưu file JSON, tạo bản đồ ngẫu nhiên, chỉnh k/p,
@@ -226,15 +227,12 @@ và không kết luận.
 đồng thời so sánh với tham lam gần nhất.
 
 Nếu ruff chưa có trong PATH dùng `python -m ruff check .`. Demo đọc bản đồ 4 × 4,
-thông báo CNN chưa sẵn sàng nếu chưa có artifact, báo “chưa cài đặt” cho CN1.
+in kết quả leo đồi của CN1, thông báo CNN chưa sẵn sàng nếu chưa có artifact.
 Không có số dự đoán mặc định hoặc kết luận bệnh giả.
 
-Các module chưa cung cấp CLI xử lý tham số. Một số thuật toán CN1/CN2 và mô hình
-đã có hàm thư viện; các hàm chưa triển khai ném `NotImplementedError`. Không coi
-các phần chưa triển khai là chức năng hoàn thành.
-
-Các test của thuật toán chưa triển khai còn đánh dấu xfail; test CN2 không còn
-xfail. `python -m scripts.check_rules` kiểm tra schema, tối thiểu 20 luật,
+Các module chưa cung cấp CLI xử lý tham số. Thuật toán CN1, CN2 và mô hình CN3
+dùng qua hàm thư viện; không còn hàm nào ném `NotImplementedError` và không còn
+test đánh dấu xfail. `python -m scripts.check_rules` kiểm tra schema, tối thiểu 20 luật,
 mã nguồn, từ vựng, chu trình, chuỗi suy diễn chẩn đoán–khuyến nghị và nội dung
 cấm. Tiêu chí bắt buộc không đạt sẽ trả mã lỗi.
 
@@ -300,7 +298,7 @@ Phân công chi tiết: `docs/ho_so_nhom/` (Mẫu 01 – Kế hoạch và phân 
 - [ ] CN1 chạy được: A*, tham lam, leo đồi, bảng so sánh
 - [ ] CN2 chạy được: ≥ 20 luật, suy diễn tiến, suy diễn lùi, mạng Bayes
 - [ ] CN3: kết quả đánh giá 2 mô hình, thử ≥ 20 ảnh thực tế
-- [ ] CN4: ứng dụng chạy đầu – cuối, có hoạt cảnh lộ trình
+- [x] CN4: ứng dụng chạy đầu – cuối, có hoạt cảnh lộ trình
 - [ ] Nộp báo cáo .docx, slide .pptx, code .zip
 
 ## 10. Quy ước làm việc với Git
@@ -309,7 +307,7 @@ Phân công chi tiết: `docs/ho_so_nhom/` (Mẫu 01 – Kế hoạch và phân 
 - Ghép vào `main` qua pull request, có ít nhất 1 thành viên khác duyệt.
 - Commit nhỏ và thường xuyên, thông điệp có tiền tố chức năng, ví dụ: `[CN1] Thêm A* với heuristic Manhattan`.
 - Không commit dữ liệu ảnh, trọng số mô hình, khóa API (đã khai báo trong `.gitignore`).
-- Mặc định trọng số không lên Git; **gói nộp cuối kỳ phải kèm `.keras` hoặc link tải** (xem `models/README.md`).
+- Riêng mô hình đã huấn luyện của CN3 (`models/`, `artifacts/cn3/`) đã được thêm vào Git để gói nộp có đủ; `.gitignore` vẫn chặn các file `.keras` mới.
 - Gốc repo hiện là `Nhom05_De02`, cây src đã đúng từ trước; không có thư mục cũ cần di chuyển trong phiên dựng khung.
 
 ## 11. Lưu ý khi sử dụng
